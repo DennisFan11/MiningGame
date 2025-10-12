@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://bffkthdmu3r4g"]
+
+[ext_resource type="PackedScene" uid="uid://6hb0myg4mp7y" path="res://GameSystem/GameController/GameController.tscn" id="6_l12wf"]
+
+[node name="Main" type="Node2D"]
+
+[node name="GameController" parent="." instance=ExtResource("6_l12wf")]

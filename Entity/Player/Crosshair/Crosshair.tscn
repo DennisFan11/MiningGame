@@ -1,0 +1,18 @@
+[gd_scene load_steps=4 format=3 uid="uid://dd8fmea27qbg0"]
+
+[ext_resource type="Texture2D" uid="uid://gjk5hgcdmvw7" path="res://Entity/Player/Crosshair/Aim_out.png" id="1_0wl5t"]
+[ext_resource type="Script" uid="uid://bjk2h6y7w5uub" path="res://Entity/Player/Crosshair/crosshair.gd" id="1_uqavv"]
+[ext_resource type="Texture2D" uid="uid://bqtbovd74yeul" path="res://Entity/Player/Crosshair/Aim_center.png" id="2_uqavv"]
+
+[node name="Crosshair" type="Node2D"]
+script = ExtResource("1_uqavv")
+
+[node name="AimOut" type="Sprite2D" parent="."]
+unique_name_in_owner = true
+scale = Vector2(3, 3)
+texture = ExtResource("1_0wl5t")
+
+[node name="AimCenter" type="Sprite2D" parent="."]
+unique_name_in_owner = true
+scale = Vector2(3, 3)
+texture = ExtResource("2_uqavv")

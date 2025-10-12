@@ -1,0 +1,38 @@
+[gd_scene load_steps=6 format=3 uid="uid://bvsu0onyi5npf"]
+
+[ext_resource type="Script" uid="uid://wprb74h1inbi" path="res://Entity/Bullet/Bullet.gd" id="1_ngv7h"]
+[ext_resource type="Script" uid="uid://osd26q5cb875" path="res://Entity/Bullet/DamageApply.gd" id="2_p006r"]
+[ext_resource type="Texture2D" uid="uid://d0vwaax8lq38w" path="res://Entity/Bullet/Normal/Bullet.png" id="3_xsqa5"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_ngv7h"]
+radius = 9.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_p006r"]
+radius = 17.0
+
+[node name="NormalBullet" type="CharacterBody2D"]
+collision_layer = 0
+script = ExtResource("1_ngv7h")
+metadata/_edit_vertical_guides_ = [-32.0, 32.0]
+
+[node name="Bullet" type="Sprite2D" parent="."]
+rotation = 3.1415927
+scale = Vector2(4, 4)
+texture = ExtResource("3_xsqa5")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_ngv7h")
+
+[node name="Area2D" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 17
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+shape = SubResource("CircleShape2D_p006r")
+
+[node name="DamageApply" type="Node2D" parent="."]
+unique_name_in_owner = true
+script = ExtResource("2_p006r")
+metadata/_custom_type_script = "uid://osd26q5cb875"
+
+[connection signal="body_entered" from="Area2D" to="." method="_on_area_2d_body_entered"]

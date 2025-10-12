@@ -1,0 +1,17 @@
+[gd_scene load_steps=2 format=3 uid="uid://cg4ui4i0ydxc4"]
+
+[ext_resource type="Script" uid="uid://o8d20lha2nax" path="res://Entity/Weapon/Gun/gun.gd" id="1_fk8iu"]
+
+[node name="Gun" type="Node2D"]
+script = ExtResource("1_fk8iu")
+ATTACK_CD = 0.1
+metadata/_edit_vertical_guides_ = [-32.0, 32.0]
+
+[node name="Polygon2D" type="Polygon2D" parent="."]
+position = Vector2(21, -1)
+scale = Vector2(2, 2)
+polygon = PackedVector2Array(-17, 10, -12.5, 11.5, -9, 3, -5.5, 3, -3.5, 12.5, 0.5, 11.5, -1, 3, 17, 1.5, 17, -1.5, -15, -1.5)
+
+[node name="Marker2D" type="Marker2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(55, 0)

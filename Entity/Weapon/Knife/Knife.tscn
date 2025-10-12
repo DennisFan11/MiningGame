@@ -1,0 +1,155 @@
+[gd_scene load_steps=16 format=3 uid="uid://dy40hq7anx35e"]
+
+[ext_resource type="Script" uid="uid://dt2i5f3gcu2sw" path="res://Entity/Weapon/Knife/knife.gd" id="1_wg3yk"]
+[ext_resource type="Texture2D" uid="uid://dotv2ng3yolsm" path="res://Asset/Attack.png" id="2_id5qa"]
+[ext_resource type="Script" uid="uid://2xreavrfy85r" path="res://Entity/Weapon/Knife/AttackPath.gd" id="3_id5qa"]
+[ext_resource type="Shader" uid="uid://bggjt82khqq3" path="res://Entity/Weapon/Knife/AttackPath.gdshader" id="4_wkh6s"]
+[ext_resource type="Texture2D" uid="uid://durpmb0cpvpvi" path="res://icon.svg" id="5_opp3v"]
+
+[sub_resource type="Curve2D" id="Curve2D_wg3yk"]
+_data = {
+"points": PackedVector2Array(-66.3283, 5.1857166, 66.3283, -5.1857166, -23.410545, -42.567135, -0.119143635, -40.227715, 0.119143635, 40.227715, 72.60624, -6.3807516, 8.569556, -2.4838119, -8.569556, 2.4838119, -16.490417, 46.50704)
+}
+point_count = 3
+
+[sub_resource type="Curve" id="Curve_opp3v"]
+_limits = [0.0, 1.5, 0.0, 1.0]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.24257427, 1.5), 0.0, 0.0, 0, 0, Vector2(0.26237625, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_jvwyn"]
+curve = SubResource("Curve_opp3v")
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_wkh6s"]
+noise_type = 3
+frequency = 0.0023
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_opp3v"]
+noise = SubResource("FastNoiseLite_wkh6s")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_opp3v"]
+shader = ExtResource("4_wkh6s")
+shader_parameter/noise = SubResource("NoiseTexture2D_opp3v")
+shader_parameter/clip_curve = SubResource("CurveTexture_jvwyn")
+
+[sub_resource type="Curve" id="Curve_jvwyn"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1e-05, 0.5316544), 0.0, 0.0, 0, 0, Vector2(0.49380165, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.790836), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="Animation" id="Animation_opp3v"]
+resource_name = "Attack"
+length = 3.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("AttackPath/Line2D:material:shader_parameter/clip_curve:curve:point_1/position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 2.2, 3),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(0.24257427, 1.5), Vector2(0.5049505, 1.5), Vector2(0.7400991, 1.5)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("AttackPath/Line2D:material:shader_parameter/clip_curve:curve:point_2/position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 2.2, 3),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(0.26237625, 0), Vector2(1, 0), Vector2(1, 0.4303279)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath(".:visible")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 2.9666667, 3),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 1,
+"values": [true, true, false]
+}
+
+[sub_resource type="Animation" id="Animation_jvwyn"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("AttackPath/Line2D:material:shader_parameter/clip_curve:curve:point_1/position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0.24257427, 1.5)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("AttackPath/Line2D:material:shader_parameter/clip_curve:curve:point_2/position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0.26237625, 0)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath(".:visible")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_jvwyn"]
+_data = {
+&"Attack": SubResource("Animation_opp3v"),
+&"RESET": SubResource("Animation_jvwyn")
+}
+
+[node name="Knife" type="Node2D"]
+visible = false
+script = ExtResource("1_wg3yk")
+ATTACK_CD = 0.3
+
+[node name="Attack" type="Sprite2D" parent="."]
+visible = false
+position = Vector2(46, 0)
+scale = Vector2(1.4375, 2)
+texture = ExtResource("2_id5qa")
+
+[node name="AttackPath" type="Path2D" parent="."]
+position = Vector2(-8.936288, 4.5845847)
+scale = Vector2(1.1560479, 0.7185023)
+curve = SubResource("Curve2D_wg3yk")
+script = ExtResource("3_id5qa")
+
+[node name="Line2D" type="Line2D" parent="AttackPath"]
+unique_name_in_owner = true
+material = SubResource("ShaderMaterial_opp3v")
+points = PackedVector2Array(-23.410545, -42.567135, -20.328302, -42.80545, -17.299736, -43.033752, -14.324683, -43.251274, -11.402975, -43.457275, -8.534442, -43.651012, -5.718919, -43.831722, -2.9562385, -43.998665, -0.24623315, -44.151085, 2.4112628, -44.288235, 5.0164204, -44.409367, 7.569403, -44.51373, 10.070379, -44.600574, 14.916986, -44.718704, 19.557575, -44.757763, 23.993486, -44.711754, 28.226057, -44.574673, 32.256626, -44.340534, 36.08653, -44.003334, 39.717113, -43.557076, 43.149704, -42.99576, 46.38565, -42.313393, 49.42628, -41.503983, 52.272945, -40.56152, 54.926975, -39.48001, 57.3897, -38.253464, 59.662483, -36.875874, 61.746635, -35.341248, 63.643513, -33.643585, 65.35445, -31.776901, 66.88077, -29.735184, 68.22383, -27.51244, 69.38497, -25.102676, 70.36551, -22.499887, 71.16681, -19.698086, 71.79019, -16.691269, 72.237, -13.473436, 72.50857, -10.038597, 72.60624, -6.3807516, 72.38545, -2.6967623, 71.71942, 0.8152379, 70.63613, 4.1593437, 69.16355, 7.339649, 67.3297, 10.360248, 65.16253, 13.225235, 62.690056, 15.938703, 59.94024, 18.504745, 56.941086, 20.92746, 53.720573, 23.210938, 50.306683, 25.359272, 46.727406, 27.37656, 43.01073, 29.266891, 39.184643, 31.034369, 35.277134, 32.683075, 31.316174, 34.21711, 27.329758, 35.640564, 23.345879, 36.957535, 19.392515, 38.17212, 15.497651, 39.28841, 11.689283, 40.310493, 7.995388, 41.242477, 4.4439564, 42.08844, 1.0629721, 42.852486, -2.1195788, 43.538708, -5.0757074, 44.15119, -7.7774296, 44.694046, -10.196759, 45.171356, -14.076292, 45.945717, -16.490417, 46.50704)
+width = 52.33
+width_curve = SubResource("Curve_jvwyn")
+texture = ExtResource("5_opp3v")
+texture_mode = 2
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+unique_name_in_owner = true
+libraries = {
+&"": SubResource("AnimationLibrary_jvwyn")
+}
+speed_scale = 17.0

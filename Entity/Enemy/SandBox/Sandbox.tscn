@@ -1,0 +1,85 @@
+[gd_scene load_steps=9 format=3 uid="uid://cv6685ggoqnqh"]
+
+[ext_resource type="Script" uid="uid://cqtms8kq4piyc" path="res://Entity/Enemy/SandBox/sandbox.gd" id="1_jdx4r"]
+[ext_resource type="Script" uid="uid://bolwmqhp0camu" path="res://Entity/Enemy/damage_taker.gd" id="2_h3xgp"]
+[ext_resource type="Texture2D" uid="uid://djik4a8e7gvmt" path="res://Entity/Enemy/SandBox/sandbag.png" id="3_choby"]
+
+[sub_resource type="Curve" id="Curve_choby"]
+_data = [Vector2(0.0126262605, 0.004504442), 0.0, 0.26113948, 0, 0, Vector2(0.7020203, 0.33075935), 1.0471312, 1.0471312, 0, 0, Vector2(0.9797981, 1), 3.4047573, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_h3xgp"]
+radius = 24.0
+height = 112.0
+
+[sub_resource type="Animation" id="Animation_choby"]
+resource_name = "HURT"
+loop_mode = 2
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Line2D:points")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [PackedVector2Array(0, 80, 0, 21, 0, -34, 0, -78), PackedVector2Array(0, 80, 0, 21, -24, -20, -63, -44)]
+}
+
+[sub_resource type="Animation" id="Animation_tjelr"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Line2D:points")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [PackedVector2Array(0, 80, 0, 21, 0, -34, 0, -78)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_tjelr"]
+_data = {
+&"HURT": SubResource("Animation_choby"),
+&"RESET": SubResource("Animation_tjelr")
+}
+
+[node name="Sandbox" type="CharacterBody2D"]
+collision_layer = 16
+collision_mask = 16
+script = ExtResource("1_jdx4r")
+hurt_curve = SubResource("Curve_choby")
+
+[node name="Sandbag" type="Sprite2D" parent="."]
+visible = false
+scale = Vector2(3.5, 3.5)
+texture = ExtResource("3_choby")
+
+[node name="DamageTaker" type="Node2D" parent="."]
+script = ExtResource("2_h3xgp")
+_hp = inf
+
+[node name="Line2D" type="Line2D" parent="."]
+scale = Vector2(0.8, 0.8)
+points = PackedVector2Array(0, 80, 0, 21, 0, -34, 0, -78)
+width = 70.0
+texture = ExtResource("3_choby")
+texture_mode = 2
+joint_mode = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -3)
+shape = SubResource("CapsuleShape2D_h3xgp")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+unique_name_in_owner = true
+libraries = {
+&"": SubResource("AnimationLibrary_tjelr")
+}
+
+[connection signal="on_hit" from="DamageTaker" to="." method="_on_damage_taker_on_hit"]

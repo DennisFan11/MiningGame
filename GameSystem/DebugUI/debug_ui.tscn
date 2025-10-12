@@ -1,0 +1,21 @@
+[gd_scene load_steps=2 format=3 uid="uid://bwts3a0tx8si3"]
+
+[ext_resource type="Script" uid="uid://cxjisbpqb1mv" path="res://GameSystem/DebugUI/debug_ui.gd" id="1_sowv2"]
+
+[node name="DebugUI" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1_sowv2")
+
+[node name="FPSLabel" type="RichTextLabel" parent="."]
+unique_name_in_owner = true
+layout_mode = 0
+offset_right = 179.0
+offset_bottom = 108.0
+mouse_filter = 2
+bbcode_enabled = true
