@@ -35,4 +35,8 @@ unique_name_in_owner = true
 script = ExtResource("2_p006r")
 metadata/_custom_type_script = "uid://osd26q5cb875"
 
+[node name="RemoteTransform2D" type="RemoteTransform2D" parent="."]
+unique_name_in_owner = true
+update_scale = false
+
 [connection signal="body_entered" from="Area2D" to="." method="_on_area_2d_body_entered"]

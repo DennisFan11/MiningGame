@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=3 uid="uid://b7altess1fi1w"]
+
+[ext_resource type="Texture2D" uid="uid://cr6304h4gbb2r" path="res://GameSystem/LightManager/Light/LightTexture.tres" id="1_0aop3"]
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_0aop3"]
+
+[node name="Light" type="Sprite2D"]
+material = SubResource("CanvasItemMaterial_0aop3")
+texture = ExtResource("1_0aop3")

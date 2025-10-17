@@ -12,8 +12,19 @@ func _ready() -> void:
 const FONT = preload("uid://1kh3hjn0q4xj")
 
 
+func d_draw_line(from:Vector2, to:Vector2, color:Color=Color.WHITE, width:float=3.0, time:float=0.1):
+	_add_draw(func():
+		self.draw_line(from, to, color, width),
+		time
+	)
+
+
+
+
+
+
 ## add_draw 用於暫時註冊一個繪製指令（Callable），可在指定時間內於 _draw() 階段持續顯示除錯圖形並自動移除。
-func add_draw(callable: Callable, time: float=1.0):
+func _add_draw(callable: Callable, time: float=1.0):
 	_draw_id += 1
 	_draw_map[_draw_id] = callable
 	
@@ -49,10 +60,6 @@ var _draw_map: Dictionary[int, Callable] = {}
 func _draw() -> void:
 	#print("Debug draw start")
 	for i: Callable in _draw_map.values():
-		if not i.is_valid():
-			continue
-		if not is_instance_valid(i.get_object()):
-			continue
 		i.call()
 	draw_finish.emit()
 		#print("Draw")

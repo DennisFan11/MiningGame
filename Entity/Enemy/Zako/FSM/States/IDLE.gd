@@ -67,14 +67,11 @@ func _new_target():
 	
 	var from = _body.global_position
 	var to = _target_pos
-	_debug_draw.add_draw(func():
-		_debug_draw.draw_line(
-			from,
-			to,
-			Color.CYAN,
-			3.0
-		),
-		0.3
+	_debug_draw.d_draw_line(
+		from,
+		to,
+		Color.CYAN,
+		3.0
 	)
 
 ## 檢查是否到達目的地

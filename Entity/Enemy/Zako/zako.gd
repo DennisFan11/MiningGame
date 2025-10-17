@@ -26,14 +26,11 @@ func can_see_player()-> bool:
 		if dict["collider"].get_parent() is Player:
 			result = true
 
-	_debug_draw.add_draw(func ():
-		_debug_draw.draw_line(
-			from, 
-			dict["position"]if dict.has("collider") else to,
-			Color.GREEN if result else Color.CRIMSON,
-			4.0
-		),
-		0.2
+	_debug_draw.d_draw_line(
+		from, 
+		dict["position"]if dict.has("collider") else to,
+		Color.GREEN if result else Color.CRIMSON,
+		4.0
 	)
 	return result
 	
@@ -53,14 +50,11 @@ func _scan_wall_dist(vec: Vector2)-> float:
 	if not res.has("collider"):
 		return vec.length()
 	#print(res["collider"])
-	_debug_draw.add_draw(func():
-		_debug_draw.draw_line(
-			from,
-			res["position"],
-			Color.REBECCA_PURPLE,
-			3.0
-		),
-		0.3
+	_debug_draw.d_draw_line(
+		from,
+		res["position"],
+		Color.REBECCA_PURPLE,
+		3.0
 	)
 	return (res["position"] - global_position).length()
 	

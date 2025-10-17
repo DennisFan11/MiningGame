@@ -1,5 +1,3 @@
-
-
 class_name Bullet
 extends CharacterBody2D
 
@@ -7,9 +5,17 @@ extends CharacterBody2D
 const BULLET_SPEED: float = 1200.0
 const BULLET_DAMAGE: float = 30.0
 
+
+var _light_manager: LightManager
 ## 外部接口
 func spawn(bullet_config: BulletConfig):
 	_spawn(bullet_config)
+
+
+func _ready() -> void:
+	var light = _light_manager.create_light(1)
+	%RemoteTransform2D.remote_path = light.get_path()
+	tree_exited.connect(light.queue_free)
 
 func _process(delta: float) -> void:
 	_fly(delta)
