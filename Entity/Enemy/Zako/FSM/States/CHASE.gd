@@ -1,4 +1,4 @@
-class_name CHASE
+#class_name CHASE
 extends FSM_state
 
 

@@ -2,8 +2,8 @@
 
 [sub_resource type="Gradient" id="Gradient_870uv"]
 interpolation_mode = 1
-offsets = PackedFloat32Array(0, 0.11325301, 0.6096386, 1)
-colors = PackedColorArray(1, 1, 1, 1, 0.8821987, 0.8821987, 0.8821987, 0.8821987, 0.40711457, 0.40711457, 0.40711457, 0.40711457, 0, 0, 0, 0)
+offsets = PackedFloat32Array(0, 0.23139158, 0.76375407, 1)
+colors = PackedColorArray(1, 1, 1, 1, 0.9389704, 0.9389704, 0.9389704, 0.9389704, 0.40711457, 0.40711457, 0.40711457, 0.40711457, 0, 0, 0, 0)
 
 [resource]
 gradient = SubResource("Gradient_870uv")

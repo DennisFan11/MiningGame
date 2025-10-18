@@ -5,6 +5,20 @@ extends Node2D
 
 
 
+
+func create_area(r: float)-> Area2D:
+	var area = Area2D.new()
+	var collide = CollisionShape2D.new()
+	var shape = CircleShape2D.new()
+	collide.shape = shape
+	area.add_child(collide)
+	return area
+
+
+
+
+
+
 func min_custom(array: Array, com: Callable):
 	if array.is_empty():
 		return null
@@ -62,6 +76,10 @@ func collide_query_circle(
 	
 	PhysicsServer2D.free_rid(shape_rid)
 	return result
+
+
+
+
 
 
 

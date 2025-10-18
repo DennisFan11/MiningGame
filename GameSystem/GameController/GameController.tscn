@@ -150,9 +150,15 @@ process_mode = 3
 [node name="SoundPlayer" type="Node2D" parent="CanvasLayer"]
 script = ExtResource("7_8d81h")
 
+[node name="BackBufferCopy" type="BackBufferCopy" parent="CanvasLayer"]
+copy_mode = 2
+
 [node name="EscUI" parent="CanvasLayer" instance=ExtResource("8_raev3")]
 metadata/_edit_group_ = true
 metadata/_edit_lock_ = true
+
+[node name="BackBufferCopy2" type="BackBufferCopy" parent="CanvasLayer"]
+copy_mode = 2
 
 [node name="CTRShader" type="ColorRect" parent="CanvasLayer"]
 material = SubResource("ShaderMaterial_ebgn5")
@@ -161,6 +167,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 
 [node name="DebugUI" parent="CanvasLayer" instance=ExtResource("7_ee1h0")]
 metadata/_edit_lock_ = true

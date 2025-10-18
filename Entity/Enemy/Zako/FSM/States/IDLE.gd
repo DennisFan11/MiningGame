@@ -1,4 +1,4 @@
-class_name IDLE
+#class_name IDLE
 extends FSM_state
 
 var _debug_draw: DebugDraw

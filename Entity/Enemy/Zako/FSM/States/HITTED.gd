@@ -1,4 +1,4 @@
-class_name HITTED
+#class_name HITTED
 extends FSM_state
 
 
