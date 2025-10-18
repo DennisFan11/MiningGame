@@ -1,0 +1,19 @@
+[gd_scene load_steps=4 format=3 uid="uid://cokminql75oji"]
+
+[ext_resource type="Script" uid="uid://b1o61bts5omni" path="res://Entity/Building/Building.gd" id="1_drqkr"]
+[ext_resource type="Script" uid="uid://cithxaqsmesw8" path="res://Entity/_components/IFF/IFF.gd" id="2_ltdac"]
+[ext_resource type="Script" uid="uid://btnryrhavvw7k" path="res://Entity/_components/Buildable/buildable.gd" id="3_6fslo"]
+
+[node name="Building" type="Node2D"]
+script = ExtResource("1_drqkr")
+
+[node name="Buildable" type="Node2D" parent="."]
+unique_name_in_owner = true
+script = ExtResource("3_6fslo")
+metadata/_custom_type_script = "uid://btnryrhavvw7k"
+
+[node name="IFF" type="Node2D" parent="." node_paths=PackedStringArray("master")]
+unique_name_in_owner = true
+script = ExtResource("2_ltdac")
+master = NodePath("..")
+metadata/_custom_type_script = "uid://cithxaqsmesw8"

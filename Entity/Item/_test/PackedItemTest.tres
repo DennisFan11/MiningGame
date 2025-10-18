@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="PackedItem" load_steps=2 format=3 uid="uid://cvq4boo05241a"]
+
+[ext_resource type="Script" uid="uid://b3hyxeotmkwn7" path="res://Entity/Item/PackedItem.gd" id="1_5xheb"]
+
+[resource]
+script = ExtResource("1_5xheb")
+item_set = null
+metadata/_custom_type_script = "uid://b3hyxeotmkwn7"

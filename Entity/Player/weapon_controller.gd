@@ -59,10 +59,10 @@ func _get_attack_vec()-> Vector2:
 
 func _get_weapon()-> Weapon:
 	return %Gun
-	for i in get_children():
-		if i is Weapon:
-			return i
-	return null
+	#for i in get_children():
+		#if i is Weapon:
+			#return i
+	#return null
 
 
 #
