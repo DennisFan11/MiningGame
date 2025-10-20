@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://bw2ikcrtxesku"]
+
+[ext_resource type="Shader" uid="uid://mxmaavhxtm0v" path="res://GameSystem/BuildingUI/DottedLine/DottedLine.gdshader" id="1_0oiaa"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_4etn2"]
+shader = ExtResource("1_0oiaa")
+
+[node name="DottedLine" type="Line2D"]
+material = SubResource("ShaderMaterial_4etn2")
+points = PackedVector2Array(52, 0, 0, 0)
+texture_mode = 1

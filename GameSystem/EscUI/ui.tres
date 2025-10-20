@@ -1,0 +1,7 @@
+[gd_resource type="Theme" format=3 uid="uid://bp16sodjsqwxw"]
+
+[resource]
+default_base_scale = 5.0
+default_font_size = 30
+FoldableContainer/font_sizes/font_size = 30
+Label/font_sizes/font_size = 30

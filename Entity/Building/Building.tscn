@@ -15,5 +15,10 @@ metadata/_custom_type_script = "uid://btnryrhavvw7k"
 [node name="IFF" type="Node2D" parent="." node_paths=PackedStringArray("master")]
 unique_name_in_owner = true
 script = ExtResource("2_ltdac")
+target = 1
 master = NodePath("..")
 metadata/_custom_type_script = "uid://cithxaqsmesw8"
+
+[connection signal="on_finish" from="Buildable" to="." method="_on_buildable_on_finish"]
+[connection signal="on_removed" from="Buildable" to="." method="_on_buildable_on_removed"]
+[connection signal="on_removing" from="Buildable" to="." method="_on_buildable_on_removing"]

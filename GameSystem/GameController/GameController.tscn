@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=4 uid="uid://6hb0myg4mp7y"]
+[gd_scene load_steps=28 format=4 uid="uid://6hb0myg4mp7y"]
 
 [ext_resource type="PackedScene" uid="uid://d3hxiu2vex0al" path="res://Entity/Player/Player.tscn" id="1_1au6a"]
 [ext_resource type="Script" uid="uid://cmqnwexcjcp8x" path="res://GameSystem/GameController/game_controller.gd" id="1_3nbeu"]
@@ -17,6 +17,7 @@
 [ext_resource type="PackedScene" uid="uid://worvs1wofc78" path="res://GameSystem/BitmaskManager/bitmask_manager.tscn" id="11_v56b3"]
 [ext_resource type="Script" uid="uid://case3gsw64e38" path="res://GameSystem/BitmaskManager/bitmask_manager.gd" id="12_3lyre"]
 [ext_resource type="Shader" uid="uid://bx16ruuqa4j5d" path="res://GameSystem/GameController/CTRshader.gdshader" id="15_26c85"]
+[ext_resource type="PackedScene" uid="uid://dgqgfb3pdvy2h" path="res://GameSystem/BuildingUI/BuildingUI.tscn" id="16_ebgn5"]
 
 [sub_resource type="Curve" id="Curve_raev3"]
 _data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.647368, 0.194444), 0.669014, 0.669014, 0, 0, Vector2(1, 1), 2.81481, 0.0, 0, 0]
@@ -143,6 +144,10 @@ uv = PackedVector2Array(-124.25, -20.25)
 
 [node name="DebugDraw" type="Node2D" parent="."]
 script = ExtResource("8_pqcmd")
+
+[node name="CanvasLayer2" type="CanvasLayer" parent="."]
+
+[node name="BuildingUi" parent="CanvasLayer2" instance=ExtResource("16_ebgn5")]
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 process_mode = 3

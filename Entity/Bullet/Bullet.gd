@@ -2,7 +2,7 @@ class_name Bullet
 extends CharacterBody2D
 
 ## 子彈速度 pix/s
-const BULLET_SPEED: float = 1200.0
+const BULLET_SPEED: float = 1500.0
 const BULLET_DAMAGE: float = 30.0
 
 

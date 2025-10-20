@@ -17,19 +17,26 @@ var contain_item: PackedItem
 
 var team: BitmaskManager.TEAM = BitmaskManager.TEAM.IDLE
 
+
+
+
 enum STATE{BUILDING, FINISH, REMOVING, REMOVED}
 var state: STATE = STATE.BUILDING
 
 func finished():
 	state = STATE.FINISH
 	on_finish.emit()
-	
+
+func removing():
+	state= STATE.REMOVING
+	on_removing.emit()
 
 func removed():
 	state = STATE.REMOVED
 	on_removed.emit()
 
 signal on_finish
+signal on_removing
 signal on_removed
 
 
