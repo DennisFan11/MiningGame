@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=3 uid="uid://dmqko2wm6gy7a"]
+
+[ext_resource type="Script" uid="uid://b1eaxpi7etxun" path="res://Entity/Building/BuildingConstruct/BuildingConstruct.gd" id="1_jfmsv"]
+[ext_resource type="Script" uid="uid://cithxaqsmesw8" path="res://Entity/_components/IFF/IFF.gd" id="2_vcpon"]
+
+[node name="BuildingConstruct" type="Node2D"]
+script = ExtResource("1_jfmsv")
+metadata/_custom_type_script = "uid://b1eaxpi7etxun"
+
+[node name="IFF" type="Node2D" parent="." node_paths=PackedStringArray("master")]
+unique_name_in_owner = true
+script = ExtResource("2_vcpon")
+master = NodePath("..")
+target = 1
+metadata/_custom_type_script = "uid://cithxaqsmesw8"

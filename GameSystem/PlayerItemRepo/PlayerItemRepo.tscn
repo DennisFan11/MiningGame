@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://qi5awbpwcjsr"]
+
+[ext_resource type="Script" uid="uid://bc5k32yrcvkuv" path="res://GameSystem/PlayerItemRepo/player_item_repo.gd" id="1_dipxt"]
+
+[node name="PlayerItemRepo" type="Node2D"]
+script = ExtResource("1_dipxt")

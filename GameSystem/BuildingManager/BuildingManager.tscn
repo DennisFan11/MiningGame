@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://78njtwpea5xy"]
+
+[ext_resource type="Script" uid="uid://dob3heqxlors7" path="res://GameSystem/BuildingManager/building_manager.gd" id="1_cwflk"]
+
+[node name="BuildingManager" type="Node2D"]
+script = ExtResource("1_cwflk")

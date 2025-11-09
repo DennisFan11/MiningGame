@@ -6,10 +6,10 @@ extends Node2D
 var _hp: float = 100.0
 
 
-signal on_hit(from: Vector2)
+signal on_hit(vel: Vector2)
 
 var _debug_draw: DebugDraw
-func damage(mount: float, from: Vector2):
+func damage(mount: float, vel: Vector2):
 	_hp -= mount
 	#_debug_draw.add_draw(func ():
 		#_debug_draw.draw_string(
@@ -19,7 +19,7 @@ func damage(mount: float, from: Vector2):
 			#0, -1, 40
 		#)
 	#)
-	on_hit.emit(from)
+	on_hit.emit(vel)
 
 	if _hp <= 0.0:
 		_die()

@@ -8,7 +8,7 @@ float sdBox(vec2 p, vec2 b) {
 void fragment() {
 	vec2 uv = UV; 
 	//uv = (uv - 0.5) * 0.5 + 0.5; // 0.2 => 放大 5 倍
-	uv +=  + vec2(TIME, 0.);
+	uv +=  + vec2(TIME * 3., 0.);
     vec2 p = fract(uv) - 0.5;
 
     // 方形半邊長（邊長 = 0.6）

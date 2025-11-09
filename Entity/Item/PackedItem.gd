@@ -8,11 +8,19 @@ extends Resource
 用於建築的資源傳遞
 """
 
+func _init() -> void:
+	item_set = {}
+
 static func create(items: Dictionary[Item.ITEM, float])-> PackedItem:
 	var new_packed_item = PackedItem.new()
 	new_packed_item.item_set = items.duplicate(true)
 	return new_packed_item
 
+static func create_full()-> PackedItem:
+	var item_set: Dictionary[Item.ITEM, float] = {}
+	for i in Item.get_all_item():
+		item_set[i] = INF
+	return create(item_set)
 ## 數學運算
 
 ## 加法：逐項相加
@@ -159,7 +167,10 @@ func is_zero()-> bool:
 	return true
 
 
-
+func dup_self() -> PackedItem:
+	var p := PackedItem.new()
+	p.item_set = item_set.duplicate(true)
+	return p
 
 
 

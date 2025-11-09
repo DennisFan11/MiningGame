@@ -27,12 +27,12 @@ static func get_item_name(item_ID: ITEM)-> String:
 static func create_item(item: ITEM)-> Item:
 	return _item_map[item].new()
 
-
+static func get_all_item()->Array[ITEM]:
+	return _item_map.keys()
 
 ## 子類複寫區
-
-@abstract
-func create_icon()-> Texture
+func create_icon()-> Texture:
+	return preload("uid://durpmb0cpvpvi")
 
 
 

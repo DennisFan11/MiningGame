@@ -50,7 +50,7 @@ func _process(delta: float) -> void:
 			_R_finish()
 
 
-func _unhandled_input(event):
+func _input(event):
 	if event.is_action_pressed("left_click"):
 		_state = L_CLICK
 	elif event.is_action_released("left_click"):

@@ -10,6 +10,7 @@ func create_area(r: float)-> Area2D:
 	var area = Area2D.new()
 	var collide = CollisionShape2D.new()
 	var shape = CircleShape2D.new()
+	shape.radius = r
 	collide.shape = shape
 	area.add_child(collide)
 	return area

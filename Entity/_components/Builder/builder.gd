@@ -1,19 +1,23 @@
 class_name Builder
 extends Node2D
 
-var item_source: ItemRepo
+var _player_item_repo: PlayerItemRepo
 var BUILDING_SPEED: float = 3.0 ## item/s
 
 enum {IDLE, RUNNING}
-@export var state: int = IDLE
+var state: int = RUNNING
 
 @onready var _IFF = %IFF
 
+var _building_manager: BuildingManager
 
 var team: BitmaskManager.TEAM = BitmaskManager.TEAM.IDLE:
 	set(new):
 		team = new
 		_IFF.team = new
+
+#var _building_plan_queue: Array[BuildingPlan] = []
+
 
 
 func _process(delta: float) -> void:
@@ -21,24 +25,75 @@ func _process(delta: float) -> void:
 		IDLE:
 			pass
 		RUNNING:
-			_running(delta)
+			%BuildingPolygon.visible = false
+			#print("target: ", _IFF.get_targets())
+			for i in _IFF.get_targets():
+				if not is_instance_valid(i):
+					continue
+				if i is BuildingPlan:
+					_convert_plan(i)
+					_update_polygon(i)
+					#break
+				if i is BuildingConstruct:
+					_update_polygon(i)
+					if i.breaking:
+						_remove(i, delta)
+					else:
+						_build(i, delta)
 
 
-## 執行中
-func _running(dt: float):
-	for i in _IFF.get_targets():
-		if i is Building:
-			var buildable = i.get_buildable()
-			match buildable.state:
-				Buildable.STATE.BUILDING:
-					_build(buildable, dt)
-				Buildable.STATE.REMOVING:
-					_remove(buildable, dt)
+
+func _update_polygon(i: BuildingI):
+	
+	var polygon = i.get_global_points()
+	polygon.append(global_position)
+	%BuildingPolygon.visible = true
+	%BuildingPolygon.polygon = Geometry2D.convex_hull(polygon)
+	
+	
+## 把藍圖轉換成施工建築
+func _convert_plan(plan: BuildingPlan):
+	
+	var data = plan.get_data()
+	var block = _building_manager.get_block(plan.coord)
+	if block and block != plan:
+		print_rich("[color=red]Building Convert Faild at:", plan.coord)
+		return
+	else:
+		print("convert" + str(plan))
+		_building_manager.set_block(
+			plan.coord,
+			data,
+			plan.team,
+			BuildingManager.TYPE.CONSTRUCT
+		)
+		
+func _convert_construct(construct: BuildingConstruct):
+	var data = construct.get_data()
+	var block = _building_manager.get_block(construct.coord)
+	if block and block != construct:
+		print_rich("[color=red]Building Convert Faild at:", construct.coord)
+		return
+	else:
+		print("convert" + str(construct))
+		_building_manager.set_block(
+			construct.coord,
+			data,
+			construct.team,
+			BuildingManager.TYPE.BUILDING
+		)
+	
+func _remove_construct(construct: BuildingConstruct):
+	pass
+	#construct.queue_free()
+
+
+#region move res
 
 ## 建造一個建築
-func _build(building: Buildable, dt: float) -> void:
+func _build(building: BuildingConstruct, dt: float) -> void:
 	# 擁有的資源
-	var have: PackedItem = item_source.contain
+	var have: PackedItem = _player_item_repo.contain
 
 	# 原始缺口
 	var need: PackedItem = building.need_item.sub(building.contain_item)
@@ -50,7 +105,7 @@ func _build(building: Buildable, dt: float) -> void:
 	# 若無正缺口或吞吐為 0 → 完成或不動作
 	var item_speed := BUILDING_SPEED * dt
 	if is_zero_approx(need_total):
-		building.finished()
+		_convert_construct(building)
 		return
 
 	# 計算請求量（不超過存量）
@@ -60,12 +115,12 @@ func _build(building: Buildable, dt: float) -> void:
 	# 收尾保險：逐項夾在 [0, need_pos] 內，避免浮點誤差
 	moving = moving.vclamp(PackedItem.zero(), need_pos)
 
-	item_source.contain = have.sub(moving)
+	_player_item_repo.contain = have.sub(moving)
 	building.contain_item = building.contain_item.add(moving)
 
 
 ## 移除一個建築（把已投入資源退回倉庫；總量限流 + 依比例）
-func _remove(building: Buildable, dt: float) -> void:
+func _remove(building: BuildingConstruct, dt: float) -> void:
 	# 僅保留正值（負值清 0）
 	var give_back := building.contain_item.vmax(PackedItem.zero())
 	var total_back := give_back.vtotal()
@@ -73,7 +128,7 @@ func _remove(building: Buildable, dt: float) -> void:
 	## 無可退 → 完成移除
 	var item_speed := BUILDING_SPEED * dt  # 可獨立設置 REMOVE_SPEED
 	if is_zero_approx(total_back):
-		building.removed()
+		_remove_construct(building)
 		return
 
 	# 依比例限制本 tick 退回總量 cap
@@ -83,12 +138,19 @@ func _remove(building: Buildable, dt: float) -> void:
 	request = request.vclamp(PackedItem.zero(), give_back)
 
 	# 狀態更新
-	item_source.contain = item_source.contain.add(request)
+	_player_item_repo.contain = _player_item_repo.contain.add(request)
 	building.contain_item = building.contain_item.sub(request)
 
 	# 若已全部清空，完成移除
 	if building.contain_item.vmax(PackedItem.zero()).vtotal() <= 0.0:
 		building.removed()
+
+
+
+
+
+
+#endregion
 
 
 #

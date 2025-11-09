@@ -6,8 +6,11 @@ extends Node2D
 var _debug_draw: DebugDraw
 var _light_manager: LightManager
 
+
+
 func _ready() -> void:
 	DI.register("_player", self)
+	%Builder.team = BitmaskManager.TEAM.PLAYER
 	
 	
 

@@ -1,10 +1,12 @@
-[gd_scene load_steps=8 format=3 uid="uid://dgqgfb3pdvy2h"]
+[gd_scene load_steps=10 format=3 uid="uid://dgqgfb3pdvy2h"]
 
 [ext_resource type="Theme" uid="uid://bp16sodjsqwxw" path="res://GameSystem/EscUI/ui.tres" id="1_sxn05"]
 [ext_resource type="Script" uid="uid://cxo8wgnqr23ah" path="res://GameSystem/BuildingUI/BuildingPanel.gd" id="2_rs12n"]
 [ext_resource type="Script" uid="uid://dkrpj6dvb4yi1" path="res://GameSystem/BuildingUI/building_ui.gd" id="2_wtl6f"]
 [ext_resource type="Script" uid="uid://klmsscfxon3k" path="res://GameSystem/BuildingUI/CarouselContainer/carousel_container.gd" id="4_6efhn"]
 [ext_resource type="PackedScene" uid="uid://bw2ikcrtxesku" path="res://GameSystem/BuildingUI/DottedLine/DottedLine.tscn" id="5_evg12"]
+[ext_resource type="Script" uid="uid://d0yukukxgxst7" path="res://GameSystem/BuildingUI/remover.gd" id="6_ch6q8"]
+[ext_resource type="Script" uid="uid://bxhmifu6dy8oy" path="res://GameSystem/BuildingUI/placer.gd" id="7_oyaap"]
 
 [sub_resource type="Gradient" id="Gradient_6efhn"]
 offsets = PackedFloat32Array(0, 0.6487603)
@@ -62,6 +64,7 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="ColumnText" type="RichTextLabel" parent="BuildingPanel"]
+unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -81,6 +84,7 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="BuildingName" type="RichTextLabel" parent="BuildingPanel"]
+unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -94,6 +98,22 @@ text = "TEST_NAME"
 fit_content = true
 scroll_active = false
 vertical_alignment = 2
+
+[node name="BuildingInfo" type="RichTextLabel" parent="BuildingPanel"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 306.0329
+offset_top = 237.2221
+offset_right = 3.9184265
+offset_bottom = 5.534546
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/normal_font_size = 20
+bbcode_enabled = true
+text = "這是一個測試建築"
 
 [node name="CenterContainer" type="CenterContainer" parent="BuildingPanel"]
 layout_mode = 1
@@ -114,305 +134,320 @@ texture = SubResource("GradientTexture2D_evg12")
 texture_offset = Vector2(256, 256)
 polygon = PackedVector2Array(-50.847122, -272.0666, 45.152878, -272.0666, 45.152878, -48.06659, 341.1529, -48.06659, 341.1529, 47.93341, 45.152878, 47.93341, 45.152878, 327.9334, -50.847122, 327.9334, -50.847122, 47.93341, -282.8471, 47.93341, -282.8471, -48.06659, -50.847122, -48.06659)
 
-[node name="CarouselContainer" type="Node2D" parent="BuildingPanel/CenterContainer/Control/Polygon2D"]
+[node name="Container" type="Node2D" parent="BuildingPanel/CenterContainer/Control/Polygon2D"]
+unique_name_in_owner = true
+
+[node name="CarouselContainer" type="Node2D" parent="BuildingPanel/CenterContainer/Control/Polygon2D/Container"]
 unique_name_in_owner = true
 physics_interpolation_mode = 2
 script = ExtResource("4_6efhn")
 metadata/_custom_type_script = "uid://klmsscfxon3k"
 
-[node name="CarouselContainer" type="Node2D" parent="BuildingPanel/CenterContainer/Control/Polygon2D/CarouselContainer"]
-modulate = Color(1, 1, 1, 0.2)
-position = Vector2(-192, 0)
+[node name="CarouselContainer" type="Node2D" parent="BuildingPanel/CenterContainer/Control/Polygon2D/Container/CarouselContainer"]
 script = ExtResource("4_6efhn")
 direction = 1
 metadata/_custom_type_script = "uid://klmsscfxon3k"
 
-[node name="Node2D" type="Node2D" parent="BuildingPanel/CenterContainer/Control/Polygon2D/CarouselContainer/CarouselContainer"]
-modulate = Color(1, 1, 1, 0.2)
-position = Vector2(0, 192)
-
-[node name="ColorRect" type="ColorRect" parent="BuildingPanel/CenterContainer/Control/Polygon2D/CarouselContainer/CarouselContainer/Node2D"]
-custom_minimum_size = Vector2(64, 64)
-offset_left = -32.0
-offset_top = -32.0
-offset_right = 32.0
-offset_bottom = 32.0
-
-[node name="Node2D2" type="Node2D" parent="BuildingPanel/CenterContainer/Control/Polygon2D/CarouselContainer/CarouselContainer"]
-modulate = Color(1, 1, 1, 0.6)
-position = Vector2(0, 96)
-
-[node name="ColorRect" type="ColorRect" parent="BuildingPanel/CenterContainer/Control/Polygon2D/CarouselContainer/CarouselContainer/Node2D2"]
-custom_minimum_size = Vector2(64, 64)
-offset_left = -31.999985
-offset_top = -32.0
-offset_right = 32.000015
-offset_bottom = 32.0
-
-[node name="Node2D3" type="Node2D" parent="BuildingPanel/CenterContainer/Control/Polygon2D/CarouselContainer/CarouselContainer"]
-
-[node name="ColorRect" type="ColorRect" parent="BuildingPanel/CenterContainer/Control/Polygon2D/CarouselContainer/CarouselContainer/Node2D3"]
-custom_minimum_size = Vector2(64, 64)
-offset_left = -31.999985
-offset_top = -32.0
-offset_right = 32.000015
-offset_bottom = 32.0
-
-[node name="Node2D4" type="Node2D" parent="BuildingPanel/CenterContainer/Control/Polygon2D/CarouselContainer/CarouselContainer"]
-modulate = Color(1, 1, 1, 0.6)
-position = Vector2(0, -96)
-
-[node name="ColorRect" type="ColorRect" parent="BuildingPanel/CenterContainer/Control/Polygon2D/CarouselContainer/CarouselContainer/Node2D4"]
-custom_minimum_size = Vector2(64, 64)
-offset_left = -31.999985
-offset_top = -32.0
-offset_right = 32.000015
-offset_bottom = 32.0
-
-[node name="Node2D5" type="Node2D" parent="BuildingPanel/CenterContainer/Control/Polygon2D/CarouselContainer/CarouselContainer"]
-modulate = Color(1, 1, 1, 0.2)
-position = Vector2(0, -192)
-
-[node name="ColorRect" type="ColorRect" parent="BuildingPanel/CenterContainer/Control/Polygon2D/CarouselContainer/CarouselContainer/Node2D5"]
-custom_minimum_size = Vector2(64, 64)
-offset_left = -31.999985
-offset_top = -32.0
-offset_right = 32.000015
-offset_bottom = 32.0
-
-[node name="CarouselContainer2" type="Node2D" parent="BuildingPanel/CenterContainer/Control/Polygon2D/CarouselContainer"]
-modulate = Color(1, 1, 1, 0.6)
-position = Vector2(-96, 0)
-script = ExtResource("4_6efhn")
-direction = 1
-metadata/_custom_type_script = "uid://klmsscfxon3k"
-
-[node name="Node2D" type="Node2D" parent="BuildingPanel/CenterContainer/Control/Polygon2D/CarouselContainer/CarouselContainer2"]
-modulate = Color(1, 1, 1, 0.2)
-position = Vector2(0, 192)
-
-[node name="ColorRect" type="ColorRect" parent="BuildingPanel/CenterContainer/Control/Polygon2D/CarouselContainer/CarouselContainer2/Node2D"]
-custom_minimum_size = Vector2(64, 64)
-offset_left = -32.0
-offset_top = -32.0
-offset_right = 32.0
-offset_bottom = 32.0
-
-[node name="Node2D2" type="Node2D" parent="BuildingPanel/CenterContainer/Control/Polygon2D/CarouselContainer/CarouselContainer2"]
-modulate = Color(1, 1, 1, 0.6)
-position = Vector2(0, 96)
-
-[node name="ColorRect" type="ColorRect" parent="BuildingPanel/CenterContainer/Control/Polygon2D/CarouselContainer/CarouselContainer2/Node2D2"]
-custom_minimum_size = Vector2(64, 64)
-offset_left = -31.999985
-offset_top = -32.0
-offset_right = 32.000015
-offset_bottom = 32.0
-
-[node name="Node2D3" type="Node2D" parent="BuildingPanel/CenterContainer/Control/Polygon2D/CarouselContainer/CarouselContainer2"]
-
-[node name="ColorRect" type="ColorRect" parent="BuildingPanel/CenterContainer/Control/Polygon2D/CarouselContainer/CarouselContainer2/Node2D3"]
-custom_minimum_size = Vector2(64, 64)
-offset_left = -31.999985
-offset_top = -32.0
-offset_right = 32.000015
-offset_bottom = 32.0
-
-[node name="Node2D4" type="Node2D" parent="BuildingPanel/CenterContainer/Control/Polygon2D/CarouselContainer/CarouselContainer2"]
-modulate = Color(1, 1, 1, 0.6)
-position = Vector2(0, -96)
-
-[node name="ColorRect" type="ColorRect" parent="BuildingPanel/CenterContainer/Control/Polygon2D/CarouselContainer/CarouselContainer2/Node2D4"]
-custom_minimum_size = Vector2(64, 64)
-offset_left = -31.999985
-offset_top = -32.0
-offset_right = 32.000015
-offset_bottom = 32.0
-
-[node name="Node2D5" type="Node2D" parent="BuildingPanel/CenterContainer/Control/Polygon2D/CarouselContainer/CarouselContainer2"]
-modulate = Color(1, 1, 1, 0.2)
-position = Vector2(0, -192)
-
-[node name="ColorRect" type="ColorRect" parent="BuildingPanel/CenterContainer/Control/Polygon2D/CarouselContainer/CarouselContainer2/Node2D5"]
-custom_minimum_size = Vector2(64, 64)
-offset_left = -31.999985
-offset_top = -32.0
-offset_right = 32.000015
-offset_bottom = 32.0
-
-[node name="CarouselContainer3" type="Node2D" parent="BuildingPanel/CenterContainer/Control/Polygon2D/CarouselContainer"]
-script = ExtResource("4_6efhn")
-direction = 1
-metadata/_custom_type_script = "uid://klmsscfxon3k"
-
-[node name="Node2D" type="Node2D" parent="BuildingPanel/CenterContainer/Control/Polygon2D/CarouselContainer/CarouselContainer3"]
-modulate = Color(1, 1, 1, 0.2)
-position = Vector2(0, 192)
-
-[node name="ColorRect" type="ColorRect" parent="BuildingPanel/CenterContainer/Control/Polygon2D/CarouselContainer/CarouselContainer3/Node2D"]
-custom_minimum_size = Vector2(64, 64)
-offset_left = -32.0
-offset_top = -32.0
-offset_right = 32.0
-offset_bottom = 32.0
-
-[node name="Node2D2" type="Node2D" parent="BuildingPanel/CenterContainer/Control/Polygon2D/CarouselContainer/CarouselContainer3"]
-modulate = Color(1, 1, 1, 0.6)
-position = Vector2(0, 96)
-
-[node name="ColorRect" type="ColorRect" parent="BuildingPanel/CenterContainer/Control/Polygon2D/CarouselContainer/CarouselContainer3/Node2D2"]
-custom_minimum_size = Vector2(64, 64)
-offset_left = -31.999985
-offset_top = -32.0
-offset_right = 32.000015
-offset_bottom = 32.0
-
-[node name="Node2D3" type="Node2D" parent="BuildingPanel/CenterContainer/Control/Polygon2D/CarouselContainer/CarouselContainer3"]
+[node name="Node2D" type="Node2D" parent="BuildingPanel/CenterContainer/Control/Polygon2D/Container/CarouselContainer/CarouselContainer"]
 scale = Vector2(1.2, 1.2)
 
-[node name="ColorRect" type="ColorRect" parent="BuildingPanel/CenterContainer/Control/Polygon2D/CarouselContainer/CarouselContainer3/Node2D3"]
+[node name="ColorRect" type="ColorRect" parent="BuildingPanel/CenterContainer/Control/Polygon2D/Container/CarouselContainer/CarouselContainer/Node2D"]
 custom_minimum_size = Vector2(64, 64)
-offset_left = -31.999985
+offset_left = -32.0
 offset_top = -32.0
-offset_right = 32.000015
+offset_right = 32.0
 offset_bottom = 32.0
 
-[node name="Node2D4" type="Node2D" parent="BuildingPanel/CenterContainer/Control/Polygon2D/CarouselContainer/CarouselContainer3"]
+[node name="Node2D2" type="Node2D" parent="BuildingPanel/CenterContainer/Control/Polygon2D/Container/CarouselContainer/CarouselContainer"]
 modulate = Color(1, 1, 1, 0.6)
 position = Vector2(0, -96)
 
-[node name="ColorRect" type="ColorRect" parent="BuildingPanel/CenterContainer/Control/Polygon2D/CarouselContainer/CarouselContainer3/Node2D4"]
+[node name="ColorRect" type="ColorRect" parent="BuildingPanel/CenterContainer/Control/Polygon2D/Container/CarouselContainer/CarouselContainer/Node2D2"]
 custom_minimum_size = Vector2(64, 64)
 offset_left = -31.999985
 offset_top = -32.0
 offset_right = 32.000015
 offset_bottom = 32.0
 
-[node name="Node2D5" type="Node2D" parent="BuildingPanel/CenterContainer/Control/Polygon2D/CarouselContainer/CarouselContainer3"]
+[node name="Node2D3" type="Node2D" parent="BuildingPanel/CenterContainer/Control/Polygon2D/Container/CarouselContainer/CarouselContainer"]
 modulate = Color(1, 1, 1, 0.2)
 position = Vector2(0, -192)
 
-[node name="ColorRect" type="ColorRect" parent="BuildingPanel/CenterContainer/Control/Polygon2D/CarouselContainer/CarouselContainer3/Node2D5"]
+[node name="ColorRect" type="ColorRect" parent="BuildingPanel/CenterContainer/Control/Polygon2D/Container/CarouselContainer/CarouselContainer/Node2D3"]
 custom_minimum_size = Vector2(64, 64)
 offset_left = -31.999985
 offset_top = -32.0
 offset_right = 32.000015
 offset_bottom = 32.0
 
-[node name="CarouselContainer4" type="Node2D" parent="BuildingPanel/CenterContainer/Control/Polygon2D/CarouselContainer"]
+[node name="Node2D4" type="Node2D" parent="BuildingPanel/CenterContainer/Control/Polygon2D/Container/CarouselContainer/CarouselContainer"]
+visible = false
+modulate = Color(1, 1, 1, 0)
+position = Vector2(0, -288)
+
+[node name="ColorRect" type="ColorRect" parent="BuildingPanel/CenterContainer/Control/Polygon2D/Container/CarouselContainer/CarouselContainer/Node2D4"]
+custom_minimum_size = Vector2(64, 64)
+offset_left = -31.999985
+offset_top = -32.0
+offset_right = 32.000015
+offset_bottom = 32.0
+
+[node name="Node2D5" type="Node2D" parent="BuildingPanel/CenterContainer/Control/Polygon2D/Container/CarouselContainer/CarouselContainer"]
+visible = false
+modulate = Color(1, 1, 1, 0)
+position = Vector2(0, -384)
+
+[node name="ColorRect" type="ColorRect" parent="BuildingPanel/CenterContainer/Control/Polygon2D/Container/CarouselContainer/CarouselContainer/Node2D5"]
+custom_minimum_size = Vector2(64, 64)
+offset_left = -31.999985
+offset_top = -32.0
+offset_right = 32.000015
+offset_bottom = 32.0
+
+[node name="CarouselContainer2" type="Node2D" parent="BuildingPanel/CenterContainer/Control/Polygon2D/Container/CarouselContainer"]
 modulate = Color(1, 1, 1, 0.6)
 position = Vector2(96, 0)
 script = ExtResource("4_6efhn")
 direction = 1
 metadata/_custom_type_script = "uid://klmsscfxon3k"
 
-[node name="Node2D" type="Node2D" parent="BuildingPanel/CenterContainer/Control/Polygon2D/CarouselContainer/CarouselContainer4"]
-modulate = Color(1, 1, 1, 0.2)
-position = Vector2(0, 192)
+[node name="Node2D" type="Node2D" parent="BuildingPanel/CenterContainer/Control/Polygon2D/Container/CarouselContainer/CarouselContainer2"]
 
-[node name="ColorRect" type="ColorRect" parent="BuildingPanel/CenterContainer/Control/Polygon2D/CarouselContainer/CarouselContainer4/Node2D"]
+[node name="ColorRect" type="ColorRect" parent="BuildingPanel/CenterContainer/Control/Polygon2D/Container/CarouselContainer/CarouselContainer2/Node2D"]
 custom_minimum_size = Vector2(64, 64)
 offset_left = -32.0
 offset_top = -32.0
 offset_right = 32.0
 offset_bottom = 32.0
 
-[node name="Node2D2" type="Node2D" parent="BuildingPanel/CenterContainer/Control/Polygon2D/CarouselContainer/CarouselContainer4"]
-modulate = Color(1, 1, 1, 0.6)
-position = Vector2(0, 96)
-
-[node name="ColorRect" type="ColorRect" parent="BuildingPanel/CenterContainer/Control/Polygon2D/CarouselContainer/CarouselContainer4/Node2D2"]
-custom_minimum_size = Vector2(64, 64)
-offset_left = -31.999985
-offset_top = -32.0
-offset_right = 32.000015
-offset_bottom = 32.0
-
-[node name="Node2D3" type="Node2D" parent="BuildingPanel/CenterContainer/Control/Polygon2D/CarouselContainer/CarouselContainer4"]
-
-[node name="ColorRect" type="ColorRect" parent="BuildingPanel/CenterContainer/Control/Polygon2D/CarouselContainer/CarouselContainer4/Node2D3"]
-custom_minimum_size = Vector2(64, 64)
-offset_left = -31.999985
-offset_top = -32.0
-offset_right = 32.000015
-offset_bottom = 32.0
-
-[node name="Node2D4" type="Node2D" parent="BuildingPanel/CenterContainer/Control/Polygon2D/CarouselContainer/CarouselContainer4"]
+[node name="Node2D2" type="Node2D" parent="BuildingPanel/CenterContainer/Control/Polygon2D/Container/CarouselContainer/CarouselContainer2"]
 modulate = Color(1, 1, 1, 0.6)
 position = Vector2(0, -96)
 
-[node name="ColorRect" type="ColorRect" parent="BuildingPanel/CenterContainer/Control/Polygon2D/CarouselContainer/CarouselContainer4/Node2D4"]
+[node name="ColorRect" type="ColorRect" parent="BuildingPanel/CenterContainer/Control/Polygon2D/Container/CarouselContainer/CarouselContainer2/Node2D2"]
 custom_minimum_size = Vector2(64, 64)
 offset_left = -31.999985
 offset_top = -32.0
 offset_right = 32.000015
 offset_bottom = 32.0
 
-[node name="Node2D5" type="Node2D" parent="BuildingPanel/CenterContainer/Control/Polygon2D/CarouselContainer/CarouselContainer4"]
+[node name="Node2D3" type="Node2D" parent="BuildingPanel/CenterContainer/Control/Polygon2D/Container/CarouselContainer/CarouselContainer2"]
 modulate = Color(1, 1, 1, 0.2)
 position = Vector2(0, -192)
 
-[node name="ColorRect" type="ColorRect" parent="BuildingPanel/CenterContainer/Control/Polygon2D/CarouselContainer/CarouselContainer4/Node2D5"]
+[node name="ColorRect" type="ColorRect" parent="BuildingPanel/CenterContainer/Control/Polygon2D/Container/CarouselContainer/CarouselContainer2/Node2D3"]
 custom_minimum_size = Vector2(64, 64)
 offset_left = -31.999985
 offset_top = -32.0
 offset_right = 32.000015
 offset_bottom = 32.0
 
-[node name="CarouselContainer5" type="Node2D" parent="BuildingPanel/CenterContainer/Control/Polygon2D/CarouselContainer"]
+[node name="Node2D4" type="Node2D" parent="BuildingPanel/CenterContainer/Control/Polygon2D/Container/CarouselContainer/CarouselContainer2"]
+visible = false
+modulate = Color(1, 1, 1, 0)
+position = Vector2(0, -288)
+
+[node name="ColorRect" type="ColorRect" parent="BuildingPanel/CenterContainer/Control/Polygon2D/Container/CarouselContainer/CarouselContainer2/Node2D4"]
+custom_minimum_size = Vector2(64, 64)
+offset_left = -31.999985
+offset_top = -32.0
+offset_right = 32.000015
+offset_bottom = 32.0
+
+[node name="Node2D5" type="Node2D" parent="BuildingPanel/CenterContainer/Control/Polygon2D/Container/CarouselContainer/CarouselContainer2"]
+visible = false
+modulate = Color(1, 1, 1, 0)
+position = Vector2(0, -384)
+
+[node name="ColorRect" type="ColorRect" parent="BuildingPanel/CenterContainer/Control/Polygon2D/Container/CarouselContainer/CarouselContainer2/Node2D5"]
+custom_minimum_size = Vector2(64, 64)
+offset_left = -31.999985
+offset_top = -32.0
+offset_right = 32.000015
+offset_bottom = 32.0
+
+[node name="CarouselContainer3" type="Node2D" parent="BuildingPanel/CenterContainer/Control/Polygon2D/Container/CarouselContainer"]
 modulate = Color(1, 1, 1, 0.2)
 position = Vector2(192, 0)
 script = ExtResource("4_6efhn")
 direction = 1
 metadata/_custom_type_script = "uid://klmsscfxon3k"
 
-[node name="Node2D" type="Node2D" parent="BuildingPanel/CenterContainer/Control/Polygon2D/CarouselContainer/CarouselContainer5"]
-modulate = Color(1, 1, 1, 0.2)
-position = Vector2(0, 192)
+[node name="Node2D" type="Node2D" parent="BuildingPanel/CenterContainer/Control/Polygon2D/Container/CarouselContainer/CarouselContainer3"]
 
-[node name="ColorRect" type="ColorRect" parent="BuildingPanel/CenterContainer/Control/Polygon2D/CarouselContainer/CarouselContainer5/Node2D"]
+[node name="ColorRect" type="ColorRect" parent="BuildingPanel/CenterContainer/Control/Polygon2D/Container/CarouselContainer/CarouselContainer3/Node2D"]
 custom_minimum_size = Vector2(64, 64)
 offset_left = -32.0
 offset_top = -32.0
 offset_right = 32.0
 offset_bottom = 32.0
 
-[node name="Node2D2" type="Node2D" parent="BuildingPanel/CenterContainer/Control/Polygon2D/CarouselContainer/CarouselContainer5"]
-modulate = Color(1, 1, 1, 0.6)
-position = Vector2(0, 96)
-
-[node name="ColorRect" type="ColorRect" parent="BuildingPanel/CenterContainer/Control/Polygon2D/CarouselContainer/CarouselContainer5/Node2D2"]
-custom_minimum_size = Vector2(64, 64)
-offset_left = -31.999985
-offset_top = -32.0
-offset_right = 32.000015
-offset_bottom = 32.0
-
-[node name="Node2D3" type="Node2D" parent="BuildingPanel/CenterContainer/Control/Polygon2D/CarouselContainer/CarouselContainer5"]
-
-[node name="ColorRect" type="ColorRect" parent="BuildingPanel/CenterContainer/Control/Polygon2D/CarouselContainer/CarouselContainer5/Node2D3"]
-custom_minimum_size = Vector2(64, 64)
-offset_left = -31.999985
-offset_top = -32.0
-offset_right = 32.000015
-offset_bottom = 32.0
-
-[node name="Node2D4" type="Node2D" parent="BuildingPanel/CenterContainer/Control/Polygon2D/CarouselContainer/CarouselContainer5"]
+[node name="Node2D2" type="Node2D" parent="BuildingPanel/CenterContainer/Control/Polygon2D/Container/CarouselContainer/CarouselContainer3"]
 modulate = Color(1, 1, 1, 0.6)
 position = Vector2(0, -96)
 
-[node name="ColorRect" type="ColorRect" parent="BuildingPanel/CenterContainer/Control/Polygon2D/CarouselContainer/CarouselContainer5/Node2D4"]
+[node name="ColorRect" type="ColorRect" parent="BuildingPanel/CenterContainer/Control/Polygon2D/Container/CarouselContainer/CarouselContainer3/Node2D2"]
 custom_minimum_size = Vector2(64, 64)
 offset_left = -31.999985
 offset_top = -32.0
 offset_right = 32.000015
 offset_bottom = 32.0
 
-[node name="Node2D5" type="Node2D" parent="BuildingPanel/CenterContainer/Control/Polygon2D/CarouselContainer/CarouselContainer5"]
+[node name="Node2D3" type="Node2D" parent="BuildingPanel/CenterContainer/Control/Polygon2D/Container/CarouselContainer/CarouselContainer3"]
 modulate = Color(1, 1, 1, 0.2)
 position = Vector2(0, -192)
 
-[node name="ColorRect" type="ColorRect" parent="BuildingPanel/CenterContainer/Control/Polygon2D/CarouselContainer/CarouselContainer5/Node2D5"]
+[node name="ColorRect" type="ColorRect" parent="BuildingPanel/CenterContainer/Control/Polygon2D/Container/CarouselContainer/CarouselContainer3/Node2D3"]
+custom_minimum_size = Vector2(64, 64)
+offset_left = -31.999985
+offset_top = -32.0
+offset_right = 32.000015
+offset_bottom = 32.0
+
+[node name="Node2D4" type="Node2D" parent="BuildingPanel/CenterContainer/Control/Polygon2D/Container/CarouselContainer/CarouselContainer3"]
+visible = false
+modulate = Color(1, 1, 1, 0)
+position = Vector2(0, -288)
+
+[node name="ColorRect" type="ColorRect" parent="BuildingPanel/CenterContainer/Control/Polygon2D/Container/CarouselContainer/CarouselContainer3/Node2D4"]
+custom_minimum_size = Vector2(64, 64)
+offset_left = -31.999985
+offset_top = -32.0
+offset_right = 32.000015
+offset_bottom = 32.0
+
+[node name="Node2D5" type="Node2D" parent="BuildingPanel/CenterContainer/Control/Polygon2D/Container/CarouselContainer/CarouselContainer3"]
+visible = false
+modulate = Color(1, 1, 1, 0)
+position = Vector2(0, -384)
+
+[node name="ColorRect" type="ColorRect" parent="BuildingPanel/CenterContainer/Control/Polygon2D/Container/CarouselContainer/CarouselContainer3/Node2D5"]
+custom_minimum_size = Vector2(64, 64)
+offset_left = -31.999985
+offset_top = -32.0
+offset_right = 32.000015
+offset_bottom = 32.0
+
+[node name="CarouselContainer4" type="Node2D" parent="BuildingPanel/CenterContainer/Control/Polygon2D/Container/CarouselContainer"]
+visible = false
+modulate = Color(1, 1, 1, 0)
+position = Vector2(288, 0)
+script = ExtResource("4_6efhn")
+direction = 1
+metadata/_custom_type_script = "uid://klmsscfxon3k"
+
+[node name="Node2D" type="Node2D" parent="BuildingPanel/CenterContainer/Control/Polygon2D/Container/CarouselContainer/CarouselContainer4"]
+
+[node name="ColorRect" type="ColorRect" parent="BuildingPanel/CenterContainer/Control/Polygon2D/Container/CarouselContainer/CarouselContainer4/Node2D"]
+custom_minimum_size = Vector2(64, 64)
+offset_left = -32.0
+offset_top = -32.0
+offset_right = 32.0
+offset_bottom = 32.0
+
+[node name="Node2D2" type="Node2D" parent="BuildingPanel/CenterContainer/Control/Polygon2D/Container/CarouselContainer/CarouselContainer4"]
+modulate = Color(1, 1, 1, 0.6)
+position = Vector2(0, -96)
+
+[node name="ColorRect" type="ColorRect" parent="BuildingPanel/CenterContainer/Control/Polygon2D/Container/CarouselContainer/CarouselContainer4/Node2D2"]
+custom_minimum_size = Vector2(64, 64)
+offset_left = -31.999985
+offset_top = -32.0
+offset_right = 32.000015
+offset_bottom = 32.0
+
+[node name="Node2D3" type="Node2D" parent="BuildingPanel/CenterContainer/Control/Polygon2D/Container/CarouselContainer/CarouselContainer4"]
+modulate = Color(1, 1, 1, 0.2)
+position = Vector2(0, -192)
+
+[node name="ColorRect" type="ColorRect" parent="BuildingPanel/CenterContainer/Control/Polygon2D/Container/CarouselContainer/CarouselContainer4/Node2D3"]
+custom_minimum_size = Vector2(64, 64)
+offset_left = -31.999985
+offset_top = -32.0
+offset_right = 32.000015
+offset_bottom = 32.0
+
+[node name="Node2D4" type="Node2D" parent="BuildingPanel/CenterContainer/Control/Polygon2D/Container/CarouselContainer/CarouselContainer4"]
+visible = false
+modulate = Color(1, 1, 1, 0)
+position = Vector2(0, -288)
+
+[node name="ColorRect" type="ColorRect" parent="BuildingPanel/CenterContainer/Control/Polygon2D/Container/CarouselContainer/CarouselContainer4/Node2D4"]
+custom_minimum_size = Vector2(64, 64)
+offset_left = -31.999985
+offset_top = -32.0
+offset_right = 32.000015
+offset_bottom = 32.0
+
+[node name="Node2D5" type="Node2D" parent="BuildingPanel/CenterContainer/Control/Polygon2D/Container/CarouselContainer/CarouselContainer4"]
+visible = false
+modulate = Color(1, 1, 1, 0)
+position = Vector2(0, -384)
+
+[node name="ColorRect" type="ColorRect" parent="BuildingPanel/CenterContainer/Control/Polygon2D/Container/CarouselContainer/CarouselContainer4/Node2D5"]
+custom_minimum_size = Vector2(64, 64)
+offset_left = -31.999985
+offset_top = -32.0
+offset_right = 32.000015
+offset_bottom = 32.0
+
+[node name="CarouselContainer5" type="Node2D" parent="BuildingPanel/CenterContainer/Control/Polygon2D/Container/CarouselContainer"]
+visible = false
+modulate = Color(1, 1, 1, 0)
+position = Vector2(384, 0)
+script = ExtResource("4_6efhn")
+direction = 1
+metadata/_custom_type_script = "uid://klmsscfxon3k"
+
+[node name="Node2D" type="Node2D" parent="BuildingPanel/CenterContainer/Control/Polygon2D/Container/CarouselContainer/CarouselContainer5"]
+
+[node name="ColorRect" type="ColorRect" parent="BuildingPanel/CenterContainer/Control/Polygon2D/Container/CarouselContainer/CarouselContainer5/Node2D"]
+custom_minimum_size = Vector2(64, 64)
+offset_left = -32.0
+offset_top = -32.0
+offset_right = 32.0
+offset_bottom = 32.0
+
+[node name="Node2D2" type="Node2D" parent="BuildingPanel/CenterContainer/Control/Polygon2D/Container/CarouselContainer/CarouselContainer5"]
+modulate = Color(1, 1, 1, 0.6)
+position = Vector2(0, -96)
+
+[node name="ColorRect" type="ColorRect" parent="BuildingPanel/CenterContainer/Control/Polygon2D/Container/CarouselContainer/CarouselContainer5/Node2D2"]
+custom_minimum_size = Vector2(64, 64)
+offset_left = -31.999985
+offset_top = -32.0
+offset_right = 32.000015
+offset_bottom = 32.0
+
+[node name="Node2D3" type="Node2D" parent="BuildingPanel/CenterContainer/Control/Polygon2D/Container/CarouselContainer/CarouselContainer5"]
+modulate = Color(1, 1, 1, 0.2)
+position = Vector2(0, -192)
+
+[node name="ColorRect" type="ColorRect" parent="BuildingPanel/CenterContainer/Control/Polygon2D/Container/CarouselContainer/CarouselContainer5/Node2D3"]
+custom_minimum_size = Vector2(64, 64)
+offset_left = -31.999985
+offset_top = -32.0
+offset_right = 32.000015
+offset_bottom = 32.0
+
+[node name="Node2D4" type="Node2D" parent="BuildingPanel/CenterContainer/Control/Polygon2D/Container/CarouselContainer/CarouselContainer5"]
+visible = false
+modulate = Color(1, 1, 1, 0)
+position = Vector2(0, -288)
+
+[node name="ColorRect" type="ColorRect" parent="BuildingPanel/CenterContainer/Control/Polygon2D/Container/CarouselContainer/CarouselContainer5/Node2D4"]
+custom_minimum_size = Vector2(64, 64)
+offset_left = -31.999985
+offset_top = -32.0
+offset_right = 32.000015
+offset_bottom = 32.0
+
+[node name="Node2D5" type="Node2D" parent="BuildingPanel/CenterContainer/Control/Polygon2D/Container/CarouselContainer/CarouselContainer5"]
+visible = false
+modulate = Color(1, 1, 1, 0)
+position = Vector2(0, -384)
+
+[node name="ColorRect" type="ColorRect" parent="BuildingPanel/CenterContainer/Control/Polygon2D/Container/CarouselContainer/CarouselContainer5/Node2D5"]
 custom_minimum_size = Vector2(64, 64)
 offset_left = -31.999985
 offset_top = -32.0
@@ -436,17 +471,20 @@ points = PackedVector2Array(-42.831146, -206.56256, -43.655075, 212.64777)
 position = Vector2(-0.8101344, 63.30821)
 points = PackedVector2Array(46.738876, 204.04944, 45.941116, -209.29834)
 
-[node name="RichTextLabel" type="RichTextLabel" parent="BuildingPanel"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 306.0329
-offset_top = 237.22208
-offset_right = 3.9184265
-offset_bottom = 5.5345154
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_font_sizes/normal_font_size = 20
-bbcode_enabled = true
-text = "這是一個測試建築"
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+follow_viewport_enabled = true
+
+[node name="Placer" type="Node2D" parent="CanvasLayer"]
+script = ExtResource("7_oyaap")
+
+[node name="Remover" type="Node2D" parent="CanvasLayer"]
+script = ExtResource("6_ch6q8")
+
+[node name="RemovePolygon" type="Polygon2D" parent="CanvasLayer/Remover"]
+unique_name_in_owner = true
+color = Color(1, 0.25882354, 0.25882354, 0.40784314)
+
+[node name="RemoveLine" type="Line2D" parent="CanvasLayer/Remover"]
+unique_name_in_owner = true
+closed = true
+default_color = Color(1, 0.25882354, 0.25882354, 0.8627451)

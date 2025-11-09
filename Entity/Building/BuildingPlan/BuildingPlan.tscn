@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3 uid="uid://dywvpop5avhnn"]
+
+[ext_resource type="Script" uid="uid://chf7f6kkysrrl" path="res://Entity/Building/BuildingPlan/building_plan.gd" id="1_uhfyp"]
+[ext_resource type="Script" uid="uid://cithxaqsmesw8" path="res://Entity/_components/IFF/IFF.gd" id="2_24dln"]
+
+[node name="BuildingPlan" type="Node2D"]
+script = ExtResource("1_uhfyp")
+
+[node name="IFF" type="Node2D" parent="."]
+unique_name_in_owner = true
+script = ExtResource("2_24dln")
+target = 1
+metadata/_custom_type_script = "uid://cithxaqsmesw8"

@@ -15,10 +15,10 @@ func _process(delta: float) -> void:
 
 
 
-func _on_damage_taker_on_hit(from: Vector2) -> void:
+func _on_damage_taker_on_hit(vel: Vector2) -> void:
 	mount += 0.3
 	
-	if from.x > global_position.x:
+	if vel.x < 0:
 		# 右邊
 		scale.x = 1.0
 	else:

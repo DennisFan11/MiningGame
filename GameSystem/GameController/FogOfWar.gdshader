@@ -46,8 +46,8 @@ void fragment() {
 	float box_dist = -sdBox(SCREEN_UV_2_world(SCREEN_UV), vec2(10.));
 	circle_dist = mix(circle_dist, box_dist, 0.5);
 
-	float _circle_weight = sin(TIME*1.5)/2.+.5;
-	dist = mix(dist, circle_dist, circle_weight);
+	//float _circle_weight = sin(TIME*1.5)/2.+.5;
+	//dist = mix(dist, circle_dist, circle_weight);
 
 	dist += BLOCK_SIZE * 3.; // 內縮三格
 	dist /= 240.;

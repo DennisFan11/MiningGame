@@ -15,6 +15,8 @@ func _ready() -> void:
 	
 	# 遞歸重新注入
 	DI.injection(self, true)
+	
+	_recursive_call(self, "_game_start")
 
 
 
@@ -33,3 +35,13 @@ func set_game_scale(new_scale: float, TIME: float)-> void:
 ## 取得遊戲時間速率
 func get_game_scale()-> float:
 	return Engine.time_scale
+
+
+
+
+
+
+
+
+func get_player()-> Player:
+	return %Player

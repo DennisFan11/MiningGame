@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://d3hxiu2vex0al"]
+[gd_scene load_steps=14 format=3 uid="uid://d3hxiu2vex0al"]
 
 [ext_resource type="Texture2D" uid="uid://durpmb0cpvpvi" path="res://icon.svg" id="1_367n4"]
 [ext_resource type="Script" uid="uid://bcps5pwj13g8t" path="res://Entity/Player/player.gd" id="1_ic0o1"]
@@ -6,6 +6,7 @@
 [ext_resource type="Script" uid="uid://cdlkuh2und3vh" path="res://Entity/Player/aim_controller.gd" id="4_43y4t"]
 [ext_resource type="PackedScene" uid="uid://cg4ui4i0ydxc4" path="res://Entity/Weapon/Gun/Gun.tscn" id="4_wu0n7"]
 [ext_resource type="PackedScene" uid="uid://dd8fmea27qbg0" path="res://Entity/Player/Crosshair/Crosshair.tscn" id="5_wu0n7"]
+[ext_resource type="PackedScene" uid="uid://4ik2roj8liup" path="res://Entity/_components/Builder/Builder.tscn" id="7_3xy24"]
 [ext_resource type="Script" uid="uid://drl8l4pna44wv" path="res://Entity/Player/camera_2d.gd" id="7_vk8em"]
 
 [sub_resource type="Curve" id="Curve_wu0n7"]
@@ -89,6 +90,9 @@ shape = SubResource("CircleShape2D_ic0o1")
 [node name="RemoteTransform2D" type="RemoteTransform2D" parent="CharacterBody2D"]
 unique_name_in_owner = true
 update_scale = false
+
+[node name="Builder" parent="CharacterBody2D" instance=ExtResource("7_3xy24")]
+unique_name_in_owner = true
 
 [node name="Camera2D" type="Camera2D" parent="."]
 script = ExtResource("7_vk8em")

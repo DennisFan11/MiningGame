@@ -1,0 +1,9 @@
+class_name PlayerItemRepo
+extends Node2D
+
+var contain: PackedItem = PackedItem.create_full()
+
+
+
+func _ready() -> void:
+	DI.register("_player_item_repo", self)

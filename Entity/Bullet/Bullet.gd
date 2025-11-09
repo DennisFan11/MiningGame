@@ -45,7 +45,7 @@ func _hit(body: Node2D):
 	
 	var damage:DamageTaker = %DamageApply.get_damage_taker(body)
 	if damage:
-		damage.damage(BULLET_DAMAGE, global_position)
+		damage.damage(BULLET_DAMAGE, _dir)
 	queue_free()
 
 
