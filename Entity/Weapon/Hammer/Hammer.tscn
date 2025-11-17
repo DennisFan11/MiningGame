@@ -1,0 +1,32 @@
+[gd_scene load_steps=4 format=3 uid="uid://bmidykio6n12a"]
+
+[ext_resource type="Script" uid="uid://8otr25x3bs1l" path="res://Entity/Weapon/Hammer/hammer.gd" id="1_44ejy"]
+[ext_resource type="Texture2D" uid="uid://cufagunbau0wa" path="res://Entity/Weapon/Hammer/hammer.png" id="2_fbogc"]
+[ext_resource type="Script" uid="uid://osd26q5cb875" path="res://Entity/_components/DamageApply.gd" id="3_uofjd"]
+
+[node name="Hammer" type="Node2D"]
+script = ExtResource("1_44ejy")
+ATTACK_CD = 0.5
+
+[node name="ColorRect" type="ColorRect" parent="."]
+visible = false
+offset_left = -67.0
+offset_top = -60.0
+offset_right = 138.0
+offset_bottom = 78.0
+color = Color(0.5514852, 0.42594257, 0.25625414, 1)
+
+[node name="Marker2D" type="Marker2D" parent="."]
+unique_name_in_owner = true
+
+[node name="Sprite2D" type="Sprite2D" parent="Marker2D"]
+unique_name_in_owner = true
+position = Vector2(23, 0)
+rotation = 1.5707964
+scale = Vector2(4, 4)
+texture = ExtResource("2_fbogc")
+
+[node name="DamageApply" type="Node2D" parent="."]
+unique_name_in_owner = true
+script = ExtResource("3_uofjd")
+metadata/_custom_type_script = "uid://osd26q5cb875"

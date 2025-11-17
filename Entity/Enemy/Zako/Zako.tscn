@@ -5,7 +5,7 @@
 [ext_resource type="Script" uid="uid://b8qd2a646fv0x" path="res://Entity/Enemy/Zako/FSM/States/IDLE.gd" id="3_jds2j"]
 [ext_resource type="Script" uid="uid://c2va6wgiga6y7" path="res://Entity/Enemy/Zako/FSM/States/HITTED.gd" id="4_73l5x"]
 [ext_resource type="Script" uid="uid://bw8tnav84nx1x" path="res://Entity/Enemy/Zako/FSM/States/CHASE.gd" id="5_1aw8t"]
-[ext_resource type="Script" uid="uid://bolwmqhp0camu" path="res://Entity/Enemy/damage_taker.gd" id="6_nru6a"]
+[ext_resource type="Script" uid="uid://bolwmqhp0camu" path="res://Entity/_components/damage_taker.gd" id="6_nru6a"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_o7wfs"]
 radius = 20.0

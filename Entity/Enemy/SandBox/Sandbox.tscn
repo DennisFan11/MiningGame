@@ -1,7 +1,7 @@
 [gd_scene load_steps=9 format=3 uid="uid://cv6685ggoqnqh"]
 
 [ext_resource type="Script" uid="uid://cqtms8kq4piyc" path="res://Entity/Enemy/SandBox/sandbox.gd" id="1_jdx4r"]
-[ext_resource type="Script" uid="uid://bolwmqhp0camu" path="res://Entity/Enemy/damage_taker.gd" id="2_h3xgp"]
+[ext_resource type="Script" uid="uid://bolwmqhp0camu" path="res://Entity/_components/damage_taker.gd" id="2_h3xgp"]
 [ext_resource type="Texture2D" uid="uid://djik4a8e7gvmt" path="res://Entity/Enemy/SandBox/sandbag.png" id="3_choby"]
 
 [sub_resource type="Curve" id="Curve_choby"]
