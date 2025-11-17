@@ -84,22 +84,22 @@ func collide_query_circle(
 
 
 
-## 回傳 Dictionary（命中時包含 position, normal, collider, collider_id 等）
-## 若未命中回傳空 Dictionary {}
-## 參數：
-## - caller_node: 用來取得 world_2d 的 Node（通常傳 self）
-## - from: 全域起點（Vector2）
-## - to: 全域終點（Vector2）
-## - exclude_self: 是否自動把 caller_node 加入排除清單（預設 true）
-##
-## 与一个给定空间中的一个射线相交。射线位置和其他参数通过 PhysicsRayQueryParameters2D 定义。返回的对象是一个包含以下字段的字典：
-## collider：该碰撞对象。
-## collider_id：该碰撞对象的 ID。
-## normal：在相交点处该对象的表面法线；如果射线从形状内部开始，并且 PhysicsRayQueryParameters2D.hit_from_inside 为 true，则为 Vector2(0, 0)。
-## position：该相交点。
-## rid：该相交对象的 RID。
-## shape：该碰撞形状的形状索引。
-## 如果射线没有与任何东西相交，则返回一个空字典。
+## 回傳 Dictionary（命中時包含 position, normal, collider, collider_id 等）[br]
+## 若未命中回傳空 Dictionary {}[br]
+## 參數：[br]
+## - caller_node: 用來取得 world_2d 的 Node（通常傳 self）[br]
+## - from: 全域起點（Vector2）[br]
+## - to: 全域終點（Vector2）[br]
+## - exclude_self: 是否自動把 caller_node 加入排除清單（預設 true）[br]
+## [br]
+## 与一个给定空间中的一个射线相交。射线位置和其他参数通过 PhysicsRayQueryParameters2D 定义。返回的对象是一个包含以下字段的字典：[br]
+## collider：该碰撞对象。[br]
+## collider_id：该碰撞对象的 ID。[br]
+## normal：在相交点处该对象的表面法线；如果射线从形状内部开始，并且 PhysicsRayQueryParameters2D.hit_from_inside 为 true，则为 Vector2(0, 0)。[br]
+## position：该相交点。[br]
+## rid：该相交对象的 RID。[br]
+## shape：该碰撞形状的形状索引。[br]
+## 如果射线没有与任何东西相交，则返回一个空字典。[br]
 func raycast_once(
 		caller_node: Node2D, 
 		from: Vector2, 
