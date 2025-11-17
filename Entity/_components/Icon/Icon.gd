@@ -19,19 +19,20 @@ func _ready() -> void:
 	expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 
-
+var _sub_icon: IconSub
 enum COLOR { WHITE, RED}
 func set_color(c: COLOR):
 	const COLOR_MAP = {
 		COLOR.WHITE: Color.WHITE_SMOKE,
 		COLOR.RED: Color.ORANGE_RED
 	}
+	if _sub_icon:
+		_sub_icon.queue_free()
+	_sub_icon = IconSub.new()
+	add_child(_sub_icon)
 	
-	var sub_icon = IconSub.new()
-	add_child(sub_icon)
 	
-	
-	sub_icon.modulate = COLOR_MAP.get(c) * Color(1, 1, 1, 0.2)
+	_sub_icon.modulate = COLOR_MAP.get(c) * Color(1, 1, 1, 0.2)
 
 
 

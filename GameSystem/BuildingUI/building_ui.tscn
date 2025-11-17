@@ -1,12 +1,12 @@
-[gd_scene load_steps=10 format=3 uid="uid://dgqgfb3pdvy2h"]
+[gd_scene load_steps=10 format=3 uid="uid://f6iptk0fh0kw"]
 
-[ext_resource type="Theme" uid="uid://bp16sodjsqwxw" path="res://GameSystem/EscUI/ui.tres" id="1_sxn05"]
-[ext_resource type="Script" uid="uid://cxo8wgnqr23ah" path="res://GameSystem/BuildingUI/BuildingPanel.gd" id="2_rs12n"]
-[ext_resource type="Script" uid="uid://dkrpj6dvb4yi1" path="res://GameSystem/BuildingUI/building_ui.gd" id="2_wtl6f"]
-[ext_resource type="Script" uid="uid://klmsscfxon3k" path="res://GameSystem/BuildingUI/CarouselContainer/carousel_container.gd" id="4_6efhn"]
-[ext_resource type="PackedScene" uid="uid://bw2ikcrtxesku" path="res://GameSystem/BuildingUI/DottedLine/DottedLine.tscn" id="5_evg12"]
-[ext_resource type="Script" uid="uid://d0yukukxgxst7" path="res://GameSystem/BuildingUI/remover.gd" id="6_ch6q8"]
-[ext_resource type="Script" uid="uid://bxhmifu6dy8oy" path="res://GameSystem/BuildingUI/placer.gd" id="7_oyaap"]
+[ext_resource type="Theme" uid="uid://bp16sodjsqwxw" path="res://GameSystem/EscUI/ui.tres" id="1_c7ekj"]
+[ext_resource type="Script" uid="uid://dkrpj6dvb4yi1" path="res://GameSystem/BuildingUI/building_ui.gd" id="2_n2fho"]
+[ext_resource type="Script" uid="uid://cxo8wgnqr23ah" path="res://GameSystem/BuildingUI/BuildingPanel.gd" id="3_sil0w"]
+[ext_resource type="Script" uid="uid://klmsscfxon3k" path="res://GameSystem/BuildingUI/CarouselContainer/carousel_container.gd" id="4_umq8h"]
+[ext_resource type="PackedScene" uid="uid://bw2ikcrtxesku" path="res://GameSystem/BuildingUI/DottedLine/DottedLine.tscn" id="5_kv2ej"]
+[ext_resource type="Script" uid="uid://bxhmifu6dy8oy" path="res://GameSystem/BuildingUI/placer.gd" id="6_ip3p7"]
+[ext_resource type="Script" uid="uid://d0yukukxgxst7" path="res://GameSystem/BuildingUI/remover.gd" id="7_nk31m"]
 
 [sub_resource type="Gradient" id="Gradient_6efhn"]
 offsets = PackedFloat32Array(0, 0.6487603)
@@ -28,8 +28,8 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme = ExtResource("1_sxn05")
-script = ExtResource("2_wtl6f")
+theme = ExtResource("1_c7ekj")
+script = ExtResource("2_n2fho")
 
 [node name="BuildingPanel" type="Panel" parent="."]
 unique_name_in_owner = true
@@ -37,14 +37,14 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 1138.0
-offset_top = 528.0
-offset_right = 26.96997
-offset_bottom = -19.576904
+offset_left = -15.152872
+offset_top = 581.0666
+offset_right = -1126.1829
+offset_bottom = 33.489685
 grow_horizontal = 2
 grow_vertical = 2
-rotation = 0.10471976
-script = ExtResource("2_rs12n")
+rotation = -0.10471976
+script = ExtResource("3_sil0w")
 
 [node name="Label" type="Label" parent="BuildingPanel"]
 visible = false
@@ -89,10 +89,8 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 5.2861633
-offset_top = 2.4609222
-offset_right = -296.9249
-offset_bottom = -234.56099
+offset_left = 302.21106
+offset_bottom = -237.02191
 grow_horizontal = 2
 grow_vertical = 2
 bbcode_enabled = true
@@ -107,10 +105,10 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 8.756376
-offset_top = 236.37961
-offset_right = -313.76254
-offset_bottom = -7.1803284
+offset_left = 306.0329
+offset_top = 237.2221
+offset_right = 3.9184265
+offset_bottom = 5.534546
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_font_sizes/normal_font_size = 20
@@ -142,11 +140,11 @@ unique_name_in_owner = true
 [node name="CarouselContainer" type="Node2D" parent="BuildingPanel/CenterContainer/Control/Polygon2D/Container"]
 unique_name_in_owner = true
 physics_interpolation_mode = 2
-script = ExtResource("4_6efhn")
+script = ExtResource("4_umq8h")
 metadata/_custom_type_script = "uid://klmsscfxon3k"
 
 [node name="CarouselContainer" type="Node2D" parent="BuildingPanel/CenterContainer/Control/Polygon2D/Container/CarouselContainer"]
-script = ExtResource("4_6efhn")
+script = ExtResource("4_umq8h")
 direction = 1
 metadata/_custom_type_script = "uid://klmsscfxon3k"
 
@@ -209,7 +207,7 @@ offset_bottom = 32.0
 [node name="CarouselContainer2" type="Node2D" parent="BuildingPanel/CenterContainer/Control/Polygon2D/Container/CarouselContainer"]
 modulate = Color(1, 1, 1, 0.6)
 position = Vector2(96, 0)
-script = ExtResource("4_6efhn")
+script = ExtResource("4_umq8h")
 direction = 1
 metadata/_custom_type_script = "uid://klmsscfxon3k"
 
@@ -271,7 +269,7 @@ offset_bottom = 32.0
 [node name="CarouselContainer3" type="Node2D" parent="BuildingPanel/CenterContainer/Control/Polygon2D/Container/CarouselContainer"]
 modulate = Color(1, 1, 1, 0.2)
 position = Vector2(192, 0)
-script = ExtResource("4_6efhn")
+script = ExtResource("4_umq8h")
 direction = 1
 metadata/_custom_type_script = "uid://klmsscfxon3k"
 
@@ -334,7 +332,7 @@ offset_bottom = 32.0
 visible = false
 modulate = Color(1, 1, 1, 0)
 position = Vector2(288, 0)
-script = ExtResource("4_6efhn")
+script = ExtResource("4_umq8h")
 direction = 1
 metadata/_custom_type_script = "uid://klmsscfxon3k"
 
@@ -397,7 +395,7 @@ offset_bottom = 32.0
 visible = false
 modulate = Color(1, 1, 1, 0)
 position = Vector2(384, 0)
-script = ExtResource("4_6efhn")
+script = ExtResource("4_umq8h")
 direction = 1
 metadata/_custom_type_script = "uid://klmsscfxon3k"
 
@@ -456,20 +454,20 @@ offset_top = -32.0
 offset_right = 32.000015
 offset_bottom = 32.0
 
-[node name="DottedLine" parent="BuildingPanel/CenterContainer/Control" instance=ExtResource("5_evg12")]
+[node name="DottedLine" parent="BuildingPanel/CenterContainer/Control" instance=ExtResource("5_kv2ej")]
 position = Vector2(0.22614129, -3.9519296)
 points = PackedVector2Array(211.99654, -48.057495, -223.85786, -43.592224)
 
-[node name="DottedLine2" parent="BuildingPanel/CenterContainer/Control" instance=ExtResource("5_evg12")]
+[node name="DottedLine2" parent="BuildingPanel/CenterContainer/Control" instance=ExtResource("5_kv2ej")]
 position = Vector2(-12.648878, 3.74443)
 rotation = 3.1415927
 points = PackedVector2Array(211.99654, -48.057495, -223.85786, -43.592224)
 
-[node name="DottedLine3" parent="BuildingPanel/CenterContainer/Control" instance=ExtResource("5_evg12")]
+[node name="DottedLine3" parent="BuildingPanel/CenterContainer/Control" instance=ExtResource("5_kv2ej")]
 position = Vector2(-7.4582024, 59.592945)
 points = PackedVector2Array(-42.831146, -206.56256, -43.655075, 212.64777)
 
-[node name="DottedLine4" parent="BuildingPanel/CenterContainer/Control" instance=ExtResource("5_evg12")]
+[node name="DottedLine4" parent="BuildingPanel/CenterContainer/Control" instance=ExtResource("5_kv2ej")]
 position = Vector2(-0.8101344, 63.30821)
 points = PackedVector2Array(46.738876, 204.04944, 45.941116, -209.29834)
 
@@ -477,10 +475,10 @@ points = PackedVector2Array(46.738876, 204.04944, 45.941116, -209.29834)
 follow_viewport_enabled = true
 
 [node name="Placer" type="Node2D" parent="CanvasLayer"]
-script = ExtResource("7_oyaap")
+script = ExtResource("6_ip3p7")
 
 [node name="Remover" type="Node2D" parent="CanvasLayer"]
-script = ExtResource("6_ch6q8")
+script = ExtResource("7_nk31m")
 
 [node name="RemovePolygon" type="Polygon2D" parent="CanvasLayer/Remover"]
 unique_name_in_owner = true

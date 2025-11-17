@@ -63,6 +63,17 @@ func get_targets() -> Array[Node2D]:
 			out.append(n)
 	return out
 
+func get_sorted_targets(from: Vector2) -> Array[Node2D]:
+	var arr = get_targets()
+	arr.sort_custom(
+		func (A:Node2D, B: Node2D):
+			return A.global_position.distance_to(from)\
+				 < B.global_position.distance_to(from)
+	)
+	return arr
+
+
+
 func _ready() -> void:
 	# 若遊戲流程不是走 _game_start，也能在 ready 後工作
 	_try_build_area()

@@ -27,9 +27,12 @@ func _L_click(): # exec-once
 func _L_clicking():
 	pass
 func _L_finish(): #exec-once
-	if _current_building:
+	var pos = BuildingManager.snap_pos(_building_manager.get_global_mouse_position())
+	var can_build: bool = _building_manager.is_space(
+		BuildingManager.global_pos_to_coord(pos))
+	
+	if _current_building and can_build:
 		#_current_building.team = BitmaskManager.TEAM.PLAYER
-		var pos = BuildingManager.snap_pos(_building_manager.get_global_mouse_position())
 		#print("pos=", pos)
 		var plan = _building_manager.try_set_block(
 			BuildingManager.global_pos_to_coord(pos),
@@ -50,6 +53,11 @@ func _Idle(): # 未按下
 	if not _current_icon: return 
 	var pos = BuildingManager.snap_pos(_building_manager.get_global_mouse_position())
 	_current_icon.set_pos(pos)
+	var can_build: bool = _building_manager.is_space(
+		BuildingManager.global_pos_to_coord(pos))
+	_current_icon.set_color(
+		Icon.COLOR.WHITE if can_build else Icon.COLOR.RED
+	)
 	#print("pos=", pos)
 
 func _R_click(): # exec-once

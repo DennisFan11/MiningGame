@@ -34,8 +34,27 @@ func _R_click(): # exec-once
 func _R_clicking():
 	second_pos = _building_manager.get_global_mouse_position()
 	_update_points()
-func _R_finish(): #exec-once
+
+func _R_finish() -> void: # exec-once
 	visible = false
+
+	# 由拖曳起終點計算矩形（自動轉正）
+	var rect := Rect2(first_pos, second_pos - first_pos).abs()
+
+	# 避免點一下幾乎沒移動造成 size=0
+	if rect.size == Vector2.ZERO:
+		return
+
+	# 套用與繪製相同的格點吸附邏輯
+	var v1 = _building_manager.floor_pos(rect.position)
+	var v2 = _building_manager.ceil_pos(rect.position + rect.size)
+	v1 = BuildingManager.global_pos_to_coord(v1)
+	v2 = BuildingManager.global_pos_to_coord(v2)
+	# 逐格拆除：假設 floor_pos / ceil_pos 回傳的是格座標（或可直接轉 int 使用）
+	for x in range(int(v1.x), int(v2.x)):
+		for y in range(int(v1.y), int(v2.y)):
+			
+			_building_manager.break_block(Vector2i(x, y))
 
 
 

@@ -25,32 +25,44 @@ func _process(delta: float) -> void:
 		IDLE:
 			pass
 		RUNNING:
-			%BuildingPolygon.visible = false
+			%BuildingEffect.visible = false
+			%BuildingEffect.global_transform.origin = Vector2.ONE
+
 			#print("target: ", _IFF.get_targets())
-			for i in _IFF.get_targets():
+			for i in _IFF.get_sorted_targets(global_position):
 				if not is_instance_valid(i):
 					continue
 				if i is BuildingPlan:
 					_convert_plan(i)
 					_update_polygon(i)
-					#break
+					break
 				if i is BuildingConstruct:
-					_update_polygon(i)
+					_update_polygon(i, i.breaking)
 					if i.breaking:
 						_remove(i, delta)
+						break
 					else:
 						_build(i, delta)
+						break
 
 
 
-func _update_polygon(i: BuildingI):
+func _update_polygon(i: BuildingI, breaking: bool=false):
 	
 	var polygon = i.get_global_points()
 	polygon.append(global_position)
-	%BuildingPolygon.visible = true
-	%BuildingPolygon.polygon = Geometry2D.convex_hull(polygon)
+	polygon = Geometry2D.convex_hull(polygon)
+	%BuildingEffect.visible = true
 	
-	
+	%BuildingPolygon.polygon = polygon
+	%BuildingPolygon.color = ColorDB.get_building_color(false, breaking)
+	%BuildingLine.points = polygon
+	%BuildingLine.default_color = ColorDB.get_building_color(true, breaking)
+	if i is BuildingConstruct:
+		i.set_breaking_color(breaking)
+
+
+
 ## 把藍圖轉換成施工建築
 func _convert_plan(plan: BuildingPlan):
 	
@@ -84,7 +96,7 @@ func _convert_construct(construct: BuildingConstruct):
 		)
 	
 func _remove_construct(construct: BuildingConstruct):
-	pass
+	_building_manager.delete_block(construct.coord)
 	#construct.queue_free()
 
 
@@ -117,7 +129,8 @@ func _build(building: BuildingConstruct, dt: float) -> void:
 
 	_player_item_repo.contain = have.sub(moving)
 	building.contain_item = building.contain_item.add(moving)
-
+	
+	building.progress = building.contain_item.vtotal() /  building.need_item.vtotal()
 
 ## 移除一個建築（把已投入資源退回倉庫；總量限流 + 依比例）
 func _remove(building: BuildingConstruct, dt: float) -> void:
@@ -143,7 +156,11 @@ func _remove(building: BuildingConstruct, dt: float) -> void:
 
 	# 若已全部清空，完成移除
 	if building.contain_item.vmax(PackedItem.zero()).vtotal() <= 0.0:
-		building.removed()
+		_remove_construct(building)
+		return 
+	
+	building.progress = building.contain_item.vtotal() /  building.need_item.vtotal()
+
 
 
 

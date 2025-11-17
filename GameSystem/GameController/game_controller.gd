@@ -17,6 +17,7 @@ func _ready() -> void:
 	DI.injection(self, true)
 	
 	_recursive_call(self, "_game_start")
+	#%BuildingEffect.trans
 
 
 

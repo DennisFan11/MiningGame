@@ -51,12 +51,13 @@ func get_global_points() -> PackedVector2Array:
 func _ready() -> void:
 	position = BuildingManager.coord_to_global(coord)
 	%IFF.team = team
-	name = get_class_name() + " : " + str(hash(randi()))
+	name = get_class_name() + str(hash(randi()))
 	
 	var test_text = TestText.new()
-	test_text.set_label(str(name) + \
-		"\ncoord: "+ str(coord))
-	test_text.scale = Vector2.ONE 
+	test_text.set_label(
+		"[color=green]" + \
+		get_data().get_building_name() + \
+		"\n\tcoord: "+ str(coord))
 	add_child(test_text)
 
 func _icon_init():

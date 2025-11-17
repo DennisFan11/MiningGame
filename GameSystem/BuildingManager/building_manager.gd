@@ -34,7 +34,7 @@ func set_block(
 	):
 	
 	var instance: BuildingI = null
-	print_stack()
+	#print_stack()
 	#data.coord = coord
 	print("set_block(" + str(coord) +str(data)+")")
 	match type:
@@ -64,9 +64,11 @@ func set_block(
 
 
 
+var _terrain_manager: TerrainManager
 
-
-
+func is_space(coord: Vector2i)-> bool:
+	return _block_map.get(coord, null)==null\
+		and _terrain_manager.get_terrain(coord -Vector2i.ONE) == TerrainManager.TERRAIN_TYPE.AIR
 
 
 
@@ -76,10 +78,37 @@ func get_block(coord: Vector2i)-> BuildingI:
 
 
 ## 相關操作
+func delete_block(coord: Vector2i):
+	var building: BuildingI = get_block(coord)
+	if not building:
+		return 
+	building.queue_free()
+	_block_map[coord] = null
 
-func _remove(coord):
-	_block_map.erase(coord)
+func break_block(coord: Vector2i):
+	var building: BuildingI = get_block(coord)
+	if not building:
+		return 
 	
+	building.breaking = true
+	
+	if building is BuildingPlan:
+		delete_block(coord)
+	if building is BuildingConstruct:
+		pass
+	if building is Building:
+		var construct_building: BuildingConstruct = set_block(
+			coord, 
+			building.get_data(),
+			building.team,
+			TYPE.CONSTRUCT
+		)
+		construct_building.contain_item = construct_building.need_item.dup_self()
+		construct_building.breaking = true
+		construct_building.set_breaking_color(true)
+		construct_building.progress = 1.0
+
+
 
 func fetch():
 	pass
