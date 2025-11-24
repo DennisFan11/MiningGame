@@ -13,6 +13,13 @@ var need_item: PackedItem:
 
 var contain_item: PackedItem = PackedItem.new()
 
+func is_building_finish()-> bool:
+	return need_item.sub(contain_item).is_zero()
+
+func is_remove_finish()-> bool:
+	return breaking and contain_item.is_zero()
+
+
 
 
 func get_class_name()-> StringName:

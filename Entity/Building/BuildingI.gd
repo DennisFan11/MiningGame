@@ -15,7 +15,7 @@ func on_data_seted():
 	_icon_init()
 
 
-
+enum DIR {UP, DOWN, LEFT, RIGHT}
 
 
 
@@ -24,6 +24,7 @@ func get_class_name()-> StringName
 
 ## 狀態
 var coord: Vector2i
+var dir: DIR
 var team: BitmaskManager.TEAM
 var breaking: bool
 

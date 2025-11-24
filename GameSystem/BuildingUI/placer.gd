@@ -21,6 +21,8 @@ func _selected(data: BuildingData):
 var _current_building: BuildingData
 var _current_icon: Icon
 var _building_manager: BuildingManager
+var _building_service: BuildingService
+
 
 func _L_click(): # exec-once
 	pass
@@ -32,18 +34,10 @@ func _L_finish(): #exec-once
 		BuildingManager.global_pos_to_coord(pos))
 	
 	if _current_building and can_build:
-		#_current_building.team = BitmaskManager.TEAM.PLAYER
-		#print("pos=", pos)
-		var plan = _building_manager.try_set_block(
+		_set_plan(
 			BuildingManager.global_pos_to_coord(pos),
 			_current_building,
-			BitmaskManager.TEAM.PLAYER,
-			BuildingManager.TYPE.PLAN
-		)
-		#print("coord=", BuildingManager.global_pos_to_coord(pos))
-		#if plan:
-			#_game_controller.get_player().add_plan(plan)
-	
+			BitmaskManager.TEAM.PLAYER)
 	
 	if _current_icon:
 		_current_icon.queue_free()
@@ -68,3 +62,14 @@ func _R_clicking():
 	pass
 func _R_finish(): #exec-once
 	pass
+
+
+
+
+# ==============================================================================
+# API 轉接
+# ==============================================================================
+
+
+func _set_plan(coord: Vector2i, data: BuildingData, team: BitmaskManager.TEAM):
+	_building_service.try_set_plan(coord, data, team)

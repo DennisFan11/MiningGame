@@ -5,8 +5,24 @@ extends Node
 提供 建築資料存取 及 建築實例生成
 通過 BuildingData 生成建築
 """
+enum TYPE{ PLAN, CONSTRUCT, BUILDING }
 
 ## Factory 產生一個遊戲建築
+static func create_type(type: TYPE, data: BuildingData):
+	match type:
+		TYPE.PLAN:
+			print("PLAN")
+			return BuildingDB.create_plan(data)
+		TYPE.CONSTRUCT:
+			print("CONSTRUCT")
+			return BuildingDB.create_construct(data)
+		TYPE.BUILDING:
+			print("BUILDING")
+			return BuildingDB.create_building(data)
+		_:
+			return null
+	return null
+
 static func create_plan(data: BuildingData)-> BuildingPlan:
 	var node: BuildingI = preload("uid://dywvpop5avhnn").instantiate()
 	node.set_data(data)

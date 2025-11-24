@@ -9,7 +9,7 @@ var state: int = RUNNING
 
 @onready var _IFF = %IFF
 
-var _building_manager: BuildingManager
+var _building_service: BuildingService
 
 var team: BitmaskManager.TEAM = BitmaskManager.TEAM.IDLE:
 	set(new):
@@ -33,11 +33,11 @@ func _process(delta: float) -> void:
 				if not is_instance_valid(i):
 					continue
 				if i is BuildingPlan:
-					_convert_plan(i)
-					_update_polygon(i)
+					_try_upgrade(i.coord)
+					__update_polygon(i)
 					break
 				if i is BuildingConstruct:
-					_update_polygon(i, i.breaking)
+					__update_polygon(i, i.breaking)
 					if i.breaking:
 						_remove(i, delta)
 						break
@@ -47,7 +47,7 @@ func _process(delta: float) -> void:
 
 
 
-func _update_polygon(i: BuildingI, breaking: bool=false):
+func __update_polygon(i: BuildingI, breaking: bool=false):
 	
 	var polygon = i.get_global_points()
 	polygon.append(global_position)
@@ -63,41 +63,26 @@ func _update_polygon(i: BuildingI, breaking: bool=false):
 
 
 
-## 把藍圖轉換成施工建築
-func _convert_plan(plan: BuildingPlan):
-	
-	var data = plan.get_data()
-	var block = _building_manager.get_block(plan.coord)
-	if block and block != plan:
-		print_rich("[color=red]Building Convert Faild at:", plan.coord)
-		return
-	else:
-		print("convert" + str(plan))
-		_building_manager.set_block(
-			plan.coord,
-			data,
-			plan.team,
-			BuildingManager.TYPE.CONSTRUCT
-		)
-		
-func _convert_construct(construct: BuildingConstruct):
-	var data = construct.get_data()
-	var block = _building_manager.get_block(construct.coord)
-	if block and block != construct:
-		print_rich("[color=red]Building Convert Faild at:", construct.coord)
-		return
-	else:
-		print("convert" + str(construct))
-		_building_manager.set_block(
-			construct.coord,
-			data,
-			construct.team,
-			BuildingManager.TYPE.BUILDING
-		)
-	
-func _remove_construct(construct: BuildingConstruct):
-	_building_manager.delete_block(construct.coord)
-	#construct.queue_free()
+
+
+
+
+
+
+
+
+## 建築操作
+
+
+func _try_upgrade(coord: Vector2i):
+	_building_service.try_upgrade(coord)
+func _try_delete(coord: Vector2i):
+	_building_service.try_delete(coord)
+
+
+
+
+
 
 
 #region move res
@@ -117,7 +102,7 @@ func _build(building: BuildingConstruct, dt: float) -> void:
 	# 若無正缺口或吞吐為 0 → 完成或不動作
 	var item_speed := BUILDING_SPEED * dt
 	if is_zero_approx(need_total):
-		_convert_construct(building)
+		_try_upgrade(building.coord)
 		return
 
 	# 計算請求量（不超過存量）
@@ -141,7 +126,7 @@ func _remove(building: BuildingConstruct, dt: float) -> void:
 	## 無可退 → 完成移除
 	var item_speed := BUILDING_SPEED * dt  # 可獨立設置 REMOVE_SPEED
 	if is_zero_approx(total_back):
-		_remove_construct(building)
+		_try_delete(building.coord)
 		return
 
 	# 依比例限制本 tick 退回總量 cap
@@ -156,7 +141,7 @@ func _remove(building: BuildingConstruct, dt: float) -> void:
 
 	# 若已全部清空，完成移除
 	if building.contain_item.vmax(PackedItem.zero()).vtotal() <= 0.0:
-		_remove_construct(building)
+		_try_delete(building.coord)
 		return 
 	
 	building.progress = building.contain_item.vtotal() /  building.need_item.vtotal()

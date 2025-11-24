@@ -53,9 +53,7 @@ func _R_finish() -> void: # exec-once
 	# 逐格拆除：假設 floor_pos / ceil_pos 回傳的是格座標（或可直接轉 int 使用）
 	for x in range(int(v1.x), int(v2.x)):
 		for y in range(int(v1.y), int(v2.y)):
-			
-			_building_manager.break_block(Vector2i(x, y))
-
+			_tag_remove(Vector2i(x, y))
 
 
 
@@ -107,6 +105,22 @@ func rect2_to_chamfered_points(rect: Rect2, chamfer: float = 15.0) -> PackedVect
 		Vector2(x0, y1 - c),   # 左下倒角端點
 		Vector2(x0, y0 + c)    # 左邊，離左上 c
 	])
+
+
+
+
+# ==============================================================================
+# API 轉接
+# ==============================================================================
+
+var _building_service: BuildingService
+func _tag_remove(coord: Vector2i):
+	_building_service.try_tag_breaking(coord)
+
+
+
+
+
 
 
 #

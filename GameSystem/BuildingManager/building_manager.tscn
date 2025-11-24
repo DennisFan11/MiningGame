@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3 uid="uid://bdnmv6mfbohpw"]
+
+[ext_resource type="Script" uid="uid://dob3heqxlors7" path="res://GameSystem/BuildingManager/BuildingManager.gd" id="1_q36bl"]
+[ext_resource type="Script" uid="uid://b8ao1e12iccpa" path="res://GameSystem/BuildingManager/BuildingService.gd" id="2_jwi62"]
+
+[node name="BuildingManager" type="Node2D"]
+script = ExtResource("1_q36bl")
+
+[node name="BuildingService" type="Node2D" parent="."]
+script = ExtResource("2_jwi62")
