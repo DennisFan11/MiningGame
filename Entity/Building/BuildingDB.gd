@@ -24,7 +24,10 @@ static func create_type(
 			instance = BuildingDB.create_construct(data)
 			instance.breaking = true
 			instance.set_full_item()
-	instance.state = state
+		_:
+			assert(false, "BuildingTYPE not valid !")
+	if instance:
+		instance.state = state
 	return instance
 
 static func create_plan(data: BuildingData)-> BuildingPlan:
