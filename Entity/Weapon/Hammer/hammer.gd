@@ -10,6 +10,7 @@ func _ready() -> void:
 
 var _bitmask_manager: BitmaskManager
 var _debug_draw: DebugDraw
+var _sound_manager: SoundManager
 
 const ATTACK_RANGE = 96.0
 const ATTACK_ANGLE = deg_to_rad(360.-120.0)
@@ -17,7 +18,10 @@ const _RAY_COUNT = 8.0
 const _TERRAIN_RAY_FIXED = 2.0
 func _attack()-> void:
 	const TEAM := BitmaskManager.TEAM.PLAYER
-	
+	_sound_manager.play_sound(
+		[preload("uid://bc7behe7j88gs"), preload("uid://bt1yklbf78hsy")].pick_random(),
+		global_position
+	)
 	
 	_hammer_anime()
 	

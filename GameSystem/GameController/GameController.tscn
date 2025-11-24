@@ -6,7 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://pdwa0g0tgsgi" path="res://GameSystem/TerrainManager/TerrainManager.tscn" id="2_26c85"]
 [ext_resource type="PackedScene" uid="uid://b35qdga6qev2q" path="res://GameSystem/BulletManager/BulletManager.tscn" id="4_ee1h0"]
 [ext_resource type="Script" uid="uid://cweu841siuwfd" path="res://GameSystem/BulletManager/bullet_manager.gd" id="5_8d81h"]
-[ext_resource type="Script" uid="uid://snlh8fakk8c7" path="res://GameSystem/SoundPlayer/SoundPlayer.gd" id="7_8d81h"]
+[ext_resource type="Script" uid="uid://snlh8fakk8c7" path="res://GameSystem/SoundManager/SoundManager.gd" id="7_8d81h"]
 [ext_resource type="PackedScene" uid="uid://bwts3a0tx8si3" path="res://GameSystem/DebugUI/debug_ui.tscn" id="7_ee1h0"]
 [ext_resource type="PackedScene" uid="uid://clp8gexovayi8" path="res://Entity/Enemy/Zako/Zako.tscn" id="7_kvmvy"]
 [ext_resource type="Script" uid="uid://mox3dq0fkucy" path="res://GameSystem/GameController/debug_draw.gd" id="8_pqcmd"]
@@ -117,7 +117,7 @@ script = ExtResource("8_pqcmd")
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 process_mode = 3
 
-[node name="SoundPlayer" type="Node2D" parent="CanvasLayer"]
+[node name="SoundManager" type="Node2D" parent="CanvasLayer"]
 script = ExtResource("7_8d81h")
 
 [node name="BackBufferCopy" type="BackBufferCopy" parent="CanvasLayer"]

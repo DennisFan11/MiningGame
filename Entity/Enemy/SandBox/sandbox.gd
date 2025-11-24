@@ -1,6 +1,7 @@
 class_name Sandbox
 extends CharacterBody2D
 
+var _sound_manager: SoundManager
 
 func _ready() -> void:
 	%AnimationPlayer.play("HURT", 0.001)
@@ -16,6 +17,10 @@ func _process(delta: float) -> void:
 
 
 func _on_damage_taker_on_hit(vel: Vector2) -> void:
+	_sound_manager.play_sound(
+		[preload("uid://c71crrfwhd8s0"), preload("uid://cqw1b4dbjak07")].pick_random(), 
+		global_position
+	)
 	mount += 0.3
 	
 	if vel.x < 0:
@@ -23,3 +28,15 @@ func _on_damage_taker_on_hit(vel: Vector2) -> void:
 		scale.x = 1.0
 	else:
 		scale.x = -1.0
+
+
+
+
+
+
+
+
+
+
+
+#

@@ -36,11 +36,7 @@ func damage_terrain(global_pos: Vector2, damage: float, dir: Vector2=Vector2.ZER
 	
 	
 	
-	
-	_terrain_manager.set_hp(
-		coord,
-		_terrain_manager.get_hp(coord) - damage
-	)
+	_terrain_manager.hit_terrain(coord, damage)
 
 
 

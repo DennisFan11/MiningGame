@@ -27,7 +27,15 @@ func set_terrain(coord: Vector2i, type:TERRAIN_TYPE)-> void:
 
 
 
-
+func hit_terrain(coord: Vector2, damage: float):
+	if get_terrain(coord) == TERRAIN_TYPE.AIR:
+		return
+	
+	_hit_effect(coord)
+	set_hp(coord, get_hp(coord)-damage)
+	
+	if get_terrain(coord) == TERRAIN_TYPE.AIR:
+		_destory_effect(coord)
 
 
 
@@ -51,10 +59,34 @@ func set_hp(coord: Vector2i, new: float):
 
 
 
+## effect
+var _sound_manager: SoundManager
+var _is_played_hit: bool = false
+var _is_played_des: bool = false
+func _process(delta: float) -> void:
+	_is_played_hit = false
+	_is_played_des = false
 
+
+func _hit_effect(coord: Vector2):
+	if _is_played_hit:return
+	_is_played_hit = true
+	_sound_manager.play_sound(
+		[preload("uid://ckl0keggqg07a"), preload("uid://b5e7phc2kadbm")].pick_random(),
+		coord_to_global(coord)
+	)
+	
+func _destory_effect(coord: Vector2):
+	if _is_played_des:return
+	_is_played_des = true
+	_sound_manager.play_sound(
+		preload("uid://cvaiefxl8v80c"), 
+		coord_to_global(coord)
+	)
 
 
 ## Math
-
+func coord_to_global(coord: Vector2i)-> Vector2:
+	return %WallLayer.to_global(%WallLayer.map_to_local(coord)) 
 func global_to_coord(global_pos: Vector2)-> Vector2i:
 	return %WallLayer.local_to_map(%WallLayer.to_local(global_pos))

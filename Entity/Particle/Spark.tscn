@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://bwcvoi3mre6yq"]
+[gd_scene load_steps=16 format=3 uid="uid://bwcvoi3mre6yq"]
 
 [sub_resource type="Gradient" id="Gradient_tqvxo"]
 colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0)
@@ -24,12 +24,27 @@ colors = PackedColorArray(0.9636926, 0.7247363, 0, 1, 1, 0.21960784, 0.26666668,
 [sub_resource type="GradientTexture1D" id="GradientTexture1D_omrpf"]
 gradient = SubResource("Gradient_rarru")
 
+[sub_resource type="Curve" id="Curve_rarru"]
+_limits = [0.0, 100.0, 0.0, 1.0]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 49.55587), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_omrpf"]
+curve = SubResource("Curve_rarru")
+
 [sub_resource type="Curve" id="Curve_l2if2"]
 _data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.40731072, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
 point_count = 3
 
 [sub_resource type="CurveTexture" id="CurveTexture_1dhnc"]
 curve = SubResource("Curve_l2if2")
+
+[sub_resource type="Curve" id="Curve_omrpf"]
+_data = [Vector2(1e-05, 0), 0.0, 0.0, 0, 0, Vector2(0.30494505, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_l2if2"]
+curve = SubResource("Curve_omrpf")
 
 [sub_resource type="Curve" id="Curve_npq7u"]
 _limits = [-200.0, 200.0, 0.0, 1.0]
@@ -45,14 +60,16 @@ particle_flag_align_y = true
 particle_flag_disable_z = true
 emission_shape_offset = Vector3(1.4, 0, 0)
 flatness = 0.701
-initial_velocity_min = 163.81
-initial_velocity_max = 229.29999
+initial_velocity_min = 437.78998
+initial_velocity_max = 503.28
 gravity = Vector3(0, 0, 0)
 tangential_accel_min = -0.10000224
 tangential_accel_max = 0.09999776
 tangential_accel_curve = SubResource("CurveTexture_rarru")
-damping_min = 73.453
-damping_max = 78.929
+damping_min = 94.524
+damping_max = 100.00001
+damping_curve = SubResource("CurveTexture_omrpf")
+scale_curve = SubResource("CurveTexture_l2if2")
 color_ramp = SubResource("GradientTexture1D_omrpf")
 alpha_curve = SubResource("CurveTexture_npq7u")
 emission_curve = SubResource("CurveTexture_1dhnc")
@@ -62,11 +79,10 @@ sub_emitter_amount_at_start = 1
 [node name="Spark" type="GPUParticles2D"]
 emitting = false
 amount = 5
-sub_emitter = NodePath(".")
 texture = SubResource("GradientTexture2D_npq7u")
-lifetime = 0.25
+lifetime = 0.3
 one_shot = true
 explosiveness = 1.0
-trail_enabled = true
+randomness = 1.0
 trail_lifetime = 0.2
 process_material = SubResource("ParticleProcessMaterial_tqvxo")
