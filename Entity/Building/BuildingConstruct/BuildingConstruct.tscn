@@ -26,8 +26,10 @@ metadata/_custom_type_script = "uid://cithxaqsmesw8"
 [node name="Icon" type="TextureRect" parent="."]
 unique_name_in_owner = true
 material = SubResource("ShaderMaterial_lxk3u")
-offset_right = 40.0
-offset_bottom = 40.0
+offset_right = 64.0
+offset_bottom = 64.0
 texture = ExtResource("3_pesvu")
+expand_mode = 1
+stretch_mode = 5
 script = ExtResource("3_o6wbc")
 metadata/_custom_type_script = "uid://cjeug1b0jo3mk"

@@ -5,35 +5,39 @@ extends Node
 提供 建築資料存取 及 建築實例生成
 通過 BuildingData 生成建築
 """
-enum TYPE{ PLAN, CONSTRUCT, BUILDING }
+enum TYPE{ PLAN, CONSTRUCT, BUILDING, FULL_REMOVED_CONSTRUCT}
 
 ## Factory 產生一個遊戲建築
-static func create_type(type: TYPE, data: BuildingData):
+static func create_type(
+		type: TYPE, 
+		data: BuildingData, 
+		state: BuildingI.BuildingState)-> BuildingI:
+	var instance = null
 	match type:
 		TYPE.PLAN:
-			print("PLAN")
-			return BuildingDB.create_plan(data)
+			instance = BuildingDB.create_plan(data)
 		TYPE.CONSTRUCT:
-			print("CONSTRUCT")
-			return BuildingDB.create_construct(data)
+			instance = BuildingDB.create_construct(data)
 		TYPE.BUILDING:
-			print("BUILDING")
-			return BuildingDB.create_building(data)
-		_:
-			return null
-	return null
+			instance = BuildingDB.create_building(data)
+		TYPE.FULL_REMOVED_CONSTRUCT:
+			instance = BuildingDB.create_construct(data)
+			instance.breaking = true
+			instance.set_full_item()
+	instance.state = state
+	return instance
 
 static func create_plan(data: BuildingData)-> BuildingPlan:
 	var node: BuildingI = preload("uid://dywvpop5avhnn").instantiate()
-	node.set_data(data)
+	node.data = data
 	return node
 static func create_construct(data: BuildingData)-> BuildingConstruct:
 	var node: BuildingI = preload("uid://dmqko2wm6gy7a").instantiate()
-	node.set_data(data)
+	node.data = data
 	return node
 static func create_building(data: BuildingData)-> Building:
 	var node: BuildingI = preload("uid://dgmf1d3lpy1rg").instantiate()
-	node.set_data(data)
+	node.data = data
 	return node
 
 
@@ -59,8 +63,8 @@ class BuildingType:
 	
 	var _buildings: Array[BuildingData] = []
 	var _name: StringName
-	func _init(_name: StringName) -> void:
-		self._name = _name
+	func _init(__name: StringName) -> void:
+		self._name = __name
 
 
 ##================ PRIVATE ===============

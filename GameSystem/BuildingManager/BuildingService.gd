@@ -21,15 +21,14 @@ var _building_manager: BuildingManager
 
 func try_set_plan(coord: Vector2i,
 	data: BuildingData,
-	team: BitmaskManager.TEAM,
-	dir: BuildingI.DIR = BuildingI.DIR.UP
+	state: BuildingI.BuildingState
 	):
 	## 有空白 則 可放置
 	if _building_manager.is_space(coord): 
 		_building_manager.set_block(
 			coord, 
 			_make_building(
-			BuildingDB.TYPE.PLAN,data, coord, team, dir)
+			BuildingDB.TYPE.PLAN,data, state)
 		)
 	return 
 
@@ -47,8 +46,8 @@ func try_tag_breaking(coord: Vector2i):
 	
 	elif building is Building:
 		var construct_building: BuildingConstruct = \
-			_make_breaking_construct(building.get_data(),
-				coord, building.team, building.dir
+			_make_breaking_construct(building.data,
+				building.copy_state()
 			)
 		_building_manager.set_block(
 			coord, construct_building
@@ -66,14 +65,14 @@ func try_upgrade(
 	if building is BuildingPlan:
 		_building_manager.set_block(coord,
 			_make_building(
-				BuildingDB.TYPE.CONSTRUCT, building.get_data(), 
-				coord, building.team, building.dir
+				BuildingDB.TYPE.CONSTRUCT, building.data, 
+				building.copy_state()
 			))
 	elif building is BuildingConstruct and building.is_building_finish():
 		_building_manager.set_block(coord,
 			_make_building(
-				BuildingDB.TYPE.BUILDING, building.get_data(), 
-				coord, building.team, building.dir
+				BuildingDB.TYPE.BUILDING, building.data, 
+				building.copy_state()
 			))
 
 
@@ -100,33 +99,16 @@ func try_delete(
 func _make_building(
 	type: BuildingDB.TYPE,
 	data: BuildingData,
-	coord: Vector2i,
-	team: BitmaskManager.TEAM,
-	dir: BuildingI.DIR,
+	state: BuildingI.BuildingState,
 )-> BuildingI:
-	
-	var instance: BuildingI = BuildingDB.create_type(type, data)
-	instance.coord = coord
-	instance.team = team
-	instance.breaking = false
-	instance.dir = dir
+	var instance: BuildingI = BuildingDB.create_type(type, data, state)
 	return instance
 
 
 ## 產生一個滿資源標記為拆除的建築
 func _make_breaking_construct(
-	data: BuildingData, coord: Vector2i,
-	team: BitmaskManager.TEAM, dir: BuildingI.DIR,
+	data: BuildingData, state: BuildingI.BuildingState,
 ):
 	var instance: BuildingI = BuildingDB.create_type(
-		BuildingDB.TYPE.CONSTRUCT, data)
-	instance.coord = coord
-	instance.team = team
-	instance.breaking = true
-	instance.dir = dir
-	
-	instance.contain_item = instance.need_item.dup_self()
-	instance.set_breaking_color(true)
-	instance.progress = 1.0
-
+		BuildingDB.TYPE.FULL_REMOVED_CONSTRUCT, data, state)
 	return instance

@@ -33,7 +33,7 @@ func _process(delta: float) -> void:
 				if not is_instance_valid(i):
 					continue
 				if i is BuildingPlan:
-					_try_upgrade(i.coord)
+					_try_upgrade(i.state.coord)
 					__update_polygon(i)
 					break
 				if i is BuildingConstruct:
@@ -58,8 +58,7 @@ func __update_polygon(i: BuildingI, breaking: bool=false):
 	%BuildingPolygon.color = ColorDB.get_building_color(false, breaking)
 	%BuildingLine.points = polygon
 	%BuildingLine.default_color = ColorDB.get_building_color(true, breaking)
-	if i is BuildingConstruct:
-		i.set_breaking_color(breaking)
+
 
 
 
@@ -102,7 +101,7 @@ func _build(building: BuildingConstruct, dt: float) -> void:
 	# 若無正缺口或吞吐為 0 → 完成或不動作
 	var item_speed := BUILDING_SPEED * dt
 	if is_zero_approx(need_total):
-		_try_upgrade(building.coord)
+		_try_upgrade(building.state.coord)
 		return
 
 	# 計算請求量（不超過存量）
@@ -115,8 +114,7 @@ func _build(building: BuildingConstruct, dt: float) -> void:
 	_player_item_repo.contain = have.sub(moving)
 	building.contain_item = building.contain_item.add(moving)
 	
-	building.progress = building.contain_item.vtotal() /  building.need_item.vtotal()
-
+	building.update_progress()
 ## 移除一個建築（把已投入資源退回倉庫；總量限流 + 依比例）
 func _remove(building: BuildingConstruct, dt: float) -> void:
 	# 僅保留正值（負值清 0）
@@ -126,7 +124,7 @@ func _remove(building: BuildingConstruct, dt: float) -> void:
 	## 無可退 → 完成移除
 	var item_speed := BUILDING_SPEED * dt  # 可獨立設置 REMOVE_SPEED
 	if is_zero_approx(total_back):
-		_try_delete(building.coord)
+		_try_delete(building.state.coord)
 		return
 
 	# 依比例限制本 tick 退回總量 cap
@@ -141,11 +139,10 @@ func _remove(building: BuildingConstruct, dt: float) -> void:
 
 	# 若已全部清空，完成移除
 	if building.contain_item.vmax(PackedItem.zero()).vtotal() <= 0.0:
-		_try_delete(building.coord)
+		_try_delete(building.states.coord)
 		return 
 	
-	building.progress = building.contain_item.vtotal() /  building.need_item.vtotal()
-
+	building.update_progress()
 
 
 

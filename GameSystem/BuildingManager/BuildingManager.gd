@@ -39,14 +39,14 @@ func set_block(
 	coord: Vector2i,
 	building: BuildingI
 	):
-	print("set_block(" + str(coord) +str(building.get_data())+")")
+	print("set_block(" + str(coord) +str(building.data)+")")
 	
 	## 強制放置
 	delete_block(coord)
 	delete_terrain(coord)
 	
 	_block_map[coord] = building
-	add_child(building)
+	%_building_node.add_child(building)
 	return building
 
 

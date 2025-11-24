@@ -2,17 +2,9 @@
 class_name BuildingI
 extends Node2D
 
-var _data: BuildingData
+var data: BuildingData
 
-func set_data(data: BuildingData):
-	_data = data
-	on_data_seted()
 
-func get_data()-> BuildingData: 
-	return _data
-
-func on_data_seted():
-	_icon_init()
 
 
 enum DIR {UP, DOWN, LEFT, RIGHT}
@@ -22,18 +14,53 @@ enum DIR {UP, DOWN, LEFT, RIGHT}
 @abstract
 func get_class_name()-> StringName
 
-## 狀態
-var coord: Vector2i
-var dir: DIR
-var team: BitmaskManager.TEAM
-var breaking: bool
+
+
+var state: BuildingState
+var breaking: bool:
+	set(new):
+		breaking = new
+		_on_breaking_been_set()
+
+func _on_breaking_been_set():
+	pass
+
+
+
+
+
+
+func _ready() -> void:
+	position = BuildingManager.coord_to_global(state.coord)
+	%IFF.team = state.team
+	name = get_class_name() + str(hash(randi()))
+	
+	var test_text = TestText.new()
+	test_text.set_label(
+		"[color=green]" + \
+		data.get_building_name() + \
+		"\n\tcoord: "+ str(state.coord))
+	add_child(test_text)
+	_icon_init()
+
+func _icon_init():
+	var icon = Icon.new()
+	icon.texture = data.get_icon()
+	icon.set_pos(Vector2.ZERO)
+	icon.set_color(Icon.COLOR.WHITE)
+	add_child(icon)
+
+
+
+
+
 
 
 
 ## 獲取該建築的全域 rect
 func get_global_rect()-> Rect2:
 	var block_size = BuildingManager.BLOCK_SIZE
-	var pos = BuildingManager.coord_to_global(coord)
+	var pos = BuildingManager.coord_to_global(state.coord)
 	return Rect2(
 		pos - block_size/2.0,
 		block_size
@@ -48,22 +75,24 @@ func get_global_points() -> PackedVector2Array:
 	])
 
 
+func copy_state()-> BuildingState:
+	return BuildingState.new(
+		state.coord,
+		state.team,
+		state.dir
+	)
 
-func _ready() -> void:
-	position = BuildingManager.coord_to_global(coord)
-	%IFF.team = team
-	name = get_class_name() + str(hash(randi()))
-	
-	var test_text = TestText.new()
-	test_text.set_label(
-		"[color=green]" + \
-		get_data().get_building_name() + \
-		"\n\tcoord: "+ str(coord))
-	add_child(test_text)
-
-func _icon_init():
-	var icon = Icon.new()
-	icon.texture = _data.get_icon()
-	icon.set_pos(Vector2.ZERO)
-	icon.set_color(Icon.COLOR.WHITE)
-	add_child(icon)
+## 狀態
+class BuildingState:
+	extends RefCounted
+	var coord: Vector2i
+	var team: BitmaskManager.TEAM
+	var dir: BuildingI.DIR
+	func _init(
+		_coord: Vector2i,
+		_team: BitmaskManager.TEAM,
+		_dir: BuildingI.DIR,
+	) -> void:
+		self.coord = _coord
+		self.team = _team
+		self.dir = _dir

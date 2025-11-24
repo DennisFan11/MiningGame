@@ -1,10 +1,18 @@
-[gd_scene load_steps=3 format=3 uid="uid://78njtwpea5xy"]
+[gd_scene load_steps=4 format=3 uid="uid://78njtwpea5xy"]
 
 [ext_resource type="Script" uid="uid://dob3heqxlors7" path="res://GameSystem/BuildingManager/BuildingManager.gd" id="1_cwflk"]
 [ext_resource type="Script" uid="uid://b8ao1e12iccpa" path="res://GameSystem/BuildingManager/BuildingService.gd" id="2_3j6id"]
+[ext_resource type="Script" uid="uid://stv6jvlgm3t3" path="res://Entity/Building/BuildingDB.gd" id="3_ohxo2"]
 
 [node name="BuildingManager" type="Node2D"]
 script = ExtResource("1_cwflk")
 
 [node name="BuildingService" type="Node2D" parent="."]
 script = ExtResource("2_3j6id")
+
+[node name="_building_node" type="Node2D" parent="."]
+unique_name_in_owner = true
+
+[node name="_BuildingDB" type="Node" parent="."]
+script = ExtResource("3_ohxo2")
+metadata/_custom_type_script = "uid://stv6jvlgm3t3"

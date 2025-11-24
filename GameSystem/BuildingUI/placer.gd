@@ -72,4 +72,8 @@ func _R_finish(): #exec-once
 
 
 func _set_plan(coord: Vector2i, data: BuildingData, team: BitmaskManager.TEAM):
-	_building_service.try_set_plan(coord, data, team)
+	_building_service.try_set_plan(
+		coord, 
+		data, 
+		BuildingI.BuildingState.new(coord, team, BuildingI.DIR.UP)
+	)

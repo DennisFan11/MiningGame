@@ -3,8 +3,6 @@ extends BuildingI
 
 
 
-func on_data_seted():
-	super()
 	
 func _ready() -> void:
 	super()

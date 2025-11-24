@@ -12,7 +12,7 @@ func get_class_name()-> StringName:
 
 func _icon_init():
 	var icon = Icon.new()
-	icon.texture = _data.get_icon()
+	icon.texture = data.get_icon()
 	icon.set_pos(Vector2.ZERO)
 	#icon.set_color(Icon.COLOR.WHITE)
 	add_child(icon)

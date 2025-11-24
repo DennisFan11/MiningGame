@@ -9,9 +9,16 @@ extends BuildingI
 
 var need_item: PackedItem:
 	get:
-		return get_data().get_need_item()
+		return data.get_need_item()
 
 var contain_item: PackedItem = PackedItem.new()
+
+func update_progress():
+	_progress = contain_item.vtotal() / need_item.vtotal()
+
+
+
+
 
 func is_building_finish()-> bool:
 	return need_item.sub(contain_item).is_zero()
@@ -19,38 +26,36 @@ func is_building_finish()-> bool:
 func is_remove_finish()-> bool:
 	return breaking and contain_item.is_zero()
 
-
+func set_full_item()-> void:
+	contain_item = need_item.dup_self()
+	update_progress()
 
 
 func get_class_name()-> StringName:
 	return "BuildingConstruct"
 
-
-
-
-
+func _on_breaking_been_set():
+	_set_breaking_color(breaking)
 
 func _icon_init():
 	var icon = %Icon
-	icon.texture = _data.get_icon()
+	icon.texture = data.get_icon()
 	icon.set_pos(Vector2.ZERO)
-	#icon.set_color(Icon.COLOR.WHITE)
-	
-	#add_child(icon)
 
 
 
-var progress: float = 0.0:
+
+
+var _progress: float = 0.0:
 	set(new):
-		progress = new
+		_progress = new
 		%Icon.material.set_shader_parameter(
-			"edge", (1.0-progress)*0.7
+			"edge", (1.0-_progress)*0.7
 		)
-		#print("edge: ", progress)
 		
-func set_breaking_color(breaking: bool):
+func _set_breaking_color(is_breaking: bool):
 	%Icon.material.set_shader_parameter(
 			"color", ColorDB.get_building_color(
-				true, breaking
+				true, is_breaking
 			)
 		)
