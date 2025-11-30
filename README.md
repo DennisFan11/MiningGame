@@ -11,25 +11,25 @@ Miningame 結合了採礦、建造與戰鬥元素。玩家可以收集資源、�
 - **引擎**: Godot 4.5 (Forward Plus)
 - **語言**: GDScript
 - **核心架構**:
-    - **DI (Dependency Injection)**: 依賴注入系統，用於管理模塊間的依賴。
-    - **Entity-Component**: 實體組件模式 (在 `Entity/_components` 中可見)。
-    - **Manager Pattern**: 使用多個管理器 (GameSystem) 處理特定邏輯 (如 BuildingManager, TerrainManager)。
+	- **DI (Dependency Injection)**: 依賴注入系統，用於管理模塊間的依賴。
+	- **Entity-Component**: 實體組件模式 (在 `Entity/_components` 中可見)。
+	- **Manager Pattern**: 使用多個管理器 (GameSystem) 處理特定邏輯 (如 BuildingManager, TerrainManager)。
 
 ## 目錄結構
 
 - **Asset/**: 遊戲資源 (圖片、音效等)。
 - **Core/**: 核心系統代碼。
-    - `DI/`: 依賴注入系統。
-    - `InputManager/`: 輸入管理。
-    - `Utility.gd`: 通用工具函數。
+	- `DI/`: 依賴注入系統。
+	- `InputManager/`: 輸入管理。
+	- `Utility.gd`: 通用工具函數。
 - **Entity/**: 遊戲實體。
-    - `Player/`, `Enemy/`, `Building/`, `Item/`, `Weapon/`, `Bullet/`: 各類實體。
-    - `_components/`: 可復用的組件。
+	- `Player/`, `Enemy/`, `Building/`, `Item/`, `Weapon/`, `Bullet/`: 各類實體。
+	- `_components/`: 可復用的組件。
 - **GameSystem/**: 遊戲子系統。
-    - `BuildingManager/`: 建造系統。
-    - `TerrainManager/`: 地形系統。
-    - `GameController/`: 遊戲流程控制。
-    - ... (其他系統如 UI, Light, Particle 等)
+	- `BuildingManager/`: 建造系統。
+	- `TerrainManager/`: 地形系統。
+	- `GameController/`: 遊戲流程控制。
+	- ... (其他系統如 UI, Light, Particle 等)
 - **Scene/**: 遊戲場景文件。
 
 ## 安裝與運行

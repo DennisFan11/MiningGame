@@ -1,6 +1,6 @@
 @abstract
 class_name BuildingI
-extends Node2D
+extends Entity
 
 var data: BuildingData
 
@@ -16,7 +16,26 @@ func get_class_name()-> StringName
 
 
 
-var state: BuildingState
+var state: BuildingState:
+	set(new):
+		state = new
+		state.on_change.connect(_on_dir_change)
+
+
+func _on_dir_change():
+	match state.dir:
+		DIR.UP:
+			rotation = Vector2.UP.angle()
+		DIR.DOWN:
+			rotation = Vector2.DOWN.angle()
+		DIR.LEFT:
+			rotation = Vector2.LEFT.angle()
+		DIR.RIGHT:
+			rotation = Vector2.RIGHT.angle()
+	on_dir_change.emit()
+signal on_dir_change
+
+
 var breaking: bool:
 	set(new):
 		breaking = new
@@ -42,6 +61,9 @@ func _ready() -> void:
 		"\n\tcoord: "+ str(state.coord))
 	add_child(test_text)
 	_icon_init()
+	super()
+	
+
 
 func _icon_init():
 	var icon = Icon.new()
@@ -85,14 +107,26 @@ func copy_state()-> BuildingState:
 ## 狀態
 class BuildingState:
 	extends RefCounted
-	var coord: Vector2i
-	var team: BitmaskManager.TEAM
-	var dir: BuildingI.DIR
+	
+	signal on_change
+	var coord: Vector2i:
+			set(new):
+				coord = new
+				on_change.emit()
+	var team: BitmaskManager.TEAM:
+			set(new):
+				team = new
+				on_change.emit()
+	var dir: BuildingI.DIR:
+			set(new):
+				dir = new
+				on_change.emit()
 	func _init(
 		_coord: Vector2i,
 		_team: BitmaskManager.TEAM,
-		_dir: BuildingI.DIR,
+		_dir: BuildingI.DIR
 	) -> void:
 		self.coord = _coord
 		self.team = _team
 		self.dir = _dir
+	

@@ -39,7 +39,7 @@ func set_block(
 	coord: Vector2i,
 	building: BuildingI
 	):
-	print("set_block(" + str(coord) +str(building.data)+")")
+	print("set_block(" + str(coord) +str(building.get_class_name())+")")
 	
 	## 強制放置
 	delete_block(coord)

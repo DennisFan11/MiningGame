@@ -41,6 +41,8 @@ static func create_construct(data: BuildingData)-> BuildingConstruct:
 static func create_building(data: BuildingData)-> Building:
 	var node: BuildingI = preload("uid://dgmf1d3lpy1rg").instantiate()
 	node.data = data
+	node.component = data.get_component()
+	node.add_child(node.component)
 	return node
 
 

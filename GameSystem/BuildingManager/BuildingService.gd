@@ -55,9 +55,7 @@ func try_tag_breaking(coord: Vector2i):
 
 
 
-func try_upgrade(
-	coord: Vector2i,
-):
+func try_upgrade(coord: Vector2i):
 	var building: BuildingI = _building_manager.get_block(coord)
 	
 	if not building: return 
@@ -76,9 +74,7 @@ func try_upgrade(
 			))
 
 
-func try_delete(
-	coord: Vector2i
-):
+func try_delete(coord: Vector2i):
 	var building: BuildingI = _building_manager.get_block(coord)
 	
 	if not building: return 

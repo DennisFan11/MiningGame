@@ -1,3 +1,4 @@
+@tool
 class_name Icon
 extends TextureRect
 
@@ -13,7 +14,7 @@ const SIZE = Vector2.ONE * 64.0
 
 
 func _ready() -> void:
-	
+	set_pos(Vector2.ZERO)
 	custom_minimum_size = SIZE
 	pivot_offset = SIZE/2.0
 	expand_mode = TextureRect.EXPAND_IGNORE_SIZE

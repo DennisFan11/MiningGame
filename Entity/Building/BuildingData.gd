@@ -15,6 +15,22 @@ func get_icon()-> Texture
 @abstract
 func get_description()-> String
 
+
+## 獲取具體實現的組件
+func get_component()-> Node:
+	return _create_basic_icon()
+	
+
+
+
+func _create_basic_icon()-> Icon:
+	var icon = Icon.new()
+	icon.texture = get_icon()
+	icon.set_pos(Vector2.ZERO)
+	return icon
+
+
+
 func get_need_item()-> PackedItem:
 	return PackedItem.create({
 		Item.ITEM.COPPER: 1.5,
