@@ -8,9 +8,9 @@ class LineItem:
 	func _init(g: float, t: int): gap = g; type=t
 
 # --- 參數 ---
-const TOTAL_LEN: float = 32.0
-const ITEM_SIZE: float = 8.0
-const SPEED: float = 10.0
+const TOTAL_LEN: float = 30.0
+const ITEM_SIZE: float = 10.0
+const SPEED: float = 30.0
 
 var _items: Array[LineItem] = []
 var _stuck_idx: int = 0 
@@ -90,7 +90,7 @@ func _draw() -> void:
 	for item in _items:
 		x -= item.gap 
 		var pos = Vector2((x)*RATIO+OFFSET, 0)
-		draw_circle(pos, 10, Color.WHEAT)
+		draw_circle(pos, 15, Color.WHEAT)
 		# 這裡需確保 FONT_RES 有效，或暫時註解掉 draw_string
 		if FONT_RES:
 			draw_string(FONT_RES, pos, str(snapped(item.gap, 0.1)), HORIZONTAL_ALIGNMENT_CENTER, 20, 10, Color.BLACK)

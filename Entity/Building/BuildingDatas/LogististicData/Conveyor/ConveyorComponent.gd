@@ -73,23 +73,25 @@ func _entity_ready(entity: Entity)-> void:
 # 3. 物流實現
 # ==============================================================================
 
+
+static var TEST_GENERATOR: bool = true
+var _is_me: bool = false
 func _process(delta: float) -> void:
 	%TransportLine.line_update(delta)
 	if %TransportLine.has_space():
 		var item = __get_input_item()
 		if item:
 			%TransportLine.try_add_item(item)
-	
-	
-	
-	
-	## TEST MUCK 
-	#var res = %TransportLine.try_add_item(
-		#TransportLine.LineItem.new(TransportLine.TOTAL_LEN, 0)
-		#)
-	#if randi()%30 == 1:
-		#%TransportLine.try_take_item()
-	#print("Try add item: ", res)
+	if TEST_GENERATOR or _is_me:
+		_is_me = true
+		TEST_GENERATOR = false
+		## TEST MUCK 
+		var res = %TransportLine.try_add_item(
+			TransportLine.LineItem.new(TransportLine.TOTAL_LEN, 0)
+			)
+		if randi()%30 == 1:
+			%TransportLine.try_take_item()
+		print("Try add item: ", res)
 
 
 

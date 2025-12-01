@@ -66,7 +66,7 @@ func _ready() -> void:
 		"\n\tcoord: "+ str(state.coord))
 	add_child(test_text)
 	_icon_init()
-	super()
+	super() 
 	
 
 

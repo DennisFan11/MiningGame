@@ -49,25 +49,31 @@ metadata/_custom_type_script = "uid://cjeug1b0jo3mk"
 
 [node name="OutputPort" type="Node2D" parent="."]
 unique_name_in_owner = true
-position = Vector2(32, 0)
+position = Vector2(46, 0)
 script = ExtResource("5_1nu03")
 metadata/_custom_type_script = "uid://bcckkeab0lcki"
 
+[node name="ColorRect" type="ColorRect" parent="OutputPort"]
+offset_left = -7.0
+offset_top = -8.0
+offset_right = 6.0
+offset_bottom = 8.0
+
 [node name="InputPort" type="Node2D" parent="."]
 unique_name_in_owner = true
-position = Vector2(-32, 0)
+position = Vector2(-45, 0)
 script = ExtResource("4_5pu6g")
 metadata/_custom_type_script = "uid://c5qps187jfdco"
 
 [node name="InputPort2" type="Node2D" parent="."]
 unique_name_in_owner = true
-position = Vector2(0, -32)
+position = Vector2(0, -45)
 script = ExtResource("4_5pu6g")
 metadata/_custom_type_script = "uid://c5qps187jfdco"
 
 [node name="InputPort3" type="Node2D" parent="."]
 unique_name_in_owner = true
-position = Vector2(0, 32)
+position = Vector2(0, 42)
 script = ExtResource("4_5pu6g")
 metadata/_custom_type_script = "uid://c5qps187jfdco"
 
