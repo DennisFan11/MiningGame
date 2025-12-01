@@ -16,4 +16,4 @@ func _icon_init():
 func get_coord()-> Vector2i:
 	return state.coord
 
-var component: Component
+var component: Node

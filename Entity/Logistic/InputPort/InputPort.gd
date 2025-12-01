@@ -13,4 +13,4 @@ func bind_output_port(output_port: OutputPort):
 	_output_port = output_port
 
 func get_target_line()-> TransportLine:
-	return _output_port.get_line()
+	return _output_port.get_line() if _output_port else null

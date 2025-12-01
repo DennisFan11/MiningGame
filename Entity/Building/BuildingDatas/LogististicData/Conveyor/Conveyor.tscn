@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://mkj5auj0anbn"]
+[gd_scene load_steps=10 format=3 uid="uid://mkj5auj0anbn"]
 
 [ext_resource type="Script" uid="uid://cjeug1b0jo3mk" path="res://Entity/_components/Icon/Icon.gd" id="1_5ji8q"]
 [ext_resource type="Script" uid="uid://cvx5vyevk1vhh" path="res://Entity/Building/BuildingDatas/LogististicData/Conveyor/ConveyorComponent.gd" id="1_dr56n"]
@@ -6,6 +6,7 @@
 [ext_resource type="Script" uid="uid://c5qps187jfdco" path="res://Entity/Logistic/InputPort/InputPort.gd" id="4_5pu6g"]
 [ext_resource type="Script" uid="uid://bcckkeab0lcki" path="res://Entity/Logistic/Outport/OutputPort.gd" id="5_1nu03"]
 [ext_resource type="Script" uid="uid://t55dvkkyhacg" path="res://Entity/Building/BuildingDatas/LogististicData/Conveyor/moving_line.gd" id="6_gq2mn"]
+[ext_resource type="Script" uid="uid://drl8l4pna44wv" path="res://Entity/Player/camera_2d.gd" id="7_lej6d"]
 
 [sub_resource type="Shader" id="Shader_1nu03"]
 code = "shader_type canvas_item;
@@ -73,3 +74,8 @@ metadata/_custom_type_script = "uid://c5qps187jfdco"
 [node name="TransportLine" type="Node2D" parent="."]
 unique_name_in_owner = true
 script = ExtResource("6_gq2mn")
+
+[node name="Camera" type="Camera2D" parent="."]
+zoom = Vector2(3, 3)
+script = ExtResource("7_lej6d")
+metadata/_custom_type_script = "uid://drl8l4pna44wv"

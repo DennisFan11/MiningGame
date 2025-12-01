@@ -8,8 +8,20 @@ var data: BuildingData
 
 
 enum DIR {UP, DOWN, LEFT, RIGHT}
-
-
+static func get_dir_angle(_dir: DIR)-> float:
+	match _dir:
+		DIR.UP:
+			return Vector2.UP.angle()
+		DIR.DOWN:
+			return Vector2.DOWN.angle()
+		DIR.LEFT:
+			return Vector2.LEFT.angle()
+		DIR.RIGHT:
+			return Vector2.RIGHT.angle()
+	return 0.0
+static func get_dir_types()-> Array[DIR]:
+	return [BuildingI.DIR.UP, BuildingI.DIR.RIGHT, 
+		BuildingI.DIR.DOWN, BuildingI.DIR.LEFT]
 
 @abstract
 func get_class_name()-> StringName
@@ -20,18 +32,11 @@ var state: BuildingState:
 	set(new):
 		state = new
 		state.on_change.connect(_on_dir_change)
+		state.dir = state.dir
 
 
 func _on_dir_change():
-	match state.dir:
-		DIR.UP:
-			rotation = Vector2.UP.angle()
-		DIR.DOWN:
-			rotation = Vector2.DOWN.angle()
-		DIR.LEFT:
-			rotation = Vector2.LEFT.angle()
-		DIR.RIGHT:
-			rotation = Vector2.RIGHT.angle()
+	rotation = get_dir_angle(state.dir)
 	on_dir_change.emit()
 signal on_dir_change
 

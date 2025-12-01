@@ -30,9 +30,10 @@ func port_rebind_ALG():
 	for input_port:InputPort in _get_input_ports(self):
 		var target_coord := _global_to_coord(input_port.global_position)
 		var component := _logistic_manager.get_logistic(target_coord)
-		var output_port :=component.has_output_targeting(self_coord)
-		if output_port:
-			input_port.bind_output_port(output_port)
+		if component:
+			var output_port := component.has_output_targeting(self_coord)
+			if output_port:
+				input_port.bind_output_port(output_port)
 		
 
 
@@ -47,11 +48,11 @@ var _logistic_manager: LogisticManager
 var _buildingI: BuildingI
 var coord:
 	get: 
-		return _buildingI.state.coords
+		return _buildingI.state.coord
 
 ## 初始化
 func _entity_ready(entity: Entity)-> void:
-	assert(entity is not Building,
+	assert(entity is Building,
 		"entity is not Building")
 	_buildingI = entity as Building
 	
@@ -68,11 +69,43 @@ func _entity_ready(entity: Entity)-> void:
 
 
 
+# ==============================================================================
+# 3. 物流實現
+# ==============================================================================
+
+func _process(delta: float) -> void:
+	%TransportLine.line_update(delta)
+	if %TransportLine.has_space():
+		var item = __get_input_item()
+		if item:
+			%TransportLine.try_add_item(item)
+	
+	
+	
+	
+	## TEST MUCK 
+	#var res = %TransportLine.try_add_item(
+		#TransportLine.LineItem.new(TransportLine.TOTAL_LEN, 0)
+		#)
+	#if randi()%30 == 1:
+		#%TransportLine.try_take_item()
+	#print("Try add item: ", res)
 
 
 
 
-
+var __index: int = 0
+@onready var __in_arr: Array[InputPort] = [%InputPort, %InputPort2, %InputPort3]
+func __get_input_item()-> TransportLine.LineItem:
+	for i in range(3): ## 最多嘗試三次
+		__index = (__index+1) % __in_arr.size()
+		var line = __in_arr[__index].get_target_line()
+		if not line:
+			continue
+		var item = line.try_take_item()
+		if item:
+			return item
+	return 
 
 
 

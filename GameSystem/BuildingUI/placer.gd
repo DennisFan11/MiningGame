@@ -63,7 +63,17 @@ func _R_clicking():
 func _R_finish(): #exec-once
 	pass
 
-
+var __dir_type: Array[BuildingI.DIR] = BuildingI.get_dir_types()
+var __index: int = 0
+func _input(event):
+	if event.is_action_pressed("R"):
+		__index = (__index+1) % __dir_type.size()
+		if _current_icon:
+			_current_icon.rotation = BuildingI.get_dir_angle(_get_dir())
+	super(event)
+	
+func _get_dir()-> BuildingI.DIR:
+	return __dir_type[__index]
 
 
 # ==============================================================================
@@ -75,5 +85,5 @@ func _set_plan(coord: Vector2i, data: BuildingData, team: BitmaskManager.TEAM):
 	_building_service.try_set_plan(
 		coord, 
 		data, 
-		BuildingI.BuildingState.new(coord, team, BuildingI.DIR.UP)
+		BuildingI.BuildingState.new(coord, team, _get_dir())
 	)

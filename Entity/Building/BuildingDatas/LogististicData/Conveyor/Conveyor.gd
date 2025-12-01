@@ -5,14 +5,14 @@ extends BuildingData
 
 
 func get_building_name()-> String:
-	return "[color=yellow]PlaceHolder"
+	return "Conveyor"
 
 func get_description()-> String:
-	return "[color=yellow]這是一個佔位符"
+	return "這是一個傳送帶"
 
 func get_icon()-> Texture:
-	return preload("uid://durpmb0cpvpvi")
+	return preload("uid://b28khqolfpx4f")
 
 
 func get_component()-> Node:
-	return 
+	return preload("uid://mkj5auj0anbn").instantiate()

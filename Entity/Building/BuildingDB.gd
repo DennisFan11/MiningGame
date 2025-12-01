@@ -41,8 +41,10 @@ static func create_construct(data: BuildingData)-> BuildingConstruct:
 static func create_building(data: BuildingData)-> Building:
 	var node: BuildingI = preload("uid://dgmf1d3lpy1rg").instantiate()
 	node.data = data
-	node.component = data.get_component()
-	node.add_child(node.component)
+	var com = data.get_component()
+	if com:
+		(node as Building).component = com
+		node.add_child(node.component)
 	return node
 
 
@@ -100,9 +102,7 @@ static func _static_init() -> void:
 	_register_building(&"Core", dummy_building)
 	_register_building(&"Core", dummy_building)
 	_register_building(&"Core", preload("uid://dndfj7pffk2w8").new())
-	_register_building(&"Logistics", dummy_building)
-	_register_building(&"Logistics", dummy_building)
-	_register_building(&"Logistics", dummy_building)
+	_register_building(&"Logistics", preload("uid://b80a8i742nfn7").new())
 	_register_building(&"Wall", dummy_building)
 	_register_building(&"Wall", dummy_building)
 	_register_building(&"Wall", dummy_building)
