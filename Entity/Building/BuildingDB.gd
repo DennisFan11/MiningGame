@@ -63,6 +63,11 @@ static var ITEM_SOURCE: ComponentData :
 		return ComponentData.new(
 		"__item_source", preload("uid://xb5ns0p5tqb1").instantiate())
 
+static var ITEM_VOID: ComponentData :
+	get:
+		return ComponentData.new(
+		"__item_void", preload("uid://cnt77watx4j2").instantiate())
+
 
 
 
@@ -115,6 +120,7 @@ static func _static_init() -> void:
 	
 	_register_building(&"Logistics", preload("uid://b80a8i742nfn7").new())
 	_register_building(&"Logistics", preload("uid://dek47g0e1b0mj").new())
+	_register_building(&"Logistics", preload("uid://cc4u1gcby6aen").new())
 	_register_building(&"Core", dummy_building)
 	_register_building(&"Core", dummy_building)
 	_register_building(&"Core", preload("uid://dndfj7pffk2w8").new())

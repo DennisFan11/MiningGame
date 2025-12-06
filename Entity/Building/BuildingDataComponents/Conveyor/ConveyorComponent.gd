@@ -23,7 +23,7 @@ func _process(delta: float) -> void:
 		if item:
 			item.line_provider = _line_provider[__index]
 			%TransportLine.try_add_item(item)
-		print("Conveyor get input item: ", item)
+		#print("Conveyor get input item: ", item)
 		
 
 

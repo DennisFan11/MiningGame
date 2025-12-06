@@ -1,4 +1,4 @@
-[gd_scene load_steps=28 format=3 uid="uid://6hb0myg4mp7y"]
+[gd_scene load_steps=29 format=3 uid="uid://6hb0myg4mp7y"]
 
 [ext_resource type="PackedScene" uid="uid://d3hxiu2vex0al" path="res://Entity/Player/Player.tscn" id="1_1au6a"]
 [ext_resource type="Script" uid="uid://cmqnwexcjcp8x" path="res://GameSystem/GameController/game_controller.gd" id="1_3nbeu"]
@@ -18,6 +18,7 @@
 [ext_resource type="Script" uid="uid://case3gsw64e38" path="res://GameSystem/BitmaskManager/bitmask_manager.gd" id="12_3lyre"]
 [ext_resource type="Shader" uid="uid://bx16ruuqa4j5d" path="res://GameSystem/GameController/CTRshader.gdshader" id="15_26c85"]
 [ext_resource type="PackedScene" uid="uid://dgqgfb3pdvy2h" path="res://GameSystem/BuildingUI/BuildingUI.tscn" id="16_ebgn5"]
+[ext_resource type="Script" uid="uid://dmpecara50fmh" path="res://GameSystem/GameController/ctr_shader.gd" id="18_02jrl"]
 [ext_resource type="PackedScene" uid="uid://78njtwpea5xy" path="res://GameSystem/BuildingManager/BuildingManager.tscn" id="19_nyrts"]
 [ext_resource type="PackedScene" uid="uid://qi5awbpwcjsr" path="res://GameSystem/PlayerItemRepo/PlayerItemRepo.tscn" id="20_2vjy7"]
 [ext_resource type="PackedScene" uid="uid://bet8g7705sris" path="res://GameSystem/ParticleManager/ParticleManager.tscn" id="21_ammeq"]
@@ -138,6 +139,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+script = ExtResource("18_02jrl")
 
 [node name="DebugUI" parent="CanvasLayer" instance=ExtResource("7_ee1h0")]
 metadata/_edit_lock_ = true
