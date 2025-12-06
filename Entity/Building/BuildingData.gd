@@ -17,8 +17,8 @@ func get_description()-> String
 
 
 ## 獲取具體實現的組件
-func get_component()-> Node:
-	return _create_basic_icon()
+func get_components()-> Array[BuildingDB.ComponentData]:
+	return [BuildingDB.ComponentData.new("__icon", _create_basic_icon())]
 	
 
 
@@ -33,8 +33,8 @@ func _create_basic_icon()-> Icon:
 
 func get_need_item()-> PackedItem:
 	return PackedItem.create({
-		Item.ITEM.COPPER: 1.5,
-		Item.ITEM.IORN: 1.5,
+		ItemDB.ITEM.COPPER: 1.5,
+		ItemDB.ITEM.IORN: 1.5,
 	
 	})
 

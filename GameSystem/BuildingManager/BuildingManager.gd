@@ -7,7 +7,7 @@ func _ready() -> void:
 
 """
 建築管理器 位於系統內核 API需保持簡潔
-使用 coord & BuildingI
+使用 coord & BuildingEntity
 
 """
 
@@ -20,7 +20,7 @@ func _ready() -> void:
 
 var _terrain_manager: TerrainManager
 
-func get_block(coord: Vector2i)-> BuildingI:
+func get_block(coord: Vector2i)-> BuildingEntity:
 	return _block_map.get(coord, null)
 
 func is_space(coord: Vector2i)-> bool:
@@ -37,7 +37,7 @@ func is_space(coord: Vector2i)-> bool:
 
 func set_block(
 	coord: Vector2i,
-	building: BuildingI
+	building: BuildingEntity
 	):
 	print("set_block(" + str(coord) +str(building.get_class_name())+")")
 	
@@ -52,7 +52,7 @@ func set_block(
 
 ## 刪除建築
 func delete_block(coord: Vector2i):
-	var building: BuildingI = get_block(coord)
+	var building: BuildingEntity = get_block(coord)
 	if not building:
 		return 
 	building.queue_free()
@@ -110,7 +110,7 @@ static func coord_to_global(coord: Vector2i)-> Vector2:
 
 
 
-var _block_map: Dictionary[Vector2i, BuildingI] = {}
+var _block_map: Dictionary[Vector2i, BuildingEntity] = {}
 
 
 

@@ -1,5 +1,5 @@
 class_name Building
-extends BuildingI
+extends BuildingEntity
 
 """
 """
@@ -15,5 +15,3 @@ func _icon_init():
 
 func get_coord()-> Vector2i:
 	return state.coord
-
-var component: Node

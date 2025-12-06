@@ -8,7 +8,7 @@ var _current_building: BuildingData
 var _current_icon: Icon
 
 # 旋轉邏輯簡化
-var _dir_types: Array[BuildingI.DIR] = BuildingI.get_dir_types()
+var _dir_types: Array[GridDirs.DIR] = GridDirs.get_dir_types()
 var _dir_index: int = 0
 
 func _ready() -> void:
@@ -38,7 +38,7 @@ func _clear_current_state():
 
 func _update_icon_rotation():
 	if _current_icon:
-		_current_icon.rotation = BuildingI.get_dir_angle(_get_dir())
+		_current_icon.rotation = GridDirs.get_dir_angle(_get_dir())
 
 # ------------------------------------------------------------------------------
 # FSM 狀態
@@ -80,7 +80,7 @@ func _input(event):
 		_update_icon_rotation()
 	super(event)
 
-func _get_dir() -> BuildingI.DIR:
+func _get_dir() -> GridDirs.DIR:
 	return _dir_types[_dir_index]
 
 # ------------------------------------------------------------------------------
@@ -91,7 +91,7 @@ func _set_plan(coord: Vector2i, data: BuildingData, team: BitmaskManager.TEAM):
 	_building_service.try_set_plan(
 		coord, 
 		data, 
-		BuildingI.BuildingState.new(coord, team, _get_dir())
+		BuildingState.new(coord, team, _get_dir())
 	)
 
 # 佔位符函式 (FSM 父類要求)

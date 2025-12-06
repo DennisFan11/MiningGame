@@ -11,8 +11,8 @@ enum TYPE{ PLAN, CONSTRUCT, BUILDING, FULL_REMOVED_CONSTRUCT}
 static func create_type(
 		type: TYPE, 
 		data: BuildingData, 
-		state: BuildingI.BuildingState)-> BuildingI:
-	var instance = null
+		state: BuildingState)-> BuildingEntity:
+	var instance: BuildingEntity = null
 	match type:
 		TYPE.PLAN:
 			instance = BuildingDB.create_plan(data)
@@ -28,27 +28,36 @@ static func create_type(
 			assert(false, "BuildingTYPE not valid !")
 	if instance:
 		instance.state = state
+		instance.final_setup()
 	return instance
 
 static func create_plan(data: BuildingData)-> BuildingPlan:
-	var node: BuildingI = preload("uid://dywvpop5avhnn").instantiate()
+	var node: BuildingEntity = preload("uid://dywvpop5avhnn").instantiate()
 	node.data = data
 	return node
 static func create_construct(data: BuildingData)-> BuildingConstruct:
-	var node: BuildingI = preload("uid://dmqko2wm6gy7a").instantiate()
+	var node: BuildingEntity = preload("uid://dmqko2wm6gy7a").instantiate()
 	node.data = data
 	return node
 static func create_building(data: BuildingData)-> Building:
-	var node: BuildingI = preload("uid://dgmf1d3lpy1rg").instantiate()
+	var node: BuildingEntity = preload("uid://dgmf1d3lpy1rg").instantiate()
 	node.data = data
-	var com = data.get_component()
-	if com:
-		(node as Building).component = com
-		node.add_child(node.component)
+	node.set_components(data.get_components())
 	return node
 
-
-
+## COMPONENTS
+class ComponentData:
+	extends Resource
+	var path: String
+	var scene: Node
+	func _init(_path: String, _scene: Node) -> void:
+		path = _path
+		scene = _scene
+		
+static var CONVEYOR: ComponentData :
+	get:
+		return ComponentData.new(
+		"__conveyor", preload("uid://mkj5auj0anbn").instantiate())
 
 
 

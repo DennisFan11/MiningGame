@@ -1,16 +1,11 @@
 class_name TransportLine
-extends Node2D
+extends IItemTransport
 
-# --- 定義輕量物品 ---
-class LineItem:
-	var gap: float   # 距離前方的空隙
-	var type: int    # 假設 Item.ITEM 是 int 或 enum
-	func _init(g: float, t: int): gap = g; type=t
 
 # --- 參數 ---
-const TOTAL_LEN: float = 30.0
+const TOTAL_LEN: float = 29.0
 const ITEM_SIZE: float = 10.0
-const SPEED: float = 30.0
+const SPEED: float = 50.0
 
 var _items: Array[LineItem] = []
 var _stuck_idx: int = 0 
@@ -18,8 +13,7 @@ var _stuck_idx: int = 0
 # [優化] 緩存變數：記錄當前所有 item.gap 的總和
 var _cached_total_gaps: float = 0.0 
 
-func line_update(delta: float) -> void:
-	queue_redraw()
+func _process(delta: float) -> void:
 	
 	if _items.is_empty() or _stuck_idx >= _items.size():
 		return
@@ -34,6 +28,9 @@ func line_update(delta: float) -> void:
 		_stuck_idx += 1
 
 # --- 公開 API (外部呼叫) ---
+
+	
+	
 
 func has_space() -> bool:
 	return left_space() >= 0
@@ -79,19 +76,12 @@ func try_take_item() -> LineItem:
 		
 	return item
 
-# --- 視覺化 (保持不變) ---
-const REAL_SIZE := Vector2(64, 32)
-const FONT_RES := preload("uid://ixuq1j7jm0cv") # 修正變數名避免衝突
-func _draw() -> void:
-	draw_rect(Rect2(-REAL_SIZE/2, REAL_SIZE), Color(0.2, 0.2, 0.2))
-	var RATIO = REAL_SIZE.x/TOTAL_LEN
-	var OFFSET = -REAL_SIZE.x/2
-	var x = TOTAL_LEN
-	for item in _items:
-		x -= item.gap 
-		var pos = Vector2((x)*RATIO+OFFSET, 0)
-		draw_circle(pos, 15, Color.WHEAT)
-		# 這裡需確保 FONT_RES 有效，或暫時註解掉 draw_string
-		if FONT_RES:
-			draw_string(FONT_RES, pos, str(snapped(item.gap, 0.1)), HORIZONTAL_ALIGNMENT_CENTER, 20, 10, Color.BLACK)
-		x -= ITEM_SIZE
+
+	
+func get_line_items()-> Array[LineItem]:
+	var progress = 0.0
+	for i in _items:
+		progress += i.gap
+		i.progress_cache = 1.0-(progress/TOTAL_LEN)
+		progress += ITEM_SIZE
+	return _items 

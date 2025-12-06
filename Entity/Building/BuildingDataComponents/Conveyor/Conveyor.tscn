@@ -1,0 +1,106 @@
+[gd_scene load_steps=10 format=3 uid="uid://mkj5auj0anbn"]
+
+[ext_resource type="Script" uid="uid://cjeug1b0jo3mk" path="res://Entity/_components/Icon/Icon.gd" id="1_5ji8q"]
+[ext_resource type="Script" uid="uid://cvx5vyevk1vhh" path="res://Entity/Building/BuildingDataComponents/Conveyor/ConveyorComponent.gd" id="1_dr56n"]
+[ext_resource type="Texture2D" uid="uid://b28khqolfpx4f" path="res://Entity/Building/BuildingDataComponents/Conveyor/Conveyor.png" id="1_n6765"]
+[ext_resource type="Script" uid="uid://c5qps187jfdco" path="res://Entity/Building/BuildingDataComponents/Logistic/Ports/InputPort.gd" id="4_5pu6g"]
+[ext_resource type="Script" uid="uid://bcckkeab0lcki" path="res://Entity/Building/BuildingDataComponents/Logistic/Ports/OutputPort.gd" id="5_1nu03"]
+[ext_resource type="Script" uid="uid://t55dvkkyhacg" path="res://Entity/Building/BuildingDataComponents/Logistic/TransportLine.gd" id="6_gq2mn"]
+[ext_resource type="Script" uid="uid://bp0w0ufomaqi3" path="res://Entity/Building/BuildingDataComponents/Logistic/LineProvider.gd" id="8_mtsol"]
+
+[sub_resource type="Shader" id="Shader_1nu03"]
+code = "shader_type canvas_item;
+
+void vertex() {
+	// Called for every vertex the material is visible on.
+}
+uniform float SPEED = 0.7;
+void fragment() {
+	COLOR = texture(TEXTURE, UV + vec2(-TIME*SPEED, 0.0));
+}
+
+//void light() {
+//	// Called for every pixel for every light affecting the CanvasItem.
+//	// Uncomment to replace the default light processing function with this one.
+//}
+"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_gq2mn"]
+shader = SubResource("Shader_1nu03")
+shader_parameter/SPEED = 0.5
+
+[node name="ConveyorComponent" type="Node2D"]
+script = ExtResource("1_dr56n")
+
+[node name="Icon" type="TextureRect" parent="."]
+texture_repeat = 2
+material = SubResource("ShaderMaterial_gq2mn")
+custom_minimum_size = Vector2(64, 64)
+offset_left = -32.0
+offset_top = -32.0
+offset_right = 32.0
+offset_bottom = 32.0
+pivot_offset = Vector2(32, 32)
+texture = ExtResource("1_n6765")
+expand_mode = 1
+stretch_mode = 5
+script = ExtResource("1_5ji8q")
+metadata/_custom_type_script = "uid://cjeug1b0jo3mk"
+
+[node name="TransportLine" type="Node2D" parent="."]
+unique_name_in_owner = true
+script = ExtResource("6_gq2mn")
+
+[node name="LineProvider" type="Line2D" parent="."]
+unique_name_in_owner = true
+points = PackedVector2Array(-32, 0, 0, 0, 32, 0)
+width = 5.0
+script = ExtResource("8_mtsol")
+metadata/_custom_type_script = "uid://bp0w0ufomaqi3"
+
+[node name="LineProvider2" type="Line2D" parent="."]
+unique_name_in_owner = true
+points = PackedVector2Array(0, -32, 8, -8, 32, 0)
+width = 5.0
+script = ExtResource("8_mtsol")
+metadata/_custom_type_script = "uid://bp0w0ufomaqi3"
+
+[node name="LineProvider3" type="Line2D" parent="."]
+unique_name_in_owner = true
+points = PackedVector2Array(0, 32, 8, 8, 32, 0)
+width = 5.0
+script = ExtResource("8_mtsol")
+metadata/_custom_type_script = "uid://bp0w0ufomaqi3"
+
+[node name="Port" type="Node2D" parent="."]
+
+[node name="OutputPort" type="Node2D" parent="Port"]
+unique_name_in_owner = true
+position = Vector2(46, 0)
+script = ExtResource("5_1nu03")
+metadata/_custom_type_script = "uid://bcckkeab0lcki"
+
+[node name="ColorRect" type="ColorRect" parent="Port/OutputPort"]
+offset_left = -7.0
+offset_top = -8.0
+offset_right = 6.0
+offset_bottom = 8.0
+metadata/_edit_use_anchors_ = true
+
+[node name="InputPort" type="Node2D" parent="Port"]
+unique_name_in_owner = true
+position = Vector2(-45, 0)
+script = ExtResource("4_5pu6g")
+metadata/_custom_type_script = "uid://c5qps187jfdco"
+
+[node name="InputPort2" type="Node2D" parent="Port"]
+unique_name_in_owner = true
+position = Vector2(0, -45)
+script = ExtResource("4_5pu6g")
+metadata/_custom_type_script = "uid://c5qps187jfdco"
+
+[node name="InputPort3" type="Node2D" parent="Port"]
+unique_name_in_owner = true
+position = Vector2(0, 42)
+script = ExtResource("4_5pu6g")
+metadata/_custom_type_script = "uid://c5qps187jfdco"

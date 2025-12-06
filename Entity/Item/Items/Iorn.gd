@@ -3,5 +3,5 @@ extends Item
 
 
 
-func create_icon()-> Texture:
+func get_icon()-> Texture:
 	return preload("uid://durpmb0cpvpvi")

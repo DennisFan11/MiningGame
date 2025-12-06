@@ -1,4 +1,4 @@
-class_name ConveyorComponent
+class_name LogisticComponent
 extends Component
 
 
@@ -26,7 +26,7 @@ func port_rebind_ALG():
 	## 對所有 InputPort 尋找自身building是否在目標地塊其中之一的 OutputPort (n - 1)
 	## 檢查方向有效性
 	## 建立 InputPort 到 OutputPort 的連結緩存
-	var self_coord := _buildingI.state.coord
+	var self_coord := __building_state.coord
 	for input_port:InputPort in _get_input_ports(self):
 		var target_coord := _global_to_coord(input_port.global_position)
 		var component := _logistic_manager.get_logistic(target_coord)
@@ -34,7 +34,10 @@ func port_rebind_ALG():
 			var output_port := component.has_output_targeting(self_coord)
 			if output_port:
 				input_port.bind_output_port(output_port)
-		
+
+
+func get_line_items()-> Array[LineItem]:
+	return %TransportLine.get_line_items()
 
 
 
@@ -44,29 +47,20 @@ func port_rebind_ALG():
 
 
 var _logistic_manager: LogisticManager
+var __building_state: BuildingState:
+	set(new):
+		__building_state = new
+		_logistic_manager.port_rebind(coord)## 組件轉向
 
-var _buildingI: BuildingI
 var coord:
 	get: 
-		return _buildingI.state.coord
+		return __building_state.coord
 
-## 初始化
-func _entity_ready(entity: Entity)-> void:
-	assert(entity is Building,
-		"entity is not Building")
-	_buildingI = entity as Building
-	
-	
+func _on_setuped():
 	_logistic_manager.set_logistic(coord, self)
-	
-	_logistic_manager.update(coord)
-	
-	## 組件轉向
-	_buildingI.on_dir_change.connect(_logistic_manager.update.bind(coord))
-	
+	_logistic_manager.port_rebind(coord)## 組件轉向
 	## 組件移除
 	tree_exiting.connect(_logistic_manager.erase_logistic.bind(coord))
-
 
 
 # ==============================================================================
@@ -77,28 +71,31 @@ func _entity_ready(entity: Entity)-> void:
 static var TEST_GENERATOR: bool = true
 var _is_me: bool = false
 func _process(delta: float) -> void:
-	%TransportLine.line_update(delta)
 	if %TransportLine.has_space():
 		var item = __get_input_item()
 		if item:
+			item.line_provider = _line_provider[__index]
 			%TransportLine.try_add_item(item)
+			
 	if TEST_GENERATOR or _is_me:
 		_is_me = true
 		TEST_GENERATOR = false
 		## TEST MUCK 
-		var res = %TransportLine.try_add_item(
-			TransportLine.LineItem.new(TransportLine.TOTAL_LEN, 0)
-			)
+		var item = LineItem.new(
+			TransportLine.TOTAL_LEN, 0, _line_provider[__index])
+		var res = %TransportLine.try_add_item(item)
+		
 		if randi()%30 == 1:
 			%TransportLine.try_take_item()
-		print("Try add item: ", res)
+		
 
-
-
+@onready var _line_provider: Array[LineProvider] = [
+	%LineProvider, %LineProvider2, %LineProvider3
+]
 
 var __index: int = 0
 @onready var __in_arr: Array[InputPort] = [%InputPort, %InputPort2, %InputPort3]
-func __get_input_item()-> TransportLine.LineItem:
+func __get_input_item()-> LineItem:
 	for i in range(3): ## 最多嘗試三次
 		__index = (__index+1) % __in_arr.size()
 		var line = __in_arr[__index].get_target_line()
@@ -108,6 +105,7 @@ func __get_input_item()-> TransportLine.LineItem:
 		if item:
 			return item
 	return 
+
 
 
 
@@ -134,7 +132,7 @@ func _get_input_ports(node:Node=self)-> Array[InputPort]:
 	for p in node.get_children():
 		if p is InputPort:
 			ports.append(p)
-		ports.append_array(_get_ports(p))
+		ports.append_array(_get_input_ports(p))
 	return ports
 
 ## 遞歸獲取 output
@@ -143,7 +141,7 @@ func _get_output_ports(node:Node=self)-> Array[OutputPort]:
 	for p in node.get_children():
 		if p is OutputPort:
 			ports.append(p)
-		ports.append_array(_get_ports(p))
+		ports.append_array(_get_output_ports(p))
 	return ports
 
 ## 坐標計算

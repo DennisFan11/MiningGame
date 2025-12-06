@@ -1,5 +1,5 @@
 class_name BuildingConstruct
-extends BuildingI
+extends BuildingEntity
 
 
 

@@ -3,10 +3,12 @@ class_name Icon
 extends TextureRect
 
 func set_icon(texture: Texture):
+	
 	self.texture = texture
 	set_pos(Vector2.ZERO)
 
 func set_pos(pos: Vector2):
+	size = SIZE
 	position = -SIZE/2.0 + pos
 
 const SIZE = Vector2.ONE * 64.0
@@ -14,11 +16,12 @@ const SIZE = Vector2.ONE * 64.0
 
 
 func _ready() -> void:
-	set_pos(Vector2.ZERO)
-	custom_minimum_size = SIZE
+	
+	#custom_minimum_size = SIZE
 	pivot_offset = SIZE/2.0
 	expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	set_pos(Vector2.ZERO)
 
 var _sub_icon: IconSub
 enum COLOR { WHITE, RED}

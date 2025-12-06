@@ -47,7 +47,7 @@ func _process(delta: float) -> void:
 
 
 
-func __update_polygon(i: BuildingI, breaking: bool=false):
+func __update_polygon(i: BuildingEntity, breaking: bool=false):
 	
 	var polygon = i.get_global_points()
 	polygon.append(global_position)
@@ -139,7 +139,7 @@ func _remove(building: BuildingConstruct, dt: float) -> void:
 
 	# 若已全部清空，完成移除
 	if building.contain_item.vmax(PackedItem.zero()).vtotal() <= 0.0:
-		_try_delete(building.states.coord)
+		_try_delete(building.state.coord)
 		return 
 	
 	building.update_progress()

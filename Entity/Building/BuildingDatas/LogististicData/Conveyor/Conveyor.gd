@@ -14,5 +14,5 @@ func get_icon()-> Texture:
 	return preload("uid://b28khqolfpx4f")
 
 
-func get_component()-> Node:
-	return preload("uid://mkj5auj0anbn").instantiate()
+func get_components()-> Array[BuildingDB.ComponentData]:
+	return [BuildingDB.CONVEYOR]

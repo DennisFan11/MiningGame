@@ -1,5 +1,5 @@
 class_name BuildingPlan
-extends BuildingI
+extends BuildingEntity
 
 
 

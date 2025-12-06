@@ -4,5 +4,9 @@ extends Node2D
 
 
 
-@abstract
-func _entity_ready(entity: Entity)-> void
+#@abstract
+#func _entity_ready(entity: Entity)-> void
+
+
+func _on_injected(): 
+	pass

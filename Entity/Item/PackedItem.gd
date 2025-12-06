@@ -1,7 +1,7 @@
 class_name PackedItem
 extends Resource
 
-@export var item_set: Dictionary[Item.ITEM, float] = {}
+@export var item_set: Dictionary[ItemDB.ITEM, float] = {}
 
 """
 表示多種資源的組合
@@ -11,14 +11,14 @@ extends Resource
 func _init() -> void:
 	item_set = {}
 
-static func create(items: Dictionary[Item.ITEM, float])-> PackedItem:
+static func create(items: Dictionary[ItemDB.ITEM, float])-> PackedItem:
 	var new_packed_item = PackedItem.new()
 	new_packed_item.item_set = items.duplicate(true)
 	return new_packed_item
 
 static func create_full()-> PackedItem:
-	var item_set: Dictionary[Item.ITEM, float] = {}
-	for i in Item.get_all_item():
+	var item_set: Dictionary[ItemDB.ITEM, float] = {}
+	for i in ItemDB.get_all_item():
 		item_set[i] = INF
 	return create(item_set)
 ## 數學運算
@@ -151,7 +151,7 @@ func _to_string() -> String:
 	var str = "PackedItem: "
 	for id in item_set.keys():
 		str += \
-		"\n\t" + Item.get_item_name(id) + ":" + str(item_set[id])
+		"\n\t" + ItemDB.get_item_name(id) + ":" + str(item_set[id])
 	return str
 
 func all_small_than_zero()-> bool:
