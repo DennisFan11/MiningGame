@@ -1,0 +1,52 @@
+[gd_scene load_steps=6 format=3 uid="uid://xb5ns0p5tqb1"]
+
+[ext_resource type="Script" uid="uid://dow1s87iql0x3" path="res://Entity/Building/BuildingDataComponents/ItemSource/ItemSource.gd" id="1_1vug8"]
+[ext_resource type="Script" uid="uid://cjeug1b0jo3mk" path="res://Entity/_components/Icon/Icon.gd" id="3_l5l2t"]
+[ext_resource type="Texture2D" uid="uid://bfwy5p5cn5j7p" path="res://Entity/Building/BuildingDataComponents/ItemSource/ItemSource.png" id="3_ptnq5"]
+[ext_resource type="Script" uid="uid://bcckkeab0lcki" path="res://Entity/Building/BuildingDataComponents/LogisticParts/Ports/OutputPort.gd" id="5_8snt5"]
+[ext_resource type="Script" uid="uid://bto5mbmcx3hyp" path="res://Entity/Building/BuildingDataComponents/ItemSource/ItemSourceLogic.gd" id="5_koabc"]
+
+[node name="ItemSource" type="Node2D"]
+script = ExtResource("1_1vug8")
+
+[node name="Icon" type="TextureRect" parent="."]
+custom_minimum_size = Vector2(64, 64)
+offset_left = -32.0
+offset_top = -32.0
+offset_right = 32.0
+offset_bottom = 32.0
+pivot_offset = Vector2(32, 32)
+texture = ExtResource("3_ptnq5")
+expand_mode = 1
+stretch_mode = 5
+script = ExtResource("3_l5l2t")
+metadata/_custom_type_script = "uid://cjeug1b0jo3mk"
+
+[node name="OutputPort" type="Node2D" parent="." node_paths=PackedStringArray("item_transport")]
+position = Vector2(48, 0)
+script = ExtResource("5_8snt5")
+item_transport = NodePath("../ItemSourceLogic")
+metadata/_custom_type_script = "uid://bcckkeab0lcki"
+
+[node name="OutputPort2" type="Node2D" parent="." node_paths=PackedStringArray("item_transport")]
+position = Vector2(0, -48)
+script = ExtResource("5_8snt5")
+item_transport = NodePath("../ItemSourceLogic")
+metadata/_custom_type_script = "uid://bcckkeab0lcki"
+
+[node name="OutputPort3" type="Node2D" parent="." node_paths=PackedStringArray("item_transport")]
+position = Vector2(-48, 0)
+script = ExtResource("5_8snt5")
+item_transport = NodePath("../ItemSourceLogic")
+metadata/_custom_type_script = "uid://bcckkeab0lcki"
+
+[node name="OutputPort4" type="Node2D" parent="." node_paths=PackedStringArray("item_transport")]
+position = Vector2(0, 48)
+script = ExtResource("5_8snt5")
+item_transport = NodePath("../ItemSourceLogic")
+metadata/_custom_type_script = "uid://bcckkeab0lcki"
+
+[node name="ItemSourceLogic" type="Node" parent="."]
+unique_name_in_owner = true
+script = ExtResource("5_koabc")
+metadata/_custom_type_script = "uid://bto5mbmcx3hyp"

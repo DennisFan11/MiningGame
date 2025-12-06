@@ -11,14 +11,8 @@ func _ready() -> void:
 
 
 # ==============================================================================
-# 1. 公開 API - 查詢 (Queries)
+# 1. 公開 API
 # ==============================================================================
-
-# ==============================================================================
-# 2. 公開 API - 註冊 (Register)
-# ==============================================================================
-
-var _building_manager: BuildingManager
 
 
 func port_rebind(coord: Vector2i):
@@ -50,7 +44,7 @@ func _port_rebind(coord: Vector2i):
 
 
 ## Render item
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	queue_redraw()
 
 
@@ -60,12 +54,17 @@ func _draw() -> void:
 	var all_items: Array[LineItem] = []
 	
 	for comp: LogisticComponent in _component_map.values():
+		if comp is not BeltComponent:
+			continue
+		comp = comp as BeltComponent
+		
 		# append_array 比迴圈 append 更快
 		all_items.append_array(comp.get_line_items())
+	#print("Logistic components ", _component_map)
 
 	# 2. 直接對「所有物品」進行座標排序 (Y 為主，X 為輔)
 	# 這樣保證了 Y 座標較大 (下方) 的物品永遠會蓋住 Y 座標較小 (上方) 的物品
-	all_items.sort_custom(func(a, b):
+	all_items.sort_custom(func(a: LineItem, b: LineItem):
 		var pos_a = a.get_position()
 		var pos_b = b.get_position()
 		

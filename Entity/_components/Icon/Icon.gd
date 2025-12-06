@@ -16,8 +16,7 @@ const SIZE = Vector2.ONE * 64.0
 
 
 func _ready() -> void:
-	
-	#custom_minimum_size = SIZE
+	custom_minimum_size = SIZE
 	pivot_offset = SIZE/2.0
 	expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED

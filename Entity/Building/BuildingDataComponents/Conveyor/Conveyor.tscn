@@ -3,10 +3,10 @@
 [ext_resource type="Script" uid="uid://cjeug1b0jo3mk" path="res://Entity/_components/Icon/Icon.gd" id="1_5ji8q"]
 [ext_resource type="Script" uid="uid://cvx5vyevk1vhh" path="res://Entity/Building/BuildingDataComponents/Conveyor/ConveyorComponent.gd" id="1_dr56n"]
 [ext_resource type="Texture2D" uid="uid://b28khqolfpx4f" path="res://Entity/Building/BuildingDataComponents/Conveyor/Conveyor.png" id="1_n6765"]
-[ext_resource type="Script" uid="uid://c5qps187jfdco" path="res://Entity/Building/BuildingDataComponents/Logistic/Ports/InputPort.gd" id="4_5pu6g"]
-[ext_resource type="Script" uid="uid://bcckkeab0lcki" path="res://Entity/Building/BuildingDataComponents/Logistic/Ports/OutputPort.gd" id="5_1nu03"]
-[ext_resource type="Script" uid="uid://t55dvkkyhacg" path="res://Entity/Building/BuildingDataComponents/Logistic/TransportLine.gd" id="6_gq2mn"]
-[ext_resource type="Script" uid="uid://bp0w0ufomaqi3" path="res://Entity/Building/BuildingDataComponents/Logistic/LineProvider.gd" id="8_mtsol"]
+[ext_resource type="Script" uid="uid://c5qps187jfdco" path="res://Entity/Building/BuildingDataComponents/LogisticParts/Ports/InputPort.gd" id="4_5pu6g"]
+[ext_resource type="Script" uid="uid://bcckkeab0lcki" path="res://Entity/Building/BuildingDataComponents/LogisticParts/Ports/OutputPort.gd" id="5_1nu03"]
+[ext_resource type="Script" uid="uid://t55dvkkyhacg" path="res://Entity/Building/BuildingDataComponents/LogisticParts/TransportLine.gd" id="6_gq2mn"]
+[ext_resource type="Script" uid="uid://bp0w0ufomaqi3" path="res://Entity/Building/BuildingDataComponents/LogisticParts/LineProvider.gd" id="8_mtsol"]
 
 [sub_resource type="Shader" id="Shader_1nu03"]
 code = "shader_type canvas_item;
@@ -47,9 +47,10 @@ stretch_mode = 5
 script = ExtResource("1_5ji8q")
 metadata/_custom_type_script = "uid://cjeug1b0jo3mk"
 
-[node name="TransportLine" type="Node2D" parent="."]
+[node name="TransportLine" type="Node" parent="."]
 unique_name_in_owner = true
 script = ExtResource("6_gq2mn")
+metadata/_custom_type_script = "uid://t55dvkkyhacg"
 
 [node name="LineProvider" type="Line2D" parent="."]
 unique_name_in_owner = true
@@ -74,18 +75,12 @@ metadata/_custom_type_script = "uid://bp0w0ufomaqi3"
 
 [node name="Port" type="Node2D" parent="."]
 
-[node name="OutputPort" type="Node2D" parent="Port"]
+[node name="OutputPort" type="Node2D" parent="Port" node_paths=PackedStringArray("item_transport")]
 unique_name_in_owner = true
 position = Vector2(46, 0)
 script = ExtResource("5_1nu03")
+item_transport = NodePath("../../TransportLine")
 metadata/_custom_type_script = "uid://bcckkeab0lcki"
-
-[node name="ColorRect" type="ColorRect" parent="Port/OutputPort"]
-offset_left = -7.0
-offset_top = -8.0
-offset_right = 6.0
-offset_bottom = 8.0
-metadata/_edit_use_anchors_ = true
 
 [node name="InputPort" type="Node2D" parent="Port"]
 unique_name_in_owner = true

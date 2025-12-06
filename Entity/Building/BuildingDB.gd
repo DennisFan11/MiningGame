@@ -58,7 +58,10 @@ static var CONVEYOR: ComponentData :
 	get:
 		return ComponentData.new(
 		"__conveyor", preload("uid://mkj5auj0anbn").instantiate())
-
+static var ITEM_SOURCE: ComponentData :
+	get:
+		return ComponentData.new(
+		"__item_source", preload("uid://xb5ns0p5tqb1").instantiate())
 
 
 
@@ -101,17 +104,20 @@ static func _register_building(type: StringName, data: BuildingData):
 	
 
 static func _static_init() -> void:
-	_register_type(&"Core")
+	
 	_register_type(&"Logistics")
 	_register_type(&"Wall")
+	_register_type(&"Core")
 	
 	## placeholder
 	var dummy_building = preload("uid://c744h4epou4k").new() 
 	
+	
+	_register_building(&"Logistics", preload("uid://b80a8i742nfn7").new())
+	_register_building(&"Logistics", preload("uid://dek47g0e1b0mj").new())
 	_register_building(&"Core", dummy_building)
 	_register_building(&"Core", dummy_building)
 	_register_building(&"Core", preload("uid://dndfj7pffk2w8").new())
-	_register_building(&"Logistics", preload("uid://b80a8i742nfn7").new())
 	_register_building(&"Wall", dummy_building)
 	_register_building(&"Wall", dummy_building)
 	_register_building(&"Wall", dummy_building)

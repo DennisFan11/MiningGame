@@ -1,6 +1,6 @@
 @abstract
 class_name IItemTransport
-extends Node2D
+extends Node
 
 @abstract
 func has_space() -> bool

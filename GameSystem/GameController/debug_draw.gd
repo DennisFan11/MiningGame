@@ -3,7 +3,7 @@ extends Node2D
 
 
 
-const DEBUG = false
+const DEBUG = true
 
 func _ready() -> void:
 	DI.register("_debug_draw", self)
@@ -32,20 +32,39 @@ func d_draw_sector(center: Vector2, radius: float, angle_from: float, angle_to: 
 	)
 
 ## [新增] 繪製圓形 (半透明填充 + 外框)
-func d_draw_circle(center: Vector2, radius: float, color: Color = Color.WHITE, time: float = 0.1, width: float = 2):
+func d_draw_circle(center: Vector2, radius: float, color: Color = Color.WHITE, time: float = 0.1, width: float = 2, filled:bool=false):
+	if not filled:
+		_add_draw(func():
+			self.draw_circle(
+				center,
+				radius,
+				color,
+				filled,
+				width,
+			),
+			time
+		)
+		return 
 	_add_draw(func():
 		self.draw_circle(
 			center,
 			radius,
 			color,
-			false,
-			width,
+			filled
 		),
 		time
 	)
 
-
-
+## 繪製圓形邊匡
+func d_draw_circle_edge(center: Vector2, radius: float, color: Color, width: float, time:float=0.01):
+	_add_draw(func():
+		self.draw_arc(
+			center, radius, 0, TAU, 32, color, width, true
+	),time)
+	# 使用 draw_arc 繪製 0 到 360 度 (TAU) 的弧線
+	# 參數：圓心, 半徑, 起始角, 結束角, 解析度(點數), 顏色, 線寬, 抗鋸齒
+	
+	
 
 
 

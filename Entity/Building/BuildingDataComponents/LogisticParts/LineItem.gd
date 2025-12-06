@@ -10,7 +10,7 @@ var line_provider: LineProvider
 func _init(
 		_gap: float, 
 		_type: int, 
-		_line_provider: LineProvider
+		_line_provider: LineProvider=null
 	):
 	gap = _gap
 	type = _type

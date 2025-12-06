@@ -4,9 +4,12 @@ extends Node2D
 
 
 
-#@abstract
-#func _entity_ready(entity: Entity)-> void
 
 
-func _on_injected(): 
+## 全域 DI 注入
+func _on_injected():
+	pass
+
+## Entity 初始化注入完成 
+func _on_setuped():
 	pass
