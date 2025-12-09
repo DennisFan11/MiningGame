@@ -42,7 +42,7 @@ func _injection(target_node: Node):
 		if property in target_node:
 			print("inject "+ str(property) + " on ", target_node)
 			target_node.set(property, _dependence[property])
-			print("result: ", target_node[property])
+			#print("result: ", target_node[property])
 	
 
 ## 遞歸更新

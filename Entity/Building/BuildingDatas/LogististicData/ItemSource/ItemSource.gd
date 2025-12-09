@@ -17,5 +17,9 @@ func get_icon()-> Texture:
 	return preload("uid://bfwy5p5cn5j7p")
 
 
-func get_components()-> Array[BuildingDB.ComponentData]:
-	return [BuildingDB.ITEM_SOURCE]
+func get_component_datas()-> Array[ComponentData]:
+	return [
+		ComponentDB.ICON,
+		ComponentDB.ALL_OUT_LOGISTIC_IO,
+		ComponentDB.ITEM_SOURCE,
+	]

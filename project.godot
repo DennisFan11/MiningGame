@@ -33,8 +33,8 @@ folder_colors={
 "res://Asset/": "gray",
 "res://Core/": "yellow",
 "res://Entity/": "teal",
-"res://Entity/Building/BuildingDataComponents/": "blue",
 "res://Entity/Building/BuildingDatas/": "blue",
+"res://Entity/ComponentSystem/BuildingDataComponents/": "blue",
 "res://GameSystem/": "orange",
 "res://Scene/": "purple"
 }

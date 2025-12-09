@@ -42,31 +42,15 @@ static func create_construct(data: BuildingData)-> BuildingConstruct:
 static func create_building(data: BuildingData)-> Building:
 	var node: BuildingEntity = preload("uid://dgmf1d3lpy1rg").instantiate()
 	node.data = data
-	node.set_components(data.get_components())
+	for component_data: ComponentData in data.get_component_datas():
+		ComponentDB.inject_component(node, component_data)
 	return node
 
 ## COMPONENTS
-class ComponentData:
-	extends Resource
-	var path: String
-	var scene: Node
-	func _init(_path: String, _scene: Node) -> void:
-		path = _path
-		scene = _scene
-		
-static var CONVEYOR: ComponentData :
-	get:
-		return ComponentData.new(
-		"__conveyor", preload("uid://mkj5auj0anbn").instantiate())
-static var ITEM_SOURCE: ComponentData :
-	get:
-		return ComponentData.new(
-		"__item_source", preload("uid://xb5ns0p5tqb1").instantiate())
 
-static var ITEM_VOID: ComponentData :
-	get:
-		return ComponentData.new(
-		"__item_void", preload("uid://cnt77watx4j2").instantiate())
+
+
+
 
 
 

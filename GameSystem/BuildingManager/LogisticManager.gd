@@ -23,11 +23,11 @@ func port_rebind(coord: Vector2i):
 			
 
 
-var _component_map: Dictionary[Vector2i, LogisticComponent] = {}
-func get_logistic(coord: Vector2i)-> LogisticComponent:
+var _component_map: Dictionary[Vector2i, LogisticIOComponent] = {}
+func get_logistic(coord: Vector2i)-> LogisticIOComponent:
 	return _component_map.get(coord, null)
 
-func set_logistic(coord: Vector2i, com: LogisticComponent):
+func set_logistic(coord: Vector2i, com: LogisticIOComponent):
 	_component_map.set(coord, com)
 
 func erase_logistic(coord: Vector2i):
@@ -37,7 +37,7 @@ func erase_logistic(coord: Vector2i):
 # 3. 內部邏輯
 # ==============================================================================
 func _port_rebind(coord: Vector2i):
-	var comp: LogisticComponent = get_logistic(coord)
+	var comp: LogisticIOComponent = get_logistic(coord)
 	if not comp:
 		return 
 	comp.port_rebind_ALG()
@@ -53,10 +53,9 @@ func _draw() -> void:
 	# 1. 收集所有物品到一個扁平的陣列中
 	var all_items: Array[LineItem] = []
 	
-	for comp: LogisticComponent in _component_map.values():
-		if comp is not BeltComponent:
-			continue
-		comp = comp as BeltComponent
+	for comp: LogisticIOComponent in _component_map.values():
+		#if comp is not LogisticIO:
+			#continue
 		
 		# append_array 比迴圈 append 更快
 		all_items.append_array(comp.get_line_items())
@@ -64,16 +63,18 @@ func _draw() -> void:
 
 	# 2. 直接對「所有物品」進行座標排序 (Y 為主，X 為輔)
 	# 這樣保證了 Y 座標較大 (下方) 的物品永遠會蓋住 Y 座標較小 (上方) 的物品
-	all_items.sort_custom(func(a: LineItem, b: LineItem):
+	all_items.sort_custom(func(a, b):
 		var pos_a = a.get_position()
 		var pos_b = b.get_position()
-		
-		# 如果 Y 座標不同，上方 (Y小) 的先畫
-		if not is_equal_approx(pos_a.y, pos_b.y):
-			return pos_a.y < pos_b.y
-		
-		# 如果 Y 座標相同，左方 (X小) 的先畫
-		return pos_a.x < pos_b.x
+
+		# 計算「左下傾向」的分數
+		# 公式：Y - X
+		# 原因：Y 越大代表越下面(+)，X 越小代表越左邊(-)，所以 (Y - X) 數值越大代表越靠左下
+		var score_a = pos_a.y - pos_a.x
+		var score_b = pos_b.y - pos_b.x
+
+		# 分數大的排前面 (左下優先)
+		return score_a > score_b
 	)
 
 	# 3. 依序繪製

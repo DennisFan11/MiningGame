@@ -17,8 +17,8 @@ func get_description()-> String
 
 
 ## 獲取具體實現的組件
-func get_components()-> Array[BuildingDB.ComponentData]:
-	return [BuildingDB.ComponentData.new("__icon", _create_basic_icon())]
+func get_component_datas()-> Array[ComponentData]:
+	return [ComponentDB.ICON]
 	
 
 
