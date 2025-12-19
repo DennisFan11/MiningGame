@@ -16,8 +16,9 @@ func _ready() -> void:
 
 
 func port_rebind(coord: Vector2i):
-	for x in range(-1, 2):
-		for y in range(-1, 2):
+	const R = 2
+	for x in range(-R, R+1):
+		for y in range(-R, R+1):
 			var offset = Vector2i(x, y)
 			_port_rebind(coord + offset)
 			

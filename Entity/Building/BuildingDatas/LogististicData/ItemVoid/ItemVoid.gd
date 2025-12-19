@@ -20,6 +20,6 @@ func get_icon()-> Texture:
 func get_component_datas()-> Array[ComponentData]:
 	return [
 		ComponentDB.ICON,
-		ComponentDB.CONVEYOR_LOGISTIC_IO,
+		ComponentDB.ALL_IN_LOGISTIC_IO,
 		ComponentDB.ITEM_VOID_LOGIC,
 	]

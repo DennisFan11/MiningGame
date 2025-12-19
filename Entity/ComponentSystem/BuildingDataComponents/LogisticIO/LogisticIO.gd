@@ -104,6 +104,9 @@ func _set_input(global_coord: Vector2i, item_source: IItemTransport):
 
 ## Logistic Logic
 func get_inputs()-> Dictionary[Vector2i, IItemTransport]:
+	for i in _input_map.keys():
+		if not is_instance_valid(_input_map[i]):
+			_input_map.erase(i)
 	return _input_map
 
 
