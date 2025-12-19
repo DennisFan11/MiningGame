@@ -2,6 +2,9 @@ class_name GameController
 extends Node2D
 
 
+
+
+
 func _recursive_call(node: Node, method:String):
 	if node.has_method(method):
 		await node.call(method)
@@ -15,9 +18,19 @@ func _ready() -> void:
 	
 	# 遞歸重新注入
 	DI.injection(self, true)
-	
+
+	# [Client Only] 場景載入完成後才登入，確保 PlayerManager/Spawner 已就緒
+	if not multiplayer.is_server():
+		var my_name = NetworkManager.player_info.get("name", "Client")
+		var my_uid = str(randi())
+		print("Client: 場景載入完畢，請求登入: ", my_name)
+		AuthManager.login(my_uid, my_name)
+
 	_recursive_call(self, "_game_start")
-	#%BuildingEffect.trans
+	
+
+
+
 
 
 
@@ -44,5 +57,4 @@ func get_game_scale()-> float:
 
 
 
-func get_player()-> Player:
-	return %Player
+

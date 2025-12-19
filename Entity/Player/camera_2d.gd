@@ -8,20 +8,25 @@ func _ready() -> void:
 
 
 
-var _player: Player
+#var _player: Player
+var _player_manager: PlayerManager
+
 
 const OFFSET_MAX: float = 170.0
 const OFFSET_SCALE: float = 0.35
 const SPEED = 8.0
 
 func _process(delta: float) -> void:
-	if not _player:
-		return 
+	#if not _player:
+		#return 
 	
-	var mouse_vec: Vector2 =  get_global_mouse_position()\
-			- _player.get_player_position()
-	var target_pos: Vector2 = _player.get_player_position() \
-		+ (mouse_vec * OFFSET_SCALE).limit_length(OFFSET_MAX)
+	#var mouse_vec: Vector2 =  get_global_mouse_position()\
+			#- _player.get_player_position()
+	#var target_pos: Vector2 = _player.get_player_position() \
+		#+ (mouse_vec * OFFSET_SCALE).limit_length(OFFSET_MAX)
+	var player := _player_manager.get_local_player_node()
+	if not player: return 
+	var target_pos := player.get_player_position()
 	
 	position = lerp(position, target_pos, SPEED * delta)
 	

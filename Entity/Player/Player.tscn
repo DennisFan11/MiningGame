@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://d3hxiu2vex0al"]
+[gd_scene load_steps=12 format=3 uid="uid://d3hxiu2vex0al"]
 
 [ext_resource type="Texture2D" uid="uid://durpmb0cpvpvi" path="res://icon.svg" id="1_367n4"]
 [ext_resource type="Script" uid="uid://bcps5pwj13g8t" path="res://Entity/Player/player.gd" id="1_ic0o1"]
@@ -6,7 +6,6 @@
 [ext_resource type="PackedScene" uid="uid://dd8fmea27qbg0" path="res://Entity/Player/Crosshair/Crosshair.tscn" id="5_wu0n7"]
 [ext_resource type="PackedScene" uid="uid://bmidykio6n12a" path="res://Entity/Weapon/Hammer/Hammer.tscn" id="6_vk8em"]
 [ext_resource type="PackedScene" uid="uid://4ik2roj8liup" path="res://Entity/_components/Builder/Builder.tscn" id="7_3xy24"]
-[ext_resource type="Script" uid="uid://drl8l4pna44wv" path="res://Entity/Player/camera_2d.gd" id="7_vk8em"]
 
 [sub_resource type="Curve" id="Curve_wu0n7"]
 _data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.5496183, 1), 0.0, 0.0, 0, 0, Vector2(0.77099234, 0.03919816), 0.0, 0.0, 0, 0]
@@ -82,6 +81,3 @@ update_scale = false
 unique_name_in_owner = true
 
 [node name="Hammer" parent="CharacterBody2D" instance=ExtResource("6_vk8em")]
-
-[node name="Camera2D" type="Camera2D" parent="."]
-script = ExtResource("7_vk8em")

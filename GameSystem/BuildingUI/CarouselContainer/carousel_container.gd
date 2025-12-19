@@ -31,8 +31,10 @@ var _dist_cache := {}
 # ---- Lifecycle ------------------------------------------------------------
 func _enter_tree() -> void:
 	# 子結點增減時自動刷新
-	child_entered_tree.connect(_on_child_changed)
-	child_exiting_tree.connect(_on_child_changed)
+	if not child_entered_tree.is_connected(_on_child_changed):
+		child_entered_tree.connect(_on_child_changed)
+	if not child_exiting_tree.is_connected(_on_child_changed):
+		child_exiting_tree.connect(_on_child_changed)
 
 func _ready() -> void:
 	_refresh()

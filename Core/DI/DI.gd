@@ -12,6 +12,7 @@ var _dependence: Dictionary = { # property : Object
 
 ## 註冊依賴項目
 func register(property: String, instance) -> void:
+	print("[DI] Registering: ", property, " -> ", instance)
 	_dependence[property] = instance
 
 ## 手動獲取依賴 (由 GameLoop Manager觸發 確保所有依賴項目以註冊)

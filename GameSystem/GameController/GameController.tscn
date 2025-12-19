@@ -142,6 +142,7 @@ script = ExtResource("5_8d81h")
 [node name="PlayerManager" parent="." instance=ExtResource("20_ammeq")]
 
 [node name="LightManager" type="Node2D" parent="."]
+visible = false
 script = ExtResource("9_870uv")
 
 [node name="CanvasGroup" type="CanvasGroup" parent="LightManager"]
