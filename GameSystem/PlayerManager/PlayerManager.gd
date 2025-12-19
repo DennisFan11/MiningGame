@@ -1,0 +1,2 @@
+class_name PlayerManager
+extends Node2D

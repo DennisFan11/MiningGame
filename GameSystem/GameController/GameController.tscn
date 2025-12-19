@@ -1,6 +1,5 @@
-[gd_scene load_steps=31 format=3 uid="uid://6hb0myg4mp7y"]
+[gd_scene load_steps=29 format=3 uid="uid://6hb0myg4mp7y"]
 
-[ext_resource type="PackedScene" uid="uid://d3hxiu2vex0al" path="res://Entity/Player/Player.tscn" id="1_1au6a"]
 [ext_resource type="Script" uid="uid://cmqnwexcjcp8x" path="res://GameSystem/GameController/game_controller.gd" id="1_3nbeu"]
 [ext_resource type="Shader" uid="uid://c7dh2mjrjd04o" path="res://GameSystem/GameController/FogOfWar.gdshader" id="2_5xj0y"]
 [ext_resource type="PackedScene" uid="uid://pdwa0g0tgsgi" path="res://GameSystem/TerrainManager/TerrainManager.tscn" id="2_26c85"]
@@ -8,10 +7,8 @@
 [ext_resource type="Script" uid="uid://cweu841siuwfd" path="res://GameSystem/BulletManager/bullet_manager.gd" id="5_8d81h"]
 [ext_resource type="Script" uid="uid://snlh8fakk8c7" path="res://GameSystem/SoundManager/SoundManager.gd" id="7_8d81h"]
 [ext_resource type="PackedScene" uid="uid://bwts3a0tx8si3" path="res://GameSystem/DebugUI/debug_ui.tscn" id="7_ee1h0"]
-[ext_resource type="PackedScene" uid="uid://clp8gexovayi8" path="res://Entity/Enemy/Zako/Zako.tscn" id="7_kvmvy"]
 [ext_resource type="Script" uid="uid://mox3dq0fkucy" path="res://GameSystem/GameController/debug_draw.gd" id="8_pqcmd"]
 [ext_resource type="PackedScene" uid="uid://r22k8qd2ihho" path="res://GameSystem/EscUI/esc_ui.tscn" id="8_raev3"]
-[ext_resource type="PackedScene" uid="uid://cv6685ggoqnqh" path="res://Entity/Enemy/SandBox/Sandbox.tscn" id="8_stmph"]
 [ext_resource type="Script" uid="uid://dkgqimy0e48fd" path="res://GameSystem/LightManager/LightManager.gd" id="9_870uv"]
 [ext_resource type="Shader" uid="uid://ppi7uandjmsm" path="res://GameSystem/LightManager/lightShader.gdshader" id="10_fry7r"]
 [ext_resource type="PackedScene" uid="uid://worvs1wofc78" path="res://GameSystem/BitmaskManager/bitmask_manager.tscn" id="11_v56b3"]
@@ -21,6 +18,7 @@
 [ext_resource type="Script" uid="uid://dmpecara50fmh" path="res://GameSystem/GameController/ctr_shader.gd" id="18_02jrl"]
 [ext_resource type="PackedScene" uid="uid://78njtwpea5xy" path="res://GameSystem/BuildingManager/BuildingManager.tscn" id="19_nyrts"]
 [ext_resource type="PackedScene" uid="uid://qi5awbpwcjsr" path="res://GameSystem/PlayerItemRepo/PlayerItemRepo.tscn" id="20_2vjy7"]
+[ext_resource type="PackedScene" uid="uid://dw134rrfyr88p" path="res://GameSystem/PlayerManager/PlayerManager.tscn" id="20_ammeq"]
 [ext_resource type="PackedScene" uid="uid://bet8g7705sris" path="res://GameSystem/ParticleManager/ParticleManager.tscn" id="21_ammeq"]
 
 [sub_resource type="Curve" id="Curve_raev3"]
@@ -141,16 +139,7 @@ material = SubResource("ShaderMaterial_kvmvy")
 [node name="BulletManager" parent="CanvasGroup" instance=ExtResource("4_ee1h0")]
 script = ExtResource("5_8d81h")
 
-[node name="Player" parent="." instance=ExtResource("1_1au6a")]
-unique_name_in_owner = true
-
-[node name="EnemyManager" type="Node2D" parent="."]
-
-[node name="Zako" parent="EnemyManager" instance=ExtResource("7_kvmvy")]
-position = Vector2(-613, 266)
-
-[node name="Sandbox" parent="EnemyManager" instance=ExtResource("8_stmph")]
-position = Vector2(-311, 26)
+[node name="PlayerManager" parent="." instance=ExtResource("20_ammeq")]
 
 [node name="LightManager" type="Node2D" parent="."]
 script = ExtResource("9_870uv")

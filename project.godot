@@ -20,6 +20,8 @@ config/icon="res://icon.svg"
 InputManager="*res://Core/InputManager/InputManager.gd"
 DI="*res://Core/DI/DI.gd"
 Utility="*res://Core/Utility.gd"
+NetworkManager="*res://Core/Network/NetworkManager.gd"
+AuthManager="*res://Core/Network/AuthManager.gd"
 
 [display]
 
