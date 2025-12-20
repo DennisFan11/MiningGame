@@ -7,7 +7,7 @@ signal player_connected(peer_id, player_info)
 signal player_disconnected(peer_id)
 signal server_disconnected
 
-const PORT = 7777
+const PORT = 17777
 const DEFAULT_IP = "127.0.0.1"
 const MAX_CLIENTS = 4
 
