@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://dmqko2wm6gy7a"]
+[gd_scene load_steps=8 format=3 uid="uid://dmqko2wm6gy7a"]
 
 [ext_resource type="Script" uid="uid://b1eaxpi7etxun" path="res://Entity/Building/BuildingConstruct/BuildingConstruct.gd" id="1_jfmsv"]
 [ext_resource type="Script" uid="uid://cithxaqsmesw8" path="res://Entity/_components/IFF/IFF.gd" id="2_vcpon"]
@@ -12,6 +12,11 @@ shader = ExtResource("3_lxk3u")
 shader_parameter/edge = 0.20999999530608
 shader_parameter/color = Color(1, 0.7490196, 0.047058824, 0.8862745)
 shader_parameter/line_thickness = 0.0110000005225
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_break"]
+properties/0/path = NodePath(":breaking")
+properties/0/spawn = true
+properties/0/replication_mode = 2
 
 [node name="BuildingConstruct" type="Node2D"]
 script = ExtResource("1_jfmsv")
@@ -33,3 +38,6 @@ expand_mode = 1
 stretch_mode = 5
 script = ExtResource("3_o6wbc")
 metadata/_custom_type_script = "uid://cjeug1b0jo3mk"
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+replication_config = SubResource("SceneReplicationConfig_break")

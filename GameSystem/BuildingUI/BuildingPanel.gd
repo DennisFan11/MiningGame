@@ -3,16 +3,13 @@ class_name BuildingPanel
 extends Panel
 
 
-signal select_building( building_data: BuildingData )
+signal select_building(building_data: BuildingData)
 
 
 var panel: CarouselContainer = null
 
 
-
-
 func _ready() -> void:
-	
 	for i in %Container.get_children():
 		i.queue_free()
 	panel = CarouselContainer.new()
@@ -34,7 +31,6 @@ func _ready() -> void:
 	_update_building_name()
 
 
-
 class CloumnCarouselContainer:
 	extends CarouselContainer
 	var BuildingType: BuildingDB.BuildingType
@@ -48,9 +44,6 @@ class BuildingContainer:
 		add_child(text)
 		
 	
-
-
-
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("building_up"):
 		panel.get_selected().move(1)
@@ -72,18 +65,22 @@ func _input(event: InputEvent) -> void:
 	
 	## 選中建築
 	if event.is_action_pressed("enter"):
-		var data: BuildingData= panel.get_selected().get_selected().Building_data
+		var data: BuildingData = panel.get_selected().get_selected().Building_data
 		select_building.emit(data.duplicate(true))
 
 
 func _update_type_name():
+	var selected = panel.get_selected()
+	if not selected:
+		%ColumnText.text = "None"
+		return
+		
 	var type_name = \
-		(panel.get_selected() as CloumnCarouselContainer)\
+		(selected as CloumnCarouselContainer) \
 		.BuildingType.get_name()
 	%ColumnText.text = type_name
 	
 	
-
 func _update_building_name():
 	var block = panel.get_selected().get_selected()
 	if block is not BuildingContainer:

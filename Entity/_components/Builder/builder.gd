@@ -19,8 +19,8 @@ var team: BitmaskManager.TEAM = BitmaskManager.TEAM.IDLE:
 #var _building_plan_queue: Array[BuildingPlan] = []
 
 
-
 func _process(delta: float) -> void:
+	# Run on everyone (Server, Owner, Puppet)
 	match state:
 		IDLE:
 			pass
@@ -46,9 +46,7 @@ func _process(delta: float) -> void:
 						break
 
 
-
-func __update_polygon(i: BuildingEntity, breaking: bool=false):
-	
+func __update_polygon(i: BuildingEntity, breaking: bool = false):
 	var polygon = i.get_global_points()
 	polygon.append(global_position)
 	polygon = Geometry2D.convex_hull(polygon)
@@ -60,16 +58,6 @@ func __update_polygon(i: BuildingEntity, breaking: bool=false):
 	%BuildingLine.default_color = ColorDB.get_building_color(true, breaking)
 
 
-
-
-
-
-
-
-
-
-
-
 ## 建築操作
 
 
@@ -77,11 +65,6 @@ func _try_upgrade(coord: Vector2i):
 	_building_service.try_upgrade(coord)
 func _try_delete(coord: Vector2i):
 	_building_service.try_delete(coord)
-
-
-
-
-
 
 
 #region move res
@@ -98,10 +81,9 @@ func _build(building: BuildingConstruct, dt: float) -> void:
 	var need_pos: PackedItem = need.vmax(PackedItem.zero())
 	var need_total: float = need_pos.vtotal()
 
-	# 若無正缺口或吞吐為 0 → 完成或不動作
+	# 若無正缺口或吞吐為 0 → 完成 (Server 會自動 Upgrade，這裡只需等待)
 	var item_speed := BUILDING_SPEED * dt
 	if is_zero_approx(need_total):
-		_try_upgrade(building.state.coord)
 		return
 
 	# 計算請求量（不超過存量）
@@ -111,20 +93,21 @@ func _build(building: BuildingConstruct, dt: float) -> void:
 	# 收尾保險：逐項夾在 [0, need_pos] 內，避免浮點誤差
 	moving = moving.vclamp(PackedItem.zero(), need_pos)
 
-	_player_item_repo.contain = have.sub(moving)
-	building.contain_item = building.contain_item.add(moving)
-	
-	building.update_progress()
-## 移除一個建築（把已投入資源退回倉庫；總量限流 + 依比例）
+	# Dual Simulation Execution (Direct Call)
+	if not moving.is_zero():
+		_building_service.try_transfer_resource(building.state.coord, moving, _player_item_repo)
+
+## 移除一個建築
 func _remove(building: BuildingConstruct, dt: float) -> void:
 	# 僅保留正值（負值清 0）
 	var give_back := building.contain_item.vmax(PackedItem.zero())
 	var total_back := give_back.vtotal()
 
-	## 無可退 → 完成移除
-	var item_speed := BUILDING_SPEED * dt  # 可獨立設置 REMOVE_SPEED
+	## 無可退 → 完成 (Server 自動 Delete)
+	var item_speed := BUILDING_SPEED * dt
 	if is_zero_approx(total_back):
-		_try_delete(building.state.coord)
+		if multiplayer.is_server() and building.breaking:
+			_building_service.try_delete(building.state.coord)
 		return
 
 	# 依比例限制本 tick 退回總量 cap
@@ -132,22 +115,11 @@ func _remove(building: BuildingConstruct, dt: float) -> void:
 
 	# 逐項保險：夾在 [0, give_back]（避免浮點誤差）
 	request = request.vclamp(PackedItem.zero(), give_back)
-
-	# 狀態更新
-	_player_item_repo.contain = _player_item_repo.contain.add(request)
-	building.contain_item = building.contain_item.sub(request)
-
-	# 若已全部清空，完成移除
-	if building.contain_item.vmax(PackedItem.zero()).vtotal() <= 0.0:
-		_try_delete(building.state.coord)
-		return 
 	
-	building.update_progress()
-
-
-
-
-
+	# Dual Simulation Execution (Direct Call)
+	if not request.is_zero():
+		var negative_request = PackedItem.zero().sub(request)
+		_building_service.try_transfer_resource(building.state.coord, negative_request, _player_item_repo)
 
 #endregion
 

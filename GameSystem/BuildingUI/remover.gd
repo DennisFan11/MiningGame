@@ -42,8 +42,8 @@ func _R_finish() -> void: # exec-once
 	var rect := Rect2(first_pos, second_pos - first_pos).abs()
 
 	# 避免點一下幾乎沒移動造成 size=0
-	if rect.size == Vector2.ZERO:
-		return
+	#if rect.size == Vector2.ZERO:
+		#return
 
 	# 套用與繪製相同的格點吸附邏輯
 	var v1 = _building_manager.floor_pos(rect.position)

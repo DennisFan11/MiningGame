@@ -5,4 +5,5 @@ var contain: PackedItem = PackedItem.create_full()
 
 
 func _ready() -> void:
-	DI.register("_player_item_repo", self)
+	if is_multiplayer_authority():
+		DI.register("_player_item_repo", self)
