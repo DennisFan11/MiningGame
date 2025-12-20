@@ -20,6 +20,11 @@ elif [ "$OS" = "Linux" ]; then
     # 搜尋當前目錄下含有 "Godot" 且可執行的檔案
     GODOT_BIN=$(find "$PROJECT_PATH" -maxdepth 1 -name "*Godot*linux*" -type f -executable | head -n 1)
     
+    # 如果專案目錄下找不到，嘗試往上一層目錄找 (例如 workspace root)
+    if [ -z "$GODOT_BIN" ]; then
+        GODOT_BIN=$(find "$PROJECT_PATH/.." -maxdepth 1 -name "*Godot*linux*" -type f -executable | head -n 1)
+    fi
+    
     # 如果找不到，嘗試使用系統路徑的 godot 指令
     if [ -z "$GODOT_BIN" ]; then
         if command -v godot &> /dev/null; then
@@ -49,6 +54,8 @@ fi
 echo "使用 Godot: $GODOT_BIN"
 echo "---------------------------------------------------"
 
+# 執行 Godot
+# 2>&1 代表將錯誤輸出 (stderr) 也導向標準輸出 (stdout)
 # 執行 Godot
 # 2>&1 代表將錯誤輸出 (stderr) 也導向標準輸出 (stdout)
 "$GODOT_BIN" --path "$PROJECT_PATH" --headless --server 2>&1 | tee server.log
