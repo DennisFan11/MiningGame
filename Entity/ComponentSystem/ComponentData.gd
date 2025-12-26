@@ -3,12 +3,11 @@ class_name ComponentData
 extends Resource
 
 
+@abstract
+func get_component() -> Component
 
 @abstract
-func get_component()-> Component
-
-@abstract
-func get_property()-> String
+func get_property() -> String
 
 func inject_to(entity: Entity):
 	var comp := get_component()

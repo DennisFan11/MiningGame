@@ -45,7 +45,7 @@ func __get_input_item()-> LineItem:
 				item.line_provider = _line_provider[1]
 			Vector2i.DOWN:
 				item.line_provider = _line_provider[2]
-		print("get input item on: ", key_arr)
+		#print("get input item on: ", key_arr)
 		return item
 	return 
 

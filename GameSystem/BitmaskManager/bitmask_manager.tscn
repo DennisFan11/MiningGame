@@ -1,3 +1,6 @@
-[gd_scene format=3 uid="uid://worvs1wofc78"]
+[gd_scene load_steps=2 format=3 uid="uid://worvs1wofc78"]
+
+[ext_resource type="Script" uid="uid://case3gsw64e38" path="res://GameSystem/BitmaskManager/bitmask_manager.gd" id="1_aygex"]
 
 [node name="BitmaskManager" type="Node2D"]
+script = ExtResource("1_aygex")

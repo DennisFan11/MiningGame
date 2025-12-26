@@ -67,7 +67,7 @@ func start_host(port: int = DEFAULT_PORT, is_single_player: bool = false, is_ded
 		peer = ENetMultiplayerPeer.new()
 		error = peer.create_server(port, 1 if is_single_player else MAX_CLIENTS)
 		# 單人模式僅允許本地連線，稍微優化頻寬
-		if is_single_player:
+		if error == OK and is_single_player:
 			peer.host.compress(ENetConnection.COMPRESS_RANGE_CODER)
 	
 	if error != OK:
