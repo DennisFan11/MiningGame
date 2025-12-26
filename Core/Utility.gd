@@ -124,7 +124,7 @@ func raycast_once(
 # Network Utilities
 #
 
-static func parse_address_string(input: String, default_port: int, default_ip: String) -> Dictionary:
+func parse_address_string(input: String, default_port: int, default_ip: String) -> Dictionary:
 	var result = {"ip": default_ip, "port": default_port, "valid": false, "protocol": 0} # 0 = UDP (Simulated Enum)
 	var working_input = input
 	
@@ -166,7 +166,7 @@ static func parse_address_string(input: String, default_port: int, default_ip: S
 		# 一般 IPv4 或 Hostname
 		var last_colon = working_input.rfind(":")
 		# 若只有一個冒號，且非 IPv6 (IPv6 至少兩個冒號)，才視為 Port 分隔
-		# 但為了簡單，這裡假設如果有多個冒號且沒有 []，則視為純 IPv6
+		# 但為了簡單，這裡假設如果有多個冒號且沒有 [], 則視為純 IPv6
 		if last_colon != -1 and working_input.count(":") == 1:
 			ip_part = working_input.substr(0, last_colon)
 			port_part = working_input.substr(last_colon + 1)
@@ -191,7 +191,7 @@ static func parse_address_string(input: String, default_port: int, default_ip: S
 	result.valid = true
 	return result
 
-static func parse_cmdline_args(default_port: int) -> Dictionary:
+func parse_cmdline_args(default_port: int) -> Dictionary:
 	var result = {"port": default_port, "protocol": 0} # 0 = UDP
 	var args = OS.get_cmdline_args()
 	for arg in args:
