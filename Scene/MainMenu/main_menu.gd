@@ -31,6 +31,7 @@ func _on_join_pressed() -> void:
 	_save_player_info()
 	var ip_text = _ip_input.text
 	
+	# 使用 static function 時建議加上 class name
 	var result = NetworkManager.parse_address_string(ip_text)
 	
 	if not result.valid:
@@ -39,10 +40,14 @@ func _on_join_pressed() -> void:
 		
 	var ip = result.ip
 	var port = result.port
+	var protocol = result.protocol
 			
-	print("嘗試加入伺服器: %s:%d" % [ip, port])
+	print("嘗試加入伺服器: %s:%d (Protocol: %s)" % [ip, port, "TCP" if protocol == NetworkManager.Protocol.TCP else "UDP"])
 	
-	NetworkManager.join_game(ip, port)
+	NetworkManager.join_game(ip, port, protocol)
+
+# ... (omitted) ...
+
 
 func _save_player_info() -> void:
 	var player_name = _name_input.text
@@ -179,6 +184,7 @@ func _create_button(text: String, callback: Callable) -> Button:
 
 var _server_list_data = [
 	{"name": "Official Server", "ip": "game.dennisfan.work", "port": 17777},
+	{"name": "Official Server (GB10 - TCP)", "ip": "ws://gb10.dennisfan.work", "port": 17777},
 	{"name": "Localhost", "ip": "127.0.0.1", "port": 17777}
 ]
 
