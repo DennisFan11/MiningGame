@@ -20,21 +20,29 @@ func _ready() -> void:
 func _on_single_player_pressed() -> void:
 	_save_player_info()
 	print("啟動單人模式...")
-	NetworkManager.start_host(true) # true = single player mode
+	NetworkManager.start_host(NetworkManager.DEFAULT_PORT, true) # true = single player mode
 
 func _on_host_pressed() -> void:
 	_save_player_info()
 	print("啟動區域連線主機...")
-	NetworkManager.start_host(false) # false = multiplayer mode
+	NetworkManager.start_host(NetworkManager.DEFAULT_PORT, false) # false = multiplayer mode
 
 func _on_join_pressed() -> void:
 	_save_player_info()
-	var ip = _ip_input.text
-	if ip.is_empty():
-		ip = "127.0.0.1"
-	print("嘗試加入伺服器: ", ip)
+	var ip_text = _ip_input.text
 	
-	NetworkManager.join_game(ip)
+	var result = NetworkManager.parse_address_string(ip_text)
+	
+	if not result.valid:
+		_show_error("無效的地址格式！")
+		return
+		
+	var ip = result.ip
+	var port = result.port
+			
+	print("嘗試加入伺服器: %s:%d" % [ip, port])
+	
+	NetworkManager.join_game(ip, port)
 
 func _save_player_info() -> void:
 	var player_name = _name_input.text
@@ -122,7 +130,7 @@ func _setup_ui() -> void:
 	_vbox.add_child(join_hbox)
 	
 	_ip_input = LineEdit.new()
-	_ip_input.placeholder_text = "IP Address"
+	_ip_input.placeholder_text = "IP:Port"
 	_ip_input.text = "game.dennisfan.work"
 	_ip_input.custom_minimum_size.y = 60
 	_ip_input.add_theme_font_size_override("font_size", 32)
@@ -134,6 +142,29 @@ func _setup_ui() -> void:
 	btn_join.add_theme_font_size_override("font_size", 32)
 	btn_join.pressed.connect(_on_join_pressed)
 	join_hbox.add_child(btn_join)
+	
+	# 5. 錯誤訊息彈窗
+	_error_dialog = AcceptDialog.new()
+	_error_dialog.title = "錯誤"
+	add_child(_error_dialog)
+	
+	# 連接 NetworkManager 訊號
+	if not NetworkManager.connection_failed.is_connected(_on_connection_failed):
+		NetworkManager.connection_failed.connect(_on_connection_failed)
+	if not NetworkManager.server_disconnected.is_connected(_on_server_disconnected):
+		NetworkManager.server_disconnected.connect(_on_server_disconnected)
+
+var _error_dialog: AcceptDialog
+
+func _on_connection_failed():
+	_show_error("無法連線至伺服器！\n請檢查 IP 與 Port 是否正確。")
+
+func _on_server_disconnected():
+	_show_error("與伺服器斷開連線。")
+
+func _show_error(msg: String):
+	_error_dialog.dialog_text = msg
+	_error_dialog.popup_centered()
 
 func _create_button(text: String, callback: Callable) -> Button:
 	var btn = Button.new()
@@ -147,15 +178,24 @@ func _create_button(text: String, callback: Callable) -> Button:
 # ==============================================================================
 
 var _server_list_data = [
-	{"name": "Official Server (game.dennisfan.work)", "ip": "game.dennisfan.work"},
-	{"name": "Localhost (127.0.0.1)", "ip": "127.0.0.1"}
+	{"name": "Official Server", "ip": "game.dennisfan.work", "port": 17777},
+	{"name": "Localhost", "ip": "127.0.0.1", "port": 17777}
 ]
 
 func _populate_server_list():
 	_server_list.clear()
 	for server in _server_list_data:
-		_server_list.add_item(server.name)
+		# 如果 Port 不是預設值，或是為了清楚起見，可以顯示出來
+		# 這裡為了簡潔，只在選中時填入 input
+		_server_list.add_item("%s (%s:%d)" % [server.name, server.ip, server.port])
 
 func _on_server_selected(index: int):
-	var ip = _server_list_data[index].ip
-	_ip_input.text = ip
+	var data = _server_list_data[index]
+	var ip = data.ip
+	var port = data.port
+	
+	# 如果是預設 Port，可以只顯示 IP，但顯示完整 IP:Port 也比較明確
+	if port == NetworkManager.DEFAULT_PORT:
+		_ip_input.text = ip
+	else:
+		_ip_input.text = "%s:%d" % [ip, port]

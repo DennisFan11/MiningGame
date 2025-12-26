@@ -1,7 +1,7 @@
 shader_type canvas_item;
 
 // Add required screen texture uniform
-uniform sampler2D SCREEN_TEXTURE : hint_screen_texture, filter_linear_mipmap;
+uniform sampler2D SCREEN_TEXTURE : hint_screen_texture;
 
 // Display settings
 uniform bool overlay = false;
@@ -172,4 +172,6 @@ void fragment() {
     }
 
     COLOR = text;
+	//COLOR.a = 1.0;
+	COLOR = clamp(COLOR, vec4(0.0), vec4(1.));
 }

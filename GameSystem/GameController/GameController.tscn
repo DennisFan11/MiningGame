@@ -165,12 +165,10 @@ top_level = true
 z_index = 999
 script = ExtResource("8_pqcmd")
 
-[node name="CanvasLayer2" type="CanvasLayer" parent="."]
-
-[node name="BuildingUi" parent="CanvasLayer2" instance=ExtResource("16_ebgn5")]
-
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 process_mode = 3
+
+[node name="BuildingUi" parent="CanvasLayer" instance=ExtResource("16_ebgn5")]
 
 [node name="SoundManager" type="Node2D" parent="CanvasLayer"]
 script = ExtResource("7_8d81h")
@@ -207,7 +205,10 @@ grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("18_02jrl")
 
-[node name="DebugUI" parent="CanvasLayer" instance=ExtResource("7_ee1h0")]
+[node name="CanvasLayer2" type="CanvasLayer" parent="."]
+layer = 999
+
+[node name="DebugUI" parent="CanvasLayer2" instance=ExtResource("7_ee1h0")]
 metadata/_edit_lock_ = true
 metadata/_edit_group_ = true
 

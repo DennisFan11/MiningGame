@@ -6,8 +6,9 @@ extends Node
 signal player_connected(peer_id, player_info)
 signal player_disconnected(peer_id)
 signal server_disconnected
+signal connection_failed
 
-const PORT = 17777
+const DEFAULT_PORT = 17777
 const DEFAULT_IP = "127.0.0.1"
 const MAX_CLIENTS = 4
 
@@ -32,19 +33,82 @@ func _ready():
 		print("偵測到 Headless/Server 模式，自動啟動 Host...")
 		# 稍等一下確保 Autoload 初始化完畢
 		await get_tree().create_timer(0.1).timeout
-		start_host(false, true)
+		
+		var port = _get_port_from_args()
+		start_host(port, false, true)
 
 # ==============================================================================
 # Public API
 # ==============================================================================
 
+## 解析地址字串
+## 回傳格式: { "ip": String, "port": int, "valid": bool }
+static func parse_address_string(input: String, default_port: int = DEFAULT_PORT, default_ip: String = DEFAULT_IP) -> Dictionary:
+	var result = {"ip": default_ip, "port": default_port, "valid": false}
+	
+	if input.is_empty():
+		result.valid = true
+		return result
+		
+	var ip_part = input
+	var port_part = ""
+	
+	# IPv6 [::1]:8080 格式處理
+	if input.begins_with("["):
+		var end_bracket = input.find("]")
+		if end_bracket == -1:
+			return result # 格式錯誤
+			
+		# 取出 [] 內的 IP
+		ip_part = input.substr(1, end_bracket - 1)
+		
+		# 檢查是否有 Port
+		if end_bracket < input.length() - 1:
+			if input[end_bracket + 1] == ":":
+				port_part = input.substr(end_bracket + 2)
+			else:
+				# 有東西在 ] 後面但不是 :，無效
+				return result
+	else:
+		# 一般 IPv4 或 Hostname
+		var last_colon = input.rfind(":")
+		# 若只有一個冒號，且非 IPv6 (IPv6 至少兩個冒號)，才視為 Port 分隔
+		# 但為了簡單，這裡假設如果有多個冒號且沒有 []，則視為純 IPv6
+		if last_colon != -1 and input.count(":") == 1:
+			ip_part = input.substr(0, last_colon)
+			port_part = input.substr(last_colon + 1)
+			
+	# IP 驗證 (簡單檢查不能為空)
+	if ip_part.is_empty():
+		result.ip = default_ip
+	else:
+		result.ip = ip_part
+		
+	# Port 驗證
+	if not port_part.is_empty():
+		if port_part.is_valid_int():
+			result.port = port_part.to_int()
+		else:
+			return result # Port 非數字
+			
+	# 最終範圍檢查
+	if result.port < 1 or result.port > 65535:
+		return result
+		
+	result.valid = true
+	return result
+
 ## 啟動主機 (Host)
-func start_host(is_single_player: bool = false, is_dedicated: bool = false) -> void:
+func start_host(port: int = DEFAULT_PORT, is_single_player: bool = false, is_dedicated: bool = false) -> void:
+	if port < 1 or port > 65535:
+		printerr("無效的 Port: %d" % port)
+		return
+
 	var peer = ENetMultiplayerPeer.new()
-	var error = peer.create_server(PORT, 1 if is_single_player else MAX_CLIENTS)
+	var error = peer.create_server(port, 1 if is_single_player else MAX_CLIENTS)
 	
 	if error != OK:
-		printerr("無法啟動 Host: " + str(error))
+		printerr("無法啟動 Host (Port: %d): %s" % [port, error])
 		return
 		
 	if is_single_player:
@@ -52,7 +116,7 @@ func start_host(is_single_player: bool = false, is_dedicated: bool = false) -> v
 		peer.host.compress(ENetConnection.COMPRESS_RANGE_CODER)
 		
 	multiplayer.multiplayer_peer = peer
-	print("Host 已啟動 (單人模式: %s, Dedicated: %s)" % [is_single_player, is_dedicated])
+	print("Host 已啟動 (Port: %d, 單人模式: %s, Dedicated: %s)" % [port, is_single_player, is_dedicated])
 	
 	# Host 自己也要登入 (僅在非 Dedicated 模式下)
 	if not is_dedicated:
@@ -64,19 +128,26 @@ func start_host(is_single_player: bool = false, is_dedicated: bool = false) -> v
 	_load_game_scene()
 
 ## 加入遊戲 (Client)
-func join_game(address: String = "") -> void:
+func join_game(address: String = "", port: int = DEFAULT_PORT) -> void:
+	if port < 1 or port > 65535:
+		printerr("無效的 Port: %d" % port)
+		# 可以在這裡 emit signal 讓 UI 知道
+		_on_connected_fail()
+		return
+
 	if address.is_empty():
 		address = DEFAULT_IP
 		
 	var peer = ENetMultiplayerPeer.new()
-	var error = peer.create_client(address, PORT)
+	var error = peer.create_client(address, port)
 	
 	if error != OK:
 		printerr("無法建立 Client: " + str(error))
+		_on_connected_fail()
 		return
 		
 	multiplayer.multiplayer_peer = peer
-	print("正在連線至 %s..." % address)
+	print("正在連線至 %s:%d..." % [address, port])
 
 ## 斷開連線
 func close_connection() -> void:
@@ -88,6 +159,16 @@ func close_connection() -> void:
 # ==============================================================================
 # Internal Logic
 # ==============================================================================
+
+## 取得命令列參數中的 Port
+func _get_port_from_args() -> int:
+	var args = OS.get_cmdline_args()
+	for arg in args:
+		if arg.begins_with("--port="):
+			var port_str = arg.split("=")[1]
+			if port_str.is_valid_int():
+				return port_str.to_int()
+	return DEFAULT_PORT
 
 ## 載入遊戲主場景
 func _load_game_scene():
@@ -125,6 +206,7 @@ func _on_connected_ok():
 
 func _on_connected_fail():
 	printerr("連線失敗!")
+	connection_failed.emit()
 	close_connection()
 
 func _on_server_disconnected():

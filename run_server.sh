@@ -58,5 +58,5 @@ echo "---------------------------------------------------"
 # 2>&1 代表將錯誤輸出 (stderr) 也導向標準輸出 (stdout)
 # 執行 Godot
 # 2>&1 代表將錯誤輸出 (stderr) 也導向標準輸出 (stdout)
-"$GODOT_BIN" --path "$PROJECT_PATH" --headless --server 2>&1 | tee server.log
+"$GODOT_BIN" --path "$PROJECT_PATH" --headless --server "$@" 2>&1 | tee server.log
 
