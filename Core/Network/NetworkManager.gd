@@ -20,21 +20,10 @@ var players: Dictionary = {}
 ## 玩家資訊 (本地)
 var player_info = {"name": "Player"}
 
-## 連線延遲 (RTT), 單位: ms
-var current_latency: int = 0
-var _ping_timer: Timer
-
 func _ready():
 	# 攔截關閉請求，確保能正確發送斷線封包
 	get_tree().auto_accept_quit = false
 	
-	_ping_timer = Timer.new()
-	_ping_timer.wait_time = 1.0 # 每秒 Ping 一次
-	_ping_timer.autostart = false
-	_ping_timer.one_shot = false
-	_ping_timer.timeout.connect(_send_ping)
-	add_child(_ping_timer)
-
 	multiplayer.peer_connected.connect(_on_peer_connected)
 	multiplayer.peer_disconnected.connect(_on_peer_disconnected)
 	multiplayer.connected_to_server.connect(_on_connected_ok)
@@ -47,80 +36,18 @@ func _ready():
 		# 稍等一下確保 Autoload 初始化完畢
 		await get_tree().create_timer(0.1).timeout
 		
-		var args = _parse_args()
-		start_host(args.port, false, true, args.protocol)
+		var args = Utility.parse_cmdline_args(DEFAULT_PORT)
+		start_host(args.port, false, true, args.protocol as Protocol)
 
 # ==============================================================================
 # Public API
 # ==============================================================================
 
-## 解析地址字串
-## 回傳格式: { "ip": String, "port": int, "valid": bool, "protocol": Protocol }
+## 解析地址字串 (Delegated to Utility)
 static func parse_address_string(input: String, default_port: int = DEFAULT_PORT, default_ip: String = DEFAULT_IP) -> Dictionary:
-	var result = {"ip": default_ip, "port": default_port, "valid": false, "protocol": Protocol.UDP}
-	var working_input = input
-	
-	if working_input.is_empty():
-		result.valid = true
-		return result
-
-	# Protocol 偵測
-	if working_input.begins_with("ws://"):
-		result.protocol = Protocol.TCP
-		working_input = working_input.substr(5)
-	elif working_input.begins_with("wss://"):
-		result.protocol = Protocol.TCP # 目前視為 TCP (WebSocket)
-		working_input = working_input.substr(6)
-	elif working_input.begins_with("udp://"):
-		result.protocol = Protocol.UDP
-		working_input = working_input.substr(6)
-		
-	var ip_part = working_input
-	var port_part = ""
-	
-	# IPv6 [::1]:8080 格式處理
-	if working_input.begins_with("["):
-		var end_bracket = working_input.find("]")
-		if end_bracket == -1:
-			return result # 格式錯誤
-			
-		# 取出 [] 內的 IP
-		ip_part = working_input.substr(1, end_bracket - 1)
-		
-		# 檢查是否有 Port
-		if end_bracket < working_input.length() - 1:
-			if working_input[end_bracket + 1] == ":":
-				port_part = working_input.substr(end_bracket + 2)
-			else:
-				# 有東西在 ] 後面但不是 :，無效
-				return result
-	else:
-		# 一般 IPv4 或 Hostname
-		var last_colon = working_input.rfind(":")
-		# 若只有一個冒號，且非 IPv6 (IPv6 至少兩個冒號)，才視為 Port 分隔
-		# 但為了簡單，這裡假設如果有多個冒號且沒有 []，則視為純 IPv6
-		if last_colon != -1 and working_input.count(":") == 1:
-			ip_part = working_input.substr(0, last_colon)
-			port_part = working_input.substr(last_colon + 1)
-			
-	# IP 驗證 (簡單檢查不能為空)
-	if ip_part.is_empty():
-		result.ip = default_ip
-	else:
-		result.ip = ip_part
-		
-	# Port 驗證
-	if not port_part.is_empty():
-		if port_part.is_valid_int():
-			result.port = port_part.to_int()
-		else:
-			return result # Port 非數字
-			
-	# 最終範圍檢查
-	if result.port < 1 or result.port > 65535:
-		return result
-		
-	result.valid = true
+	var result = Utility.parse_address_string(input, default_port, default_ip)
+	# Cast integer protocol back to enum
+	result.protocol = result.protocol as Protocol
 	return result
 
 ## 啟動主機 (Host)
@@ -193,22 +120,16 @@ func join_game(address: String = "", port: int = DEFAULT_PORT, protocol: Protoco
 	multiplayer.multiplayer_peer = peer
 	print("正在連線至 %s (Protocol: %s)..." % [url, "TCP" if protocol == Protocol.TCP else "UDP"])
 
+## 斷開連線
+func close_connection() -> void:
+	multiplayer.multiplayer_peer = null
+	players.clear()
+	# 回到主選單 (尚未實作，暫時 reload)
+	# get_tree().change_scene_to_file("res://Scene/Menu/MainMenu.tscn") 
+
 # ==============================================================================
 # Internal Logic
 # ==============================================================================
-
-## 取得命令列參數
-func _parse_args() -> Dictionary:
-	var result = {"port": DEFAULT_PORT, "protocol": Protocol.UDP}
-	var args = OS.get_cmdline_args()
-	for arg in args:
-		if arg.begins_with("--port="):
-			var port_str = arg.split("=")[1]
-			if port_str.is_valid_int():
-				result.port = port_str.to_int()
-		elif arg == "--tcp" or arg == "--protocol=tcp":
-			result.protocol = Protocol.TCP
-	return result
 
 ## 載入遊戲主場景
 func _load_game_scene():
@@ -241,9 +162,6 @@ func _on_peer_disconnected(id: int):
 func _on_connected_ok():
 	print("成功連線至伺服器!")
 	
-	# 開始 Ping 統計
-	_ping_timer.start()
-	
 	# [Client] 連線成功後，先載入場景 -> 在場景的 GameController 中才執行登入
 	_load_game_scene()
 
@@ -257,33 +175,6 @@ func _on_server_disconnected():
 	server_disconnected.emit()
 	close_connection()
 	
-# ==============================================================================
-# Ping / Latency Logic
-# ==============================================================================
-
-func _send_ping():
-	if multiplayer.has_multiplayer_peer() and not multiplayer.is_server():
-		# Client -> Server
-		# 這裡使用 unreliable_ordered 或 unreliable 以最接近真實網路狀況 (但 TCP 下等同 reliable)
-		_remote_ping_request.rpc_id(1, Time.get_ticks_msec())
-
-@rpc("any_peer", "call_remote", "unreliable")
-func _remote_ping_request(client_time: int):
-	var sender_id = multiplayer.get_remote_sender_id()
-	# Server 回覆 Pong, 帶回原本的時間戳
-	_remote_pong_response.rpc_id(sender_id, client_time)
-
-@rpc("authority", "call_remote", "unreliable")
-func _remote_pong_response(client_time: int):
-	var now = Time.get_ticks_msec()
-	var rtt = now - client_time
-	# 簡單平滑處理 (Optional), 這裡直接更新
-	current_latency = rtt
-
-# ==============================================================================
-# System Notification
-# ==============================================================================
-
 func _notification(what):
 	if what == NOTIFICATION_WM_CLOSE_REQUEST:
 		print("偵測到視窗關閉，正在斷開連線...")
@@ -297,13 +188,3 @@ func _notification(what):
 			
 		# 必須手動執行退出，因為我們設了 auto_accept_quit = false
 		get_tree().quit()
-
-## 斷開連線 (Updated to stop timer)
-func close_connection() -> void:
-	if _ping_timer:
-		_ping_timer.stop()
-	current_latency = 0
-	multiplayer.multiplayer_peer = null
-	players.clear()
-	# 回到主選單 (尚未實作，暫時 reload)
-	# get_tree().change_scene_to_file("res://Scene/Menu/MainMenu.tscn") 
