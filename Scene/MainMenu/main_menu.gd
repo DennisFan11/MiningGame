@@ -184,7 +184,7 @@ func _create_button(text: String, callback: Callable) -> Button:
 
 var _server_list_data = [
 	{"name": "Official Server", "ip": "game.dennisfan.work", "port": 17777},
-	{"name": "Official Server (GB10 - TCP)", "ip": "ws://gb10.dennisfan.work", "port": 17777},
+	{"name": "Official Server (GB10 - TCP)", "ip": "ws://gb10.dennisfan.work", "port": 443},
 	{"name": "Localhost", "ip": "127.0.0.1", "port": 17777}
 ]
 

@@ -20,10 +20,21 @@ var players: Dictionary = {}
 ## 玩家資訊 (本地)
 var player_info = {"name": "Player"}
 
+## 連線延遲 (RTT), 單位: ms
+var current_latency: int = 0
+var _ping_timer: Timer
+
 func _ready():
 	# 攔截關閉請求，確保能正確發送斷線封包
 	get_tree().auto_accept_quit = false
 	
+	_ping_timer = Timer.new()
+	_ping_timer.wait_time = 1.0 # 每秒 Ping 一次
+	_ping_timer.autostart = false
+	_ping_timer.one_shot = false
+	_ping_timer.timeout.connect(_send_ping)
+	add_child(_ping_timer)
+
 	multiplayer.peer_connected.connect(_on_peer_connected)
 	multiplayer.peer_disconnected.connect(_on_peer_disconnected)
 	multiplayer.connected_to_server.connect(_on_connected_ok)
@@ -182,13 +193,6 @@ func join_game(address: String = "", port: int = DEFAULT_PORT, protocol: Protoco
 	multiplayer.multiplayer_peer = peer
 	print("正在連線至 %s (Protocol: %s)..." % [url, "TCP" if protocol == Protocol.TCP else "UDP"])
 
-## 斷開連線
-func close_connection() -> void:
-	multiplayer.multiplayer_peer = null
-	players.clear()
-	# 回到主選單 (尚未實作，暫時 reload)
-	# get_tree().change_scene_to_file("res://Scene/Menu/MainMenu.tscn") 
-
 # ==============================================================================
 # Internal Logic
 # ==============================================================================
@@ -237,6 +241,9 @@ func _on_peer_disconnected(id: int):
 func _on_connected_ok():
 	print("成功連線至伺服器!")
 	
+	# 開始 Ping 統計
+	_ping_timer.start()
+	
 	# [Client] 連線成功後，先載入場景 -> 在場景的 GameController 中才執行登入
 	_load_game_scene()
 
@@ -249,6 +256,33 @@ func _on_server_disconnected():
 	print("與伺服器斷開連線")
 	server_disconnected.emit()
 	close_connection()
+	
+# ==============================================================================
+# Ping / Latency Logic
+# ==============================================================================
+
+func _send_ping():
+	if multiplayer.has_multiplayer_peer() and not multiplayer.is_server():
+		# Client -> Server
+		# 這裡使用 unreliable_ordered 或 unreliable 以最接近真實網路狀況 (但 TCP 下等同 reliable)
+		_remote_ping_request.rpc_id(1, Time.get_ticks_msec())
+
+@rpc("any_peer", "call_remote", "unreliable")
+func _remote_ping_request(client_time: int):
+	var sender_id = multiplayer.get_remote_sender_id()
+	# Server 回覆 Pong, 帶回原本的時間戳
+	_remote_pong_response.rpc_id(sender_id, client_time)
+
+@rpc("authority", "call_remote", "unreliable")
+func _remote_pong_response(client_time: int):
+	var now = Time.get_ticks_msec()
+	var rtt = now - client_time
+	# 簡單平滑處理 (Optional), 這裡直接更新
+	current_latency = rtt
+
+# ==============================================================================
+# System Notification
+# ==============================================================================
 
 func _notification(what):
 	if what == NOTIFICATION_WM_CLOSE_REQUEST:
@@ -263,3 +297,13 @@ func _notification(what):
 			
 		# 必須手動執行退出，因為我們設了 auto_accept_quit = false
 		get_tree().quit()
+
+## 斷開連線 (Updated to stop timer)
+func close_connection() -> void:
+	if _ping_timer:
+		_ping_timer.stop()
+	current_latency = 0
+	multiplayer.multiplayer_peer = null
+	players.clear()
+	# 回到主選單 (尚未實作，暫時 reload)
+	# get_tree().change_scene_to_file("res://Scene/Menu/MainMenu.tscn") 
