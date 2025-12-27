@@ -6,14 +6,13 @@ Weapon 的 抽象基類
 必須實作 _attack
 """
 
-@export 
+@export
 var ATTACK_CD = 0.3
 
 
 ## 單次攻擊 
-@abstract 
-func _attack()-> void
-
+@abstract
+func _attack() -> void
 
 
 ## 外部接口 (被 WeaponController 使用 )
@@ -31,20 +30,9 @@ func attack(dt: float):
 		fire_cd = 0.0
 
 		
-	
-
-
-
-
-
-
-
-
-
 ## WeaponController ========================
 
 func _process(dt: float) -> void:
-	
 	## attack input
 	attack(dt)
 	
@@ -63,8 +51,8 @@ func _process(dt: float) -> void:
 		self.scale.y = 1.0
 
 
-func is_vec_faced(v1: Vector2, v2: Vector2)-> bool:
+func is_vec_faced(v1: Vector2, v2: Vector2) -> bool:
 	return v1.dot(v2) >= 0.0
 
-func _get_attack_vec()-> Vector2:
-	return (get_global_mouse_position()- global_position).normalized()
+func _get_attack_vec() -> Vector2:
+	return (get_global_mouse_position() - global_position).normalized()

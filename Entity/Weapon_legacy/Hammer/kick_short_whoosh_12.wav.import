@@ -3,12 +3,12 @@
 importer="wav"
 type="AudioStreamWAV"
 uid="uid://bc7behe7j88gs"
-path="res://.godot/imported/kick_short_whoosh_12.wav-e8346abd6087e15d3617534a0724aecc.sample"
+path="res://.godot/imported/kick_short_whoosh_12.wav-d38975444425cd87502988b16ce0cb36.sample"
 
 [deps]
 
-source_file="res://Entity/Weapon/Hammer/kick_short_whoosh_12.wav"
-dest_files=["res://.godot/imported/kick_short_whoosh_12.wav-e8346abd6087e15d3617534a0724aecc.sample"]
+source_file="res://Entity/Weapon_legacy/Hammer/kick_short_whoosh_12.wav"
+dest_files=["res://.godot/imported/kick_short_whoosh_12.wav-d38975444425cd87502988b16ce0cb36.sample"]
 
 [params]
 

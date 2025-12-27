@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cufagunbau0wa"
-path="res://.godot/imported/hammer.png-cae7d1c6fbcab9063061db04bccd5132.ctex"
+uid="uid://d0vwaax8lq38w"
+path="res://.godot/imported/Bullet.png-e01904c4f0e4d19fe58308f919ba630b.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Entity/Weapon/Hammer/hammer.png"
-dest_files=["res://.godot/imported/hammer.png-cae7d1c6fbcab9063061db04bccd5132.ctex"]
+source_file="res://Entity/Weapon_legacy/Bullet/Normal/Bullet.png"
+dest_files=["res://.godot/imported/Bullet.png-e01904c4f0e4d19fe58308f919ba630b.ctex"]
 
 [params]
 
