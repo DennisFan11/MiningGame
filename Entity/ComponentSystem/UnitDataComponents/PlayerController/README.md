@@ -18,12 +18,12 @@
 ```gdscript
 // PlayerData.gd
 func get_component_datas() -> Array[ComponentData]:
-    return [
-        BodyComponentData.new(get_body_polygon()),
-        ComponentDB.UNIT_MOVEMENT,
-        ComponentDB.PLAYER_CONTROLLER,  // ← 添加這個！
-        // ...
-    ]
+	return [
+		BodyComponentData.new(get_body_polygon()),
+		ComponentDB.UNIT_MOVEMENT,
+		ComponentDB.PLAYER_CONTROLLER,  // ← 添加這個！
+		// ...
+	]
 ```
 
 ### 2. 設定 Multiplayer Authority
@@ -42,32 +42,32 @@ player_entity.set_multiplayer_authority(peer_id)  // 設定為該玩家的 peer_
 ```gdscript
 // 在 UnitEntity 或其他組件中
 func _ready():
-    var controller = $PlayerControllerComponent
-    if controller:
-        controller.on_dash_requested.connect(_on_dash)
+	var controller = $PlayerControllerComponent
+	if controller:
+		controller.on_dash_requested.connect(_on_dash)
 
 func _on_dash():
-    print("Player requested dash!")
-    // 執行衝刺邏輯
+	print("Player requested dash!")
+	// 執行衝刺邏輯
 ```
 
 ## 🔄 工作流程
 
 ```
 Client (有權限)
-    ↓ 收集輸入 (Input.get_vector)
-    ↓ RPC 發送到 Server
-    
+	↓ 收集輸入 (Input.get_vector)
+	↓ RPC 發送到 Server
+	
 Server
-    ↓ 接收輸入
-    ↓ 儲存到 _current_input_vec
-    ↓ UnitMoveComponent 調用 get_input_vector()
-    ↓ 執行物理運算
-    ↓ BodyComponent 自動同步位置
-    
+	↓ 接收輸入
+	↓ 儲存到 _current_input_vec
+	↓ UnitMoveComponent 調用 get_input_vector()
+	↓ 執行物理運算
+	↓ BodyComponent 自動同步位置
+	
 Client (所有)
-    ↓ 接收同步的位置
-    ↓ 顯示
+	↓ 接收同步的位置
+	↓ 顯示
 ```
 
 ## ⚙️ 配置選項
@@ -127,27 +127,27 @@ class_name PlayerData
 extends UnitData
 
 func get_max_hp() -> float:
-    return 100.0
+	return 100.0
 
 func get_speed() -> float:
-    return 300.0
+	return 300.0
 
 func get_body_polygon() -> PackedVector2Array:
-    return PackedVector2Array([
-        Vector2(-20, -20),
-        Vector2(20, -20),
-        Vector2(20, 20),
-        Vector2(-20, 20)
-    ])
+	return PackedVector2Array([
+		Vector2(-20, -20),
+		Vector2(20, -20),
+		Vector2(20, 20),
+		Vector2(-20, 20)
+	])
 
 func get_component_datas() -> Array[ComponentData]:
-    return [
-        BodyComponentData.new(get_body_polygon()),
-        HitboxComponentData.new(BitmaskManager.TEAM.PLAYER),
-        ComponentDB.UNIT_MOVEMENT,
-        HealthComponentData.new(get_max_hp()),
-        ComponentDB.PLAYER_CONTROLLER,
-    ]
+	return [
+		BodyComponentData.new(get_body_polygon()),
+		HitboxComponentData.new(BitmaskManager.TEAM.PLAYER),
+		ComponentDB.UNIT_MOVEMENT,
+		HealthComponentData.new(get_max_hp()),
+		ComponentDB.PLAYER_CONTROLLER,
+	]
 ```
 
 ## 🐛 疑難排解

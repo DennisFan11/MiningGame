@@ -6,6 +6,7 @@ extends Component
 
 var __unit_move_component: UnitMoveComponent
 var __body_component: BodyComponent
+var __prop_holder_component: PropHolderComponent
 
 ## 輸入動作名稱配置
 var action_left: String = "left"
@@ -20,7 +21,6 @@ func _ready() -> void:
 	add_child(Camera2D.new())
 
 func _process(_delta: float) -> void:
-	
 	# Client Only: 收集輸入
 	if not is_multiplayer_authority():
 		return
@@ -36,6 +36,25 @@ func _process(_delta: float) -> void:
 	# 衝刺輸入（偶發事件，reliable）
 	if Input.is_action_just_pressed(action_dash):
 		_rpc_dash.rpc_id(1)
+		
+	# 拾取輸入 (E) - 暫時Hardcode
+	if Input.is_action_just_pressed("E"):
+		_try_pickup()
+	
+	# 投擲輸入 (Q) - 暫時Hardcode
+	if Input.is_action_just_pressed("Q"):
+		_try_throw()
+
+
+func _try_pickup():
+	if not __prop_holder_component: return
+	__prop_holder_component.try_pickup()
+	
+
+func _try_throw():
+	if not __prop_holder_component: return
+	var mouse_pos = get_global_mouse_position()
+	__prop_holder_component.try_throw(mouse_pos)
 
 ## Server 端接收輸入
 @rpc("any_peer", "call_local", "unreliable_ordered")
@@ -71,6 +90,8 @@ func _on_setuped():
 	if __unit_move_component:
 		_input_provider = PlayerInputProvider.new()
 		__unit_move_component.input_provider = _input_provider
+	
+	# 取得 PropHolder (Sibling Component) - Auto Injected by LocalInjector
 	
 	# 初始化 Process 狀態
 	if is_multiplayer_authority():

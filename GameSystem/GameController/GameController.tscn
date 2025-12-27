@@ -1,4 +1,4 @@
-[gd_scene load_steps=28 format=3 uid="uid://6hb0myg4mp7y"]
+[gd_scene load_steps=29 format=3 uid="uid://6hb0myg4mp7y"]
 
 [ext_resource type="Script" uid="uid://cmqnwexcjcp8x" path="res://GameSystem/GameController/game_controller.gd" id="1_3nbeu"]
 [ext_resource type="Shader" uid="uid://c7dh2mjrjd04o" path="res://GameSystem/GameController/FogOfWar.gdshader" id="2_5xj0y"]
@@ -19,6 +19,7 @@
 [ext_resource type="PackedScene" uid="uid://qi5awbpwcjsr" path="res://GameSystem/PlayerItemRepo/PlayerItemRepo.tscn" id="20_2vjy7"]
 [ext_resource type="PackedScene" uid="uid://dw134rrfyr88p" path="res://GameSystem/PlayerManager/PlayerManager.tscn" id="20_ammeq"]
 [ext_resource type="PackedScene" uid="uid://bet8g7705sris" path="res://GameSystem/ParticleManager/ParticleManager.tscn" id="21_ammeq"]
+[ext_resource type="PackedScene" path="res://GameSystem/PropManager/PropManager.tscn" id="22_pm"]
 
 [sub_resource type="Curve" id="Curve_raev3"]
 _data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.647368, 0.194444), 0.669014, 0.669014, 0, 0, Vector2(1, 1), 2.81481, 0.0, 0, 0]
@@ -215,3 +216,5 @@ metadata/_edit_group_ = true
 unique_name_in_owner = true
 
 [node name="PlayerItemRepo" parent="." instance=ExtResource("20_2vjy7")]
+
+[node name="PropManager" parent="." instance=ExtResource("22_pm")]

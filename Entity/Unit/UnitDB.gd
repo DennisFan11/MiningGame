@@ -55,6 +55,11 @@ static func create_player(peer_id: int) -> UnitEntity:
 	# 2. 動態注入 PlayerController (不在 PlayerData 中定義)
 	var controller_data = ComponentDB.PLAYER_CONTROLLER
 	ComponentDB.inject_component(unit, controller_data)
+	
+	# 3. 注入 PropHolder (手持道具功能)
+	var PropHolderDataScript = preload("res://Entity/ComponentSystem/Prop/PropHolder/PropHolderComponentData.gd")
+	var prop_holder_data = PropHolderDataScript.new()
+	ComponentDB.inject_component(unit, prop_holder_data)
 		
 	print("Player Spawnned")
 	return unit

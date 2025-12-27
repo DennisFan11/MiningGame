@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://prop_entity_base"]
+
+[ext_resource type="Script" path="res://Entity/Prop/PropEntity.gd" id="1_prop"]
+
+[node name="PropEntity" type="Node2D"]
+script = ExtResource("1_prop")
