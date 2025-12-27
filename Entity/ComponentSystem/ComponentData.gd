@@ -11,7 +11,7 @@ func get_property() -> String
 
 func inject_to(entity: Entity):
 	var comp := get_component()
-	
+	comp.name = get_property()
 	comp._on_data_set(self)
 	entity.__loca_injector.register(get_property(), comp)
 	if entity is Node:

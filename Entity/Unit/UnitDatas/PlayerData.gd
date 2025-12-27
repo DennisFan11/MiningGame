@@ -12,9 +12,9 @@ func get_speed() -> float:
 
 func get_component_datas() -> Array[ComponentData]:
 	return [
-		UnitVisualComponentData.new(null), # Default Godot Icon
-		ComponentDB.create_rect_body(32, 32),
-		HitboxComponentData.new(BitmaskManager.TEAM.PLAYER),
+		ComponentDB.SMALL_UNIT_BODY, # Default Godot Icon, size 32x32
+		ComponentDB.VISUAL_SMALL_PLACEHOLDER,
 		ComponentDB.UNIT_MOVEMENT,
+		HitboxComponentData.new(BitmaskManager.TEAM.PLAYER),
 		HealthComponentData.new(get_max_hp()),
 	]

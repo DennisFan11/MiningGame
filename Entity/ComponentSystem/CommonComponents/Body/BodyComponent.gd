@@ -9,12 +9,14 @@ var _synchronizer: MultiplayerSynchronizer
 func _on_data_set(data: ComponentData):
 	if data is BodyComponentData:
 		_shape = data.shape
-
-func _on_setuped():
+	
 	# create body directly
 	body = CharacterBody2D.new()
 	body.name = "Body"
 	add_child(body)
+
+func _on_setuped():
+	
 	
 	# Setup collision - only with walls
 	if _bitmask_manager:

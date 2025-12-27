@@ -3,10 +3,12 @@ extends Component
 
 var __body_component: BodyComponent
 var _texture: Texture2D
+var _size: Vector2
 
 func _on_data_set(data: ComponentData):
 	if data is UnitVisualComponentData:
 		_texture = data.texture
+		_size = data.size
 
 func _on_setuped():
 	# 依賴 BodyComponent
@@ -24,9 +26,12 @@ func _on_setuped():
 	else:
 		sprite.texture = preload("res://icon.svg")
 		
-	# 適當縮放 (假設 icon 較大, 稍微縮小以適配 units)
-	# 這裡先不縮放，或根據需求調整。
-	# sprite.scale = Vector2(0.5, 0.5)
+	# 適當縮放
+	if _size != Vector2.ZERO and sprite.texture:
+		var tex_size = sprite.texture.get_size()
+		# 避免除以零
+		if tex_size.x != 0 and tex_size.y != 0:
+			sprite.scale = _size / tex_size
 	
 	# 掛載到 Body 下
 	__body_component.body.add_child(sprite)

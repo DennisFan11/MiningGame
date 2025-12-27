@@ -12,9 +12,11 @@ func get_speed() -> float:
 
 func get_component_datas() -> Array[ComponentData]:
 	return [
-		ComponentDB.create_rect_body(24, 24),
-		HitboxComponentData.new(BitmaskManager.TEAM.ENEMY),
-		ComponentDB.UNIT_MOVEMENT,
-		HealthComponentData.new(get_max_hp()),
+		ComponentDB.SMALL_UNIT_BODY,
+		ComponentDB.VISUAL_SMALL_PLACEHOLDER,
 		ComponentDB.VISION,
+		ComponentDB.UNIT_MOVEMENT,
+		HitboxComponentData.new(BitmaskManager.TEAM.ENEMY),
+		HealthComponentData.new(get_max_hp()),
+
 	]

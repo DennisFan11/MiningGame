@@ -1,4 +1,4 @@
-[gd_scene load_steps=29 format=3 uid="uid://6hb0myg4mp7y"]
+[gd_scene load_steps=28 format=3 uid="uid://6hb0myg4mp7y"]
 
 [ext_resource type="Script" uid="uid://cmqnwexcjcp8x" path="res://GameSystem/GameController/game_controller.gd" id="1_3nbeu"]
 [ext_resource type="Shader" uid="uid://c7dh2mjrjd04o" path="res://GameSystem/GameController/FogOfWar.gdshader" id="2_5xj0y"]
@@ -12,7 +12,6 @@
 [ext_resource type="Script" uid="uid://dkgqimy0e48fd" path="res://GameSystem/LightManager/LightManager.gd" id="9_870uv"]
 [ext_resource type="Shader" uid="uid://ppi7uandjmsm" path="res://GameSystem/LightManager/lightShader.gdshader" id="10_fry7r"]
 [ext_resource type="PackedScene" uid="uid://worvs1wofc78" path="res://GameSystem/BitmaskManager/bitmask_manager.tscn" id="11_v56b3"]
-[ext_resource type="Script" uid="uid://case3gsw64e38" path="res://GameSystem/BitmaskManager/bitmask_manager.gd" id="12_3lyre"]
 [ext_resource type="Shader" uid="uid://bx16ruuqa4j5d" path="res://GameSystem/GameController/CTRshader.gdshader" id="15_26c85"]
 [ext_resource type="PackedScene" uid="uid://dgqgfb3pdvy2h" path="res://GameSystem/BuildingUI/BuildingUI.tscn" id="16_ebgn5"]
 [ext_resource type="Script" uid="uid://dmpecara50fmh" path="res://GameSystem/GameController/ctr_shader.gd" id="18_02jrl"]
@@ -214,6 +213,5 @@ metadata/_edit_group_ = true
 
 [node name="BitmaskManager" parent="." instance=ExtResource("11_v56b3")]
 unique_name_in_owner = true
-script = ExtResource("12_3lyre")
 
 [node name="PlayerItemRepo" parent="." instance=ExtResource("20_2vjy7")]
