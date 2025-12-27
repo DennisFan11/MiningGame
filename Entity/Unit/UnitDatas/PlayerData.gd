@@ -17,4 +17,5 @@ func get_component_datas() -> Array[ComponentData]:
 		ComponentDB.UNIT_MOVEMENT,
 		HitboxComponentData.new(BitmaskManager.TEAM.PLAYER),
 		HealthComponentData.new(get_max_hp()),
+		BuilderComponentData.new(BitmaskManager.TEAM.PLAYER),
 	]

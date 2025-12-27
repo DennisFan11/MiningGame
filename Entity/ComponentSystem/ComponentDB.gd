@@ -68,10 +68,9 @@ static var VISION := VisionComponentData.new()
 static var PLAYER_CONTROLLER := PlayerControllerComponentData.new()
 
 
-
 static var SMALL_SIZE: Vector2 = Vector2(32, 32)
 
-static var VISUAL_SMALL_PLACEHOLDER :=\
+static var VISUAL_SMALL_PLACEHOLDER := \
 	UnitVisualComponentData.new(null, SMALL_SIZE)
 
-static var SMALL_UNIT_BODY := create_circle_body(SMALL_SIZE.x/2.0)
+static var SMALL_UNIT_BODY := create_circle_body(SMALL_SIZE.x / 2.0)

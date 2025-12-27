@@ -1,4 +1,4 @@
-class_name Builder
+class_name BuilderComponent
 extends Component
 
 var _player_item_repo: PlayerItemRepo
@@ -11,25 +11,46 @@ var state: int = RUNNING
 
 var _building_service: BuildingService
 
+# 依賴 BodyComponent 獲取位置
+var __body_component: BodyComponent
+
 var team: BitmaskManager.TEAM = BitmaskManager.TEAM.IDLE:
 	set(new):
 		team = new
-		_IFF.team = new
+		if _IFF:
+			_IFF.team = new
 
-#var _building_plan_queue: Array[BuildingPlan] = []
+func _on_data_set(data: ComponentData):
+	if data is BuilderComponentData:
+		team = data.team
 
+func _on_setuped():
+	if not __body_component or not __body_component.body:
+		printerr("[BuilderComponent] Missing BodyComponent!")
+		set_process(false)
+		return
+		
+	# Sync team to IFF if set before ready
+	if _IFF:
+		_IFF.team = team
 
 func _process(delta: float) -> void:
 	# Run on everyone (Server, Owner, Puppet)
+	global_position = _get_body_position()
+	
 	match state:
 		IDLE:
 			pass
 		RUNNING:
 			%BuildingEffect.visible = false
+			# 這裡原本是重置位置，可能是為了避免畫面殘留?
 			%BuildingEffect.global_transform.origin = Vector2.ONE
 
+			# 使用 Body 位置進行搜尋
+			var current_pos = _get_body_position()
+
 			#print("target: ", _IFF.get_targets())
-			for i in _IFF.get_sorted_targets(global_position):
+			for i in _IFF.get_sorted_targets(current_pos):
 				if not is_instance_valid(i):
 					continue
 				if i is BuildingPlan:
@@ -46,9 +67,18 @@ func _process(delta: float) -> void:
 						break
 
 
+func _get_body_position() -> Vector2:
+	if __body_component and __body_component.body:
+		return __body_component.body.global_position
+	return global_position
+
+
 func __update_polygon(i: BuildingEntity, breaking: bool = false):
 	var polygon = i.get_global_points()
-	polygon.append(global_position)
+	
+	# 連線到自己的位置
+	polygon.append(_get_body_position())
+	
 	polygon = Geometry2D.convex_hull(polygon)
 	%BuildingEffect.visible = true
 	
@@ -59,18 +89,21 @@ func __update_polygon(i: BuildingEntity, breaking: bool = false):
 
 
 ## 建築操作
-
-
 func _try_upgrade(coord: Vector2i):
-	_building_service.try_upgrade(coord)
+	if _building_service:
+		_building_service.try_upgrade(coord)
+		
 func _try_delete(coord: Vector2i):
-	_building_service.try_delete(coord)
+	if _building_service:
+		_building_service.try_delete(coord)
 
 
 #region move res
 
 ## 建造一個建築
 func _build(building: BuildingConstruct, dt: float) -> void:
+	if not _player_item_repo: return
+
 	# 擁有的資源
 	var have: PackedItem = _player_item_repo.contain
 
@@ -94,11 +127,13 @@ func _build(building: BuildingConstruct, dt: float) -> void:
 	moving = moving.vclamp(PackedItem.zero(), need_pos)
 
 	# Dual Simulation Execution (Direct Call)
-	if not moving.is_zero():
+	if not moving.is_zero() and _building_service:
 		_building_service.try_transfer_resource(building.state.coord, moving, _player_item_repo)
 
 ## 移除一個建築
 func _remove(building: BuildingConstruct, dt: float) -> void:
+	if not _player_item_repo: return
+
 	# 僅保留正值（負值清 0）
 	var give_back := building.contain_item.vmax(PackedItem.zero())
 	var total_back := give_back.vtotal()
@@ -106,7 +141,7 @@ func _remove(building: BuildingConstruct, dt: float) -> void:
 	## 無可退 → 完成 (Server 自動 Delete)
 	var item_speed := BUILDING_SPEED * dt
 	if is_zero_approx(total_back):
-		if multiplayer.is_server() and building.breaking:
+		if multiplayer.is_server() and building.breaking and _building_service:
 			_building_service.try_delete(building.state.coord)
 		return
 
@@ -117,11 +152,8 @@ func _remove(building: BuildingConstruct, dt: float) -> void:
 	request = request.vclamp(PackedItem.zero(), give_back)
 	
 	# Dual Simulation Execution (Direct Call)
-	if not request.is_zero():
+	if not request.is_zero() and _building_service:
 		var negative_request = PackedItem.zero().sub(request)
 		_building_service.try_transfer_resource(building.state.coord, negative_request, _player_item_repo)
 
 #endregion
-
-
-#

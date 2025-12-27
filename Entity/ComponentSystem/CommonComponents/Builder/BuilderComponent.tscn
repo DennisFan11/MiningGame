@@ -1,0 +1,35 @@
+[gd_scene load_steps=4 format=3 uid="uid://4ik2roj8liup"]
+
+[ext_resource type="Script" uid="uid://bldwqnrxjxe3b" path="res://Entity/ComponentSystem/CommonComponents/Builder/BuilderComponent.gd" id="1_0jlwc"]
+[ext_resource type="Script" uid="uid://cithxaqsmesw8" path="res://Entity/_components/IFF/IFF.gd" id="2_3y445"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_hmesp"]
+
+[node name="Builder" type="Node2D"]
+script = ExtResource("1_0jlwc")
+
+[node name="BuildingEffect" type="Node2D" parent="."]
+unique_name_in_owner = true
+
+[node name="BuildingPolygon" type="Polygon2D" parent="BuildingEffect"]
+unique_name_in_owner = true
+texture_filter = 1
+texture_repeat = 2
+material = SubResource("ShaderMaterial_hmesp")
+color = Color(1, 0.5686275, 0.047058824, 0.65882355)
+texture_scale = Vector2(4.08, 4.08)
+
+[node name="BuildingLine" type="Line2D" parent="BuildingEffect"]
+unique_name_in_owner = true
+top_level = true
+closed = true
+width = 3.0
+default_color = Color(1, 0.7490196, 0.047058824, 0.8862745)
+
+[node name="IFF" type="Node2D" parent="."]
+unique_name_in_owner = true
+script = ExtResource("2_3y445")
+target = 2
+team = 1
+AREA_R = 300.0
+metadata/_custom_type_script = "uid://cithxaqsmesw8"
