@@ -1,25 +1,17 @@
 class_name PropManager
 extends Node2D
 
-var _spawner: MultiplayerSpawner
+@onready var _spawner: MultiplayerSpawner = $PropSpawner
 
 func _ready() -> void:
 	DI.register("_prop_manager", self)
 	
-	_spawner = MultiplayerSpawner.new()
-	_spawner.name = "PropSpawner"
-	_spawner.spawn_path = "." # Spawn children under self
-	_spawner.spawn_limit = 100
-	
 	_spawner.spawn_function = _spawn_prop_node
-	add_child(_spawner)
 
 func _game_start():
 	## Spawn TEST 
 	if multiplayer.is_server():
 		spawn_prop(PropDB.PROP.STONE, Vector2.ZERO)
-
-
 
 
 # ==============================================================================

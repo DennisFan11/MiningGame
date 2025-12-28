@@ -5,26 +5,20 @@ extends Node2D
 var _avatars: Dictionary[int, UnitEntity] = {}
 
 # Spawner
-var _spawner: MultiplayerSpawner
+@onready var _spawner: MultiplayerSpawner = $PlayerSpawner
 
 func _ready() -> void:
 	# 1. DI 註冊
 	DI.register("_player_manager", self)
 
-func _game_start():
 	# 2. 設定 Spawner (程式碼動態建立，確保正確性)
 	# 如果場景中已經拉了 Spawner 也可以直接用 get_node
-	_spawner = MultiplayerSpawner.new()
-	_spawner.name = "PlayerSpawner"
-	_spawner.spawn_path = "." # 生成在 PlayerManager 底下
-	_spawner.spawn_limit = 10
-	
 	# 設定生成函數 (Server 決定資料 -> Client 同步生成)
 	_spawner.spawn_function = _spawn_player_node
 	# 監聽生成事件，由 Manager 負責幫新角色注入依賴 (IoC)
 	_spawner.spawned.connect(_on_player_spawned)
-	add_child(_spawner)
-	
+
+func _game_start():
 	# 3. 監聽登入/登出 (無論 Server/Client 都監聽，避免因啟動順序導致 Miss)
 	if not AuthManager.player_logged_in.is_connected(_on_player_logged_in):
 		AuthManager.player_logged_in.connect(_on_player_logged_in)

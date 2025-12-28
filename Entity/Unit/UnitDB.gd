@@ -50,13 +50,14 @@ static func create_player(peer_id: int) -> UnitEntity:
 	# 1. 創建基礎 Unit
 	var unit = create_unit(data, state)
 	unit.name = str(peer_id)
-	unit.set_multiplayer_authority(peer_id)
-	
 	# 2. 動態注入 PlayerController (不在 PlayerData 中定義)
 	ComponentDB.inject_component(unit, ComponentDB.PLAYER_CONTROLLER)
 	
 	# 3. 注入 PropHolder (手持道具功能)
 	ComponentDB.inject_component(unit, ComponentDB.PROP_HOLDER)
+	
+	# 4. 設定權限 (最後執行，確保所有組件都能繼承)
+	unit.set_multiplayer_authority(peer_id)
 		
 	print("Player Spawnned")
 	return unit
