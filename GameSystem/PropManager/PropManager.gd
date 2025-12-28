@@ -11,6 +11,7 @@ func _ready() -> void:
 func _game_start():
 	## Spawn TEST 
 	if multiplayer.is_server():
+		await get_tree().create_timer(10).timeout
 		spawn_prop(PropDB.PROP.STONE, Vector2.ZERO)
 
 
