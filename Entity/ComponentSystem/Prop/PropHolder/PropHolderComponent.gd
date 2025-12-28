@@ -11,7 +11,10 @@ var _bitmask_manager: BitmaskManager
 var _pickup_area: Area2D
 
 # 狀態同步
-@export var current_prop_id: int = -1
+@export var current_prop_id: int = -1:
+	set(value):
+		current_prop_id = value
+		_update_held_visual(value)
 var _held_entity: Entity
 
 # Data
@@ -34,6 +37,20 @@ func _on_setuped():
 	collider.shape = shape
 	_pickup_area.add_child(collider)
 	add_child(_pickup_area)
+	
+	# MultiplayerSynchronizer for Late Joiners
+	var synchronizer = MultiplayerSynchronizer.new()
+	synchronizer.name = "PropHolderSynchronizer"
+	
+	# Config Replication
+	var config = SceneReplicationConfig.new()
+	config.add_property(":current_prop_id") # Sync this property (relative to parent, which is self)
+	synchronizer.replication_config = config
+	
+	# Set Authority (Server controls this)
+	synchronizer.set_multiplayer_authority(1)
+	
+	add_child(synchronizer)
 
 # API
 func try_pickup():
@@ -54,17 +71,16 @@ func rpc_try_pickup(target_path: NodePath):
 	var target_body = get_node_or_null(target_path)
 	if not target_body: return
 	
-	if __body_component.body.global_position.distance_to(target_body.global_position) > 150.0: 
+	if __body_component.body.global_position.distance_to(target_body.global_position) > 150.0:
 		printerr("player pickup distan too long")
 		return
 	
 	
-	
 	if target_body is not RigidBody2D:
-		return 
+		return
 	if target_body.get_parent() is not PropBodyComponent:
-		return 
-	var prop_entity: PropEntity = target_body.get_parent().get_parent() 
+		return
+	var prop_entity: PropEntity = target_body.get_parent().get_parent()
 	print("player pickup", prop_entity)
 	
 	if prop_entity is PropEntity and prop_entity.data is PropData:
@@ -72,8 +88,8 @@ func rpc_try_pickup(target_path: NodePath):
 		
 		if id != -1:
 			prop_entity.queue_free()
-			_set_held_prop(id)
-			rpc_update_held_prop.rpc(id)
+			current_prop_id = id # Setter triggers visual update local & sync triggers remote
+
 
 @rpc("any_peer", "call_local", "reliable")
 func rpc_try_throw(target_pos: Vector2):
@@ -86,15 +102,9 @@ func rpc_try_throw(target_pos: Vector2):
 	if _prop_manager:
 		_prop_manager.spawn_prop(current_prop_id, __body_component.body.global_position + dir * 30.0, force)
 	
-	_set_held_prop(-1)
-	rpc_update_held_prop.rpc(-1)
+	current_prop_id = -1 # Setter triggers visual update local & sync triggers remote
 
-@rpc("authority", "call_local", "reliable")
-func rpc_update_held_prop(id: int):
-	_set_held_prop(id)
-
-func _set_held_prop(id: int):
-	current_prop_id = id
+func _update_held_visual(id: int):
 	if is_instance_valid(_held_entity):
 		_held_entity.queue_free()
 		_held_entity = null
