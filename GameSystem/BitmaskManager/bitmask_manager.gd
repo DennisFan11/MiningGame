@@ -12,9 +12,11 @@ const PLAYER_LAYER: int = 1 << 1
 const ENEMY_LAYER: int = 1 << 4
 const PROP_LAYER: int = 1 << 5 # Layer 6 for Props
 
+func get_prop_layer()-> int:
+	return PROP_LAYER
 
 ## 獲取中立牆 bitmask (通常用於尋路)
-func get_wall_layer(_team: TEAM) -> int:
+func get_wall_layer(_team: TEAM=TEAM.IDLE) -> int:
 	return WALL_LAYER
 
 ## 獲取給定 team 的友軍的 bitmask

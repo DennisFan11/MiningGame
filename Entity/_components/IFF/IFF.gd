@@ -92,6 +92,7 @@ func _try_build_area() -> void:
 	if _area or not _bitmask_manager or team == BitmaskManager.TEAM.IDLE:
 		return
 	_area = Utility.create_area(AREA_R)
+	_area.modulate = Color.YELLOW
 	add_child(_area)
 	# 依需要：確保監測開啟（若 Utility 未處理）
 	_area.monitoring = true

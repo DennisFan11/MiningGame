@@ -60,17 +60,46 @@ static var ITEM_SOURCE := ItemSourceInventoryData.new()
 static var TRANSPORT_LINE = TransportLineData.new()
 
 # ==============================================================================
-# 4. Unit Components (Unit 專用組件)
+# 4. Common Components (Common 專用組件)
+# ==============================================================================
+
+static func HITBOX (p_team) : return HitboxComponentData.new(p_team)
+static func BUILDER (p_team) : return BuilderComponentData.new(p_team)
+
+## 生命值組件 (100 hp)
+static var HEALTH := HealthComponentData.new(100) 
+
+
+
+
+
+# ==============================================================================
+# 5. Unit Components (Unit 專用組件)
 # ==============================================================================
 
 static var UNIT_MOVEMENT := UnitMoveComponentData.new()
+
+## 敵人視野
 static var VISION := VisionComponentData.new()
+
+## 玩家控制器
 static var PLAYER_CONTROLLER := PlayerControllerComponentData.new()
 
+## 手持道具功能
+static var PROP_HOLDER :=  PropHolderComponentData.new()
 
 static var SMALL_SIZE: Vector2 = Vector2(32, 32)
 
-static var VISUAL_SMALL_PLACEHOLDER := \
-	UnitVisualComponentData.new(null, SMALL_SIZE)
+## 顯示組件
+static var VISUAL_SMALL_PLACEHOLDER := UnitVisualComponentData.new(null, SMALL_SIZE)
 
+## 碰撞組件
 static var SMALL_UNIT_BODY := create_circle_body(SMALL_SIZE.x / 2.0)
+
+
+
+# ==============================================================================
+# 6. Prop Components (Prop 專用組件)
+# ==============================================================================
+
+static var PROP_VISUAL_SMALL := PropVisualComponentData.new(null, SMALL_SIZE)

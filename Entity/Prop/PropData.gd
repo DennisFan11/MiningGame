@@ -32,14 +32,12 @@ func get_component_datas() -> Array[ComponentData]:
 
 func get_world_component_datas() -> Array[ComponentData]:
 	return [
-		PropVisualComponentData.new(get_icon()),
+		ComponentDB.PROP_VISUAL_SMALL,
 		PropBodyComponentData.new(get_shape(30.0), get_mass()),
-		
-		
 	]
 
 func get_held_component_datas() -> Array[ComponentData]:
 	# Held prop doesn't need body (physics), just visual
 	return [
-		PropVisualComponentData.new(get_icon())
+		#ComponentDB.PROP_VISUAL_SMALL,
 	]

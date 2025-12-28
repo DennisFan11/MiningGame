@@ -10,7 +10,8 @@ var _spawner: MultiplayerSpawner
 func _ready() -> void:
 	# 1. DI 註冊
 	DI.register("_player_manager", self)
-	
+
+func _game_start():
 	# 2. 設定 Spawner (程式碼動態建立，確保正確性)
 	# 如果場景中已經拉了 Spawner 也可以直接用 get_node
 	_spawner = MultiplayerSpawner.new()

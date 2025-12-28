@@ -5,6 +5,7 @@ var __body_component: BodyComponent
 
 # 依賴
 var _prop_manager: PropManager
+var _bitmask_manager: BitmaskManager
 
 # 內部組件
 var _pickup_area: Area2D
@@ -24,10 +25,11 @@ func _on_setuped():
 	_pickup_area = Area2D.new()
 	_pickup_area.name = "PickupArea"
 	_pickup_area.collision_layer = 0
-	_pickup_area.collision_mask = 32 # Prop Layer
+	_pickup_area.collision_mask = _bitmask_manager.get_prop_layer() # Prop Layer
+	_pickup_area.modulate = Color.AQUAMARINE
 	
 	var shape = CircleShape2D.new()
-	shape.radius = 50.0
+	shape.radius = 100.0
 	var collider = CollisionShape2D.new()
 	collider.shape = shape
 	_pickup_area.add_child(collider)
@@ -52,7 +54,7 @@ func rpc_try_pickup(target_path: NodePath):
 	var target_body = get_node_or_null(target_path)
 	if not target_body: return
 	
-	if __body_component.body.global_position.distance_to(target_body.global_position) > 100.0: 
+	if __body_component.body.global_position.distance_to(target_body.global_position) > 150.0: 
 		printerr("player pickup distan too long")
 		return
 	

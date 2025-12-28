@@ -139,8 +139,6 @@ material = SubResource("ShaderMaterial_kvmvy")
 [node name="BulletManager" parent="CanvasGroup" instance=ExtResource("4_ee1h0")]
 script = ExtResource("5_8d81h")
 
-[node name="PlayerManager" parent="." instance=ExtResource("20_ammeq")]
-
 [node name="LightManager" type="Node2D" parent="."]
 visible = false
 script = ExtResource("9_870uv")
@@ -157,6 +155,10 @@ polygon = PackedVector2Array(-124.25, -20.25)
 uv = PackedVector2Array(-124.25, -20.25)
 
 [node name="BuildingManager" parent="." instance=ExtResource("19_nyrts")]
+
+[node name="PropManager" parent="." instance=ExtResource("22_pm")]
+
+[node name="PlayerManager" parent="." instance=ExtResource("20_ammeq")]
 
 [node name="ParticleManager" parent="." instance=ExtResource("21_ammeq")]
 
@@ -216,5 +218,3 @@ metadata/_edit_group_ = true
 unique_name_in_owner = true
 
 [node name="PlayerItemRepo" parent="." instance=ExtResource("20_2vjy7")]
-
-[node name="PropManager" parent="." instance=ExtResource("22_pm")]

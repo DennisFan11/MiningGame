@@ -13,9 +13,11 @@ func _ready() -> void:
 	
 	_spawner.spawn_function = _spawn_prop_node
 	add_child(_spawner)
-	
+
+func _game_start():
 	## Spawn TEST 
-	spawn_prop(PropDB.PROP.STONE, Vector2.ZERO)
+	if multiplayer.is_server():
+		spawn_prop(PropDB.PROP.STONE, Vector2.ZERO)
 
 
 

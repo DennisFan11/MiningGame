@@ -1,6 +1,6 @@
-[gd_scene load_steps=2 format=3 uid="uid://prop_entity_base"]
+[gd_scene load_steps=2 format=3 uid="uid://cqwg5lqgq7l8u"]
 
-[ext_resource type="Script" path="res://Entity/Prop/PropEntity.gd" id="1_prop"]
+[ext_resource type="Script" uid="uid://b5cupdpxr7hoo" path="res://Entity/Prop/PropEntity.gd" id="1_prop"]
 
 [node name="PropEntity" type="Node2D"]
 script = ExtResource("1_prop")

@@ -13,23 +13,33 @@ func _on_data_set(data: ComponentData):
 		_shape = data.shape
 		_mass = data.mass
 
+var _bitmask_manager: BitmaskManager
+
 # Injected State
 var __prop_state: PropState
 
-func _on_setuped():
+func _ready() -> void:
 	# 建立物理實體
 	body = RigidBody2D.new()
 	body.name = "Body"
 	body.mass = _mass
 	body.gravity_scale = 0.0
 	
+	body.linear_damp_mode = RigidBody2D.DAMP_MODE_COMBINE
+	body.linear_damp = 10.0
+	
+	body.physics_material_override = PhysicsMaterial.new()
+	body.physics_material_override.bounce = 1.0
+	
 	# Layer 32 (Prop)
-	var prop_layer = 1 << 5
+	var prop_layer = _bitmask_manager.get_prop_layer()
 	body.collision_layer = prop_layer
-	body.collision_mask = 1 | prop_layer
+	body.collision_mask = prop_layer | _bitmask_manager.get_wall_layer()
 	
 	add_child(body)
 	
+
+func _on_setuped():
 	if _shape:
 		var collider = CollisionShape2D.new()
 		collider.shape = _shape
