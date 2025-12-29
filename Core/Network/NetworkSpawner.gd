@@ -86,8 +86,6 @@ func spawn(data: Dictionary) -> Node:
 	if node.name.is_empty() or node.name.begins_with("@"):
 		node.name = "NetNode_" + str(randi())
 		
-	var node_name = node.name
-	
 	# 加入場景樹
 	var parent = get_node_or_null(spawn_path)
 	if not parent:
@@ -97,10 +95,15 @@ func spawn(data: Dictionary) -> Node:
 		
 	parent.add_child(node)
 	
+	# [關鍵修正] 
+	# 必須在 add_child 之後獲取名字，因為 SceneTree 可能會因為名稱衝突而重新命名 (例如 name@2)
+	# 這確保 Server 和 Client 使用完全一致的名稱，讓 MultiplayerSynchronizer 能正確運作
+	var node_name = node.name
+	
 	# 記錄狀態
 	_spawned_nodes[node_name] = data
 	
-	# 廣播給所有客戶端
+	# 廣播給所有客戶端 (傳送最終確定的名稱)
 	_rpc_spawn.rpc(node_name, data)
 	
 	return node
@@ -229,6 +232,13 @@ func _rpc_spawn(node_name: String, data: Dictionary) -> void:
 	
 	# 加入場景
 	parent.add_child(node)
+	
+	# [安全性檢查] 確保 Client 端名稱與 Server 一致
+	# 如果 add_child 因為衝突自動重命名，這會導致 MultiplayerSynchronizer 失效
+	if node.name != node_name:
+		push_error("NetworkSpawner [Client]: Critical Name Mismatch! Expected '%s', Got '%s'. Sync will likely fail." % [node_name, node.name])
+		# 嘗試強制改回 (雖然可能失敗)
+		node.name = node_name
 	
 	# Client 端註冊
 	_spawned_nodes[node_name] = data

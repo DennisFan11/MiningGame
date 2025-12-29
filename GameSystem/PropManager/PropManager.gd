@@ -8,8 +8,8 @@ func _enter_tree() -> void:
 	_spawner = NetworkSpawner.new()
 	_spawner.name = "PropNetworkSpawner"
 	# 設定 spawn_path 為 PropManager 自己 (因為 props 是 PropManager 的子節點)
-	# 注意：PropManager 繼承 Node2D，所以 spawn_path 設為 "." 即可，或者直接 add_child 到 self
-	_spawner.spawn_path = "."
+	# 使用 get_path() 獲取絕對路徑，確保 NetworkSpawner 能正確找到 PropManager
+	_spawner.spawn_path = get_path()
 	_spawner.spawn_function = _spawn_prop_node
 	add_child(_spawner)
 
