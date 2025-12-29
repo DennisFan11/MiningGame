@@ -34,10 +34,11 @@ func _setup_multiplayer_sync():
 	_synchronizer = NetworkSynchronizer.new()
 	_synchronizer.name = "Synchronizer"
 	_synchronizer.set_multiplayer_authority(1) # Server Authority
+	_synchronizer.sync_every_frame = true
 	
 	# 配置同步屬性
 	_synchronizer.add_property(NodePath(".:position"), true)
-	_synchronizer.add_property(NodePath(".:velocity"))
+	_synchronizer.add_property(NodePath(".:velocity"), true)
 	
 	body.add_child(_synchronizer)
 	

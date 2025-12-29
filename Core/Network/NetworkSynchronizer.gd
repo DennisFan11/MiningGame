@@ -22,6 +22,11 @@ class_name NetworkSynchronizer extends Node
 ## 當數值差距超過此值時，將直接強制設定而不進行插值 (Teleport)，防止滑步。
 @export var snap_margin: float = 300.0
 
+## 每幀同步 (Sync Every Frame)
+## 若啟用，將忽略 sync_interval，每一幀 (Process Frame) 都嘗試同步。
+## 適合極度依賴即時性的物件，但會大幅增加網路負載。
+@export var sync_every_frame: bool = false
+
 ## 是否僅同步變更的值 (節省頻寬)
 @export var specific_check_on_change: bool = true
 
@@ -39,8 +44,9 @@ var _timer: Timer
 
 func _ready() -> void:
 	if multiplayer.is_server():
-		_timer = Timer.new(); _timer.wait_time = sync_interval; _timer.autostart = true
-		_timer.timeout.connect(_on_timer); add_child(_timer)
+		if not sync_every_frame:
+			_timer = Timer.new(); _timer.wait_time = sync_interval; _timer.autostart = true
+			_timer.timeout.connect(_on_timer); add_child(_timer)
 	else:
 		# Client 需要 process 進行插值運算
 		set_process(true)
@@ -71,7 +77,11 @@ func start() -> void:
 # ==============================================================================
 
 func _process(delta: float) -> void:
-	if multiplayer.is_server(): return
+	if multiplayer.is_server():
+		if sync_every_frame:
+			_tick()
+		return
+		
 	var root = get_node_or_null(root_path)
 	if not root: return
 	
@@ -91,6 +101,9 @@ func _process(delta: float) -> void:
 # ==============================================================================
 
 func _on_timer() -> void:
+	_tick()
+
+func _tick() -> void:
 	var data = _collect_state(not specific_check_on_change)
 	if not data.is_empty(): _rpc_unreliable.rpc(data)
 

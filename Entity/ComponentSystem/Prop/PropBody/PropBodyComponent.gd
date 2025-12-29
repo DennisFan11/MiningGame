@@ -51,6 +51,7 @@ func _on_setuped():
 	# Check State via Injection
 	if __prop_state:
 		# World State: Dynamic Mode
+		# World State: Dynamic Mode
 		body.freeze = false
 		
 		# Set Initial Position (Global) directly to Body
@@ -67,11 +68,12 @@ func _setup_multiplayer_sync():
 	_synchronizer = NetworkSynchronizer.new()
 	_synchronizer.name = "Synchronizer"
 	_synchronizer.set_multiplayer_authority(1)
+	_synchronizer.sync_every_frame = true
 	
 	_synchronizer.add_property(NodePath("Body:position"), true)
 	_synchronizer.add_property(NodePath("Body:rotation"), true)
-	_synchronizer.add_property(NodePath("Body:linear_velocity"), false) # Velocity usually doesn't need smooth visual interp if Position is handled, or it fights physics. Keep generic for now.
-	_synchronizer.add_property(NodePath("Body:angular_velocity"), false)
+	_synchronizer.add_property(NodePath("Body:linear_velocity"), true)
+	_synchronizer.add_property(NodePath("Body:angular_velocity"), true)
 	
 	add_child(_synchronizer)
 	
