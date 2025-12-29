@@ -2,16 +2,30 @@ class_name BuildingManager
 extends Node2D
 
 
-var _spawner: MultiplayerSpawner
+var _spawner: NetworkSpawner
 
 func _enter_tree() -> void:
-	_spawner = MultiplayerSpawner.new()
+	_spawner = NetworkSpawner.new()
+	_spawner.name = "BuildingNetworkSpawner"
 	_spawner.spawn_function = _spawn_building_node
 	add_child(_spawner)
 
 func _ready() -> void:
 	DI.register("_building_manager", self)
-	_spawner.spawn_path = %_building_node.get_path()
+	# BuildingManager 的 spawn_path 設定
+	# 原本是 _spawner.spawn_path = %_building_node.get_path()
+	# NetworkSpawner 的 spawn_path 是 NodePath，需要相對於 NetworkSpawner 或是絕對路徑
+	# 因為我們剛剛 add_child(_spawner) 到 BuildingManager
+	# 所以如果 %_building_node 是 BuildingManager 的子節點，我們需要正確設定路徑
+	# 這裡建議直接使用 get_node("%_building_node").get_path() 來獲取絕對路徑或相對路徑
+	# 但考慮到 NetworkSpawner 是在 _enter_tree 加入的，此時 %UniqueName 可能還可以存取
+	
+	# 為了保險，我們在 _ready 設定 spawn_path
+	var building_node = get_node("%_building_node") # 假設 _building_node 是 Unique Name
+	if building_node:
+		_spawner.spawn_path = building_node.get_path()
+	else:
+		push_error("BuildingManager: %_building_node not found!")
 
 var _terrain_manager: TerrainManager
 
