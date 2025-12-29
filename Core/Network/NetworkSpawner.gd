@@ -11,12 +11,26 @@ extends Node
 ## 3. 魯棒性：具備冪等性檢查、防呆機制。
 
 # 配置
-@export var spawn_path: NodePath
+@export var spawn_path: NodePath:
+	set(value):
+		spawn_path = value
+		_update_watcher()
+
 var spawn_function: Callable
 
-# 狀態跟踪 (Server Only)
-# { node_name: spawn_data }
+# 狀態跟踪
+# Server: { node_name: data }
+# Client: { node_name: null } (主要用於驗證是否為受控節點)
 var _spawned_nodes: Dictionary = {}
+
+# Client Only: 追蹤合法的移除請求，用於防呆檢查
+var _authorized_despawns: Dictionary = {}
+
+var _current_watched_node: Node
+
+func _enter_tree() -> void:
+	# Server 和 Client 都需要監聽，以確保狀態一致性並進行防呆
+	_update_watcher()
 
 func _ready() -> void:
 	# 僅伺服器需要監聽連線以進行同步
@@ -48,7 +62,7 @@ func spawn(data: Dictionary) -> Node:
 		push_error("NetworkSpawner: spawn called on client.")
 		return null
 		
-	# [魯棒性] 檢查必要參數
+	# 檢查必要參數
 	if not spawn_function.is_valid():
 		push_error("NetworkSpawner: spawn_function is not valid.")
 		return null
@@ -56,7 +70,7 @@ func spawn(data: Dictionary) -> Node:
 	# 執行生成
 	var node = spawn_function.call(data)
 	
-	# [魯棒性] 檢查生成結果
+	# 檢查生成結果
 	if not is_instance_valid(node):
 		push_error("NetworkSpawner: spawn_function returned invalid node.")
 		return null
@@ -103,12 +117,9 @@ func despawn(node: Node) -> void:
 		
 	var node_name = node.name
 	
-	# [魯棒性] 檢查是否為受控節點
+	# 檢查是否為受控節點
 	if not _spawned_nodes.has(node_name):
 		push_warning("NetworkSpawner: Try to despawn a node not managed by this spawner: " + node_name)
-		# 雖然不是我們生成的，但如果呼叫者執意要刪，我們還是可以幫忙刪，
-		# 但為了安全起見，這裡只處理受控節點。
-		# 若要刪除非受控節點，應直接 queue_free 或用其他邏輯。
 		return
 
 	# 移除狀態
@@ -118,7 +129,51 @@ func despawn(node: Node) -> void:
 	_rpc_despawn.rpc(node_name)
 	
 	# 執行刪除
+	# 注意：queue_free 會觸發 child_exiting_tree，
+	# 但因為我們已經從 _spawned_nodes 移除了，所以 callback 會安全忽略。
 	node.queue_free()
+
+func _update_watcher():
+	if not is_inside_tree():
+		return
+		
+	if _current_watched_node and is_instance_valid(_current_watched_node):
+		if _current_watched_node.child_exiting_tree.is_connected(_on_child_exiting_tree):
+			_current_watched_node.child_exiting_tree.disconnect(_on_child_exiting_tree)
+	
+	_current_watched_node = null
+	
+	if spawn_path.is_empty():
+		return
+		
+	var node = get_node_or_null(spawn_path)
+	if node:
+		node.child_exiting_tree.connect(_on_child_exiting_tree)
+		_current_watched_node = node
+
+func _on_child_exiting_tree(node: Node):
+	# 當受控節點被移除（無論是透過 despawn 還是外部 queue_free）
+	# 我們都要確保同步給客戶端
+	var node_name = node.name
+	
+	if multiplayer.is_server():
+		# Server Logic: Sync to Clients
+		if _spawned_nodes.has(node_name):
+			_spawned_nodes.erase(node_name)
+			_rpc_despawn.rpc(node_name)
+	else:
+		# Client Logic: Illegal Deletion Guard
+		if _spawned_nodes.has(node_name):
+			# 檢查是否為 authorized despawn
+			if _authorized_despawns.has(node_name):
+				# 合法移除，清除標記
+				_authorized_despawns.erase(node_name)
+				_spawned_nodes.erase(node_name)
+			else:
+				# 非法移除！ (Client 自作主張 queue_free)
+				push_error("NetworkSpawner [Client]: 非法移除受控節點 (%s)！正在重新同步..." % node_name)
+				# 重新同步：Client 主動跟 Server 要資料，把消失的節點補回來
+				start()
 
 # ==============================================================================
 # Internal / Callbacks
@@ -151,9 +206,10 @@ func _rpc_spawn(node_name: String, data: Dictionary) -> void:
 		
 	# [魯棒性 - 冪等性] 檢查是否已存在
 	if parent.has_node(node_name):
-		# 節點已存在，視為已同步
-		# 這情況發生在 Late Join 同步封包 與 即時生成廣播 同時到達時
-		# print_verbose("NetworkSpawner [Client]: Node already exists, skipping spawn: ", node_name)
+		# 如果節點已存在，我們仍需確保它被註冊在 _spawned_nodes 中
+		# 這確保了後續刪除檢查的正確性
+		if not _spawned_nodes.has(node_name):
+			_spawned_nodes[node_name] = data
 		return
 		
 	# [魯棒性] 檢查 spawn_function
@@ -173,6 +229,9 @@ func _rpc_spawn(node_name: String, data: Dictionary) -> void:
 	
 	# 加入場景
 	parent.add_child(node)
+	
+	# Client 端註冊
+	_spawned_nodes[node_name] = data
 
 @rpc("authority", "call_remote", "reliable")
 func _rpc_despawn(node_name: String) -> void:
@@ -180,11 +239,13 @@ func _rpc_despawn(node_name: String) -> void:
 	if not parent:
 		return
 		
+	# 標記為合法移除 (使用 Dictionary 當 Set 用)
+	_authorized_despawns[node_name] = true
+		
 	# [魯棒性] 檢查節點是否存在
 	var node = parent.get_node_or_null(node_name)
 	if node:
 		node.queue_free()
 	else:
-		# 節點不存在可能是因為已經被刪除了，或是這是一個重複的 despawn 封包
-		# 安全忽略
-		pass
+		# 節點已消失，移除標記以免殘留
+		_authorized_despawns.erase(node_name)
