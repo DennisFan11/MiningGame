@@ -48,3 +48,19 @@ func _set_breaking_color(is_breaking: bool):
 				true, is_breaking
 			)
 		)
+
+func _ready():
+	super ()
+	_setup_multiplayer_sync()
+
+func _setup_multiplayer_sync():
+	var sync = NetworkSynchronizer.new()
+	sync.name = "Synchronizer"
+	sync.set_multiplayer_authority(1)
+	
+	sync.add_property(NodePath(":breaking"))
+	
+	add_child(sync )
+	
+	if not multiplayer.is_server():
+		sync.start()

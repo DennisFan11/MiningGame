@@ -4,7 +4,7 @@ extends Component
 var body: CharacterBody2D
 var _bitmask_manager: BitmaskManager
 var _shape: Shape2D
-var _synchronizer: MultiplayerSynchronizer
+var _synchronizer: NetworkSynchronizer
 
 func _on_data_set(data: ComponentData):
 	if data is BodyComponentData:
@@ -16,8 +16,6 @@ func _on_data_set(data: ComponentData):
 	add_child(body)
 
 func _on_setuped():
-	
-	
 	# Setup collision - only with walls
 	if _bitmask_manager:
 		body.collision_layer = _bitmask_manager.PLAYER_LAYER
@@ -33,14 +31,15 @@ func _on_setuped():
 	_setup_multiplayer_sync()
 
 func _setup_multiplayer_sync():
-	_synchronizer = MultiplayerSynchronizer.new()
+	_synchronizer = NetworkSynchronizer.new()
 	_synchronizer.name = "Synchronizer"
 	_synchronizer.set_multiplayer_authority(1) # Server Authority
 	
 	# 配置同步屬性
-	var config = SceneReplicationConfig.new()
-	config.add_property(NodePath(".:position"))
-	config.add_property(NodePath(".:velocity"))
+	_synchronizer.add_property(NodePath(".:position"), true)
+	_synchronizer.add_property(NodePath(".:velocity"))
 	
-	_synchronizer.replication_config = config
 	body.add_child(_synchronizer)
+	
+	if not multiplayer.is_server():
+		_synchronizer.start()

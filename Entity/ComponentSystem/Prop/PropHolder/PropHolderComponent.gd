@@ -39,18 +39,19 @@ func _on_setuped():
 	add_child(_pickup_area)
 	
 	# MultiplayerSynchronizer for Late Joiners
-	var synchronizer = MultiplayerSynchronizer.new()
+	var synchronizer = NetworkSynchronizer.new()
 	synchronizer.name = "PropHolderSynchronizer"
 	
 	# Config Replication
-	var config = SceneReplicationConfig.new()
-	config.add_property(":current_prop_id") # Sync this property (relative to parent, which is self)
-	synchronizer.replication_config = config
+	synchronizer.add_property(NodePath(":current_prop_id"))
 	
 	# Set Authority (Server controls this)
 	synchronizer.set_multiplayer_authority(1)
 	
 	add_child(synchronizer)
+	
+	if not multiplayer.is_server():
+		synchronizer.start()
 
 # API
 func try_pickup():

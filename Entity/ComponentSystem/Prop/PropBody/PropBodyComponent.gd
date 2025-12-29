@@ -6,7 +6,7 @@ var _shape: Shape2D
 var _mass: float = 1.0
 
 var body: RigidBody2D
-var _synchronizer: MultiplayerSynchronizer
+var _synchronizer: NetworkSynchronizer
 
 func _on_data_set(data: ComponentData):
 	if data is PropBodyComponentData:
@@ -64,18 +64,19 @@ func _on_setuped():
 # Note: _physics_process removed as we no longer sync Entity to Body
 
 func _setup_multiplayer_sync():
-	_synchronizer = MultiplayerSynchronizer.new()
+	_synchronizer = NetworkSynchronizer.new()
 	_synchronizer.name = "Synchronizer"
 	_synchronizer.set_multiplayer_authority(1)
 	
-	var config = SceneReplicationConfig.new()
-	config.add_property(NodePath("Body:position"))
-	config.add_property(NodePath("Body:rotation"))
-	config.add_property(NodePath("Body:linear_velocity"))
-	config.add_property(NodePath("Body:angular_velocity"))
+	_synchronizer.add_property(NodePath("Body:position"), true)
+	_synchronizer.add_property(NodePath("Body:rotation"), true)
+	_synchronizer.add_property(NodePath("Body:linear_velocity"), false) # Velocity usually doesn't need smooth visual interp if Position is handled, or it fights physics. Keep generic for now.
+	_synchronizer.add_property(NodePath("Body:angular_velocity"), false)
 	
-	_synchronizer.replication_config = config
 	add_child(_synchronizer)
+	
+	if not multiplayer.is_server():
+		_synchronizer.start()
 
 func apply_impulse(impulse: Vector2):
 	if body:
