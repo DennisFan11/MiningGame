@@ -20,7 +20,7 @@ func _on_setuped():
 	
 	# Setup collision - only with walls
 	if _bitmask_manager:
-		body.collision_layer = 0
+		body.collision_layer = _bitmask_manager.PLAYER_LAYER
 		body.collision_mask = _bitmask_manager.get_wall_layer(BitmaskManager.TEAM.IDLE)
 	
 	# Create collision shape from data

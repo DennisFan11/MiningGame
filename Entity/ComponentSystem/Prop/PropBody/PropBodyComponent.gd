@@ -35,7 +35,8 @@ func _ready() -> void:
 	var prop_layer = _bitmask_manager.get_prop_layer()
 	body.collision_layer = prop_layer
 	body.collision_mask = prop_layer | _bitmask_manager.get_wall_layer()
-	
+	body.collision_mask |= _bitmask_manager.PLAYER_LAYER
+	#body.collision_layer |= _bitmask_manager.PLAYER_LAYER
 	add_child(body)
 	
 
