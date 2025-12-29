@@ -137,4 +137,10 @@ static func coord_to_global(coord: Vector2i) -> Vector2:
 var _block_map: Dictionary[Vector2i, BuildingEntity] = {}
 
 
-#
+# ==============================================================================
+# Game Lifecycle
+# ==============================================================================
+
+func _game_start():
+	if not multiplayer.is_server():
+		_spawner.start()

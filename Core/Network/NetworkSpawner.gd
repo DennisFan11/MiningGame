@@ -20,8 +20,21 @@ var _spawned_nodes: Dictionary = {}
 
 func _ready() -> void:
 	# 僅伺服器需要監聽連線以進行同步
-	if multiplayer.is_server():
-		multiplayer.peer_connected.connect(_on_peer_connected)
+	# Client 端改由 start() 手動觸發同步，配合 _game_start 流程
+	pass
+
+# ==============================================================================
+# Public API (Common)
+# ==============================================================================
+
+## 啟動同步
+## 應在 Client 端確認場景/依賴載入完成後呼叫 (例如 _game_start)
+func start():
+	if not multiplayer.is_server():
+		# 延遲一幀確保連線狀態穩定
+		await get_tree().process_frame
+		if multiplayer.has_multiplayer_peer() and multiplayer.multiplayer_peer.get_connection_status() == MultiplayerPeer.CONNECTION_CONNECTED:
+			_request_sync.rpc_id(1)
 
 # ==============================================================================
 # Public API (Server Only)
@@ -111,11 +124,15 @@ func despawn(node: Node) -> void:
 # Internal / Callbacks
 # ==============================================================================
 
-## 處理新玩家連線 (Late Join Sync)
-func _on_peer_connected(peer_id: int):
-	# 將當前所有存活的節點同步給新玩家
-	# 使用 loop 發送多個 RPC
-	# 為了避免瞬間流量過大，未來可考慮分批發送，目前先直接送
+## 處理新玩家同步請求
+## 由 Client 端在 _ready 時呼叫
+@rpc("any_peer", "call_remote", "reliable")
+func _request_sync():
+	if not multiplayer.is_server(): return
+	
+	var peer_id = multiplayer.get_remote_sender_id()
+	# print("NetworkSpawner: Sending sync data to peer ", peer_id)
+	
 	for node_name in _spawned_nodes:
 		var data = _spawned_nodes[node_name]
 		_rpc_spawn.rpc_id(peer_id, node_name, data)

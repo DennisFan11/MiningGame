@@ -21,6 +21,10 @@ func _ready() -> void:
 		get_node("PropSpawner").queue_free()
 
 func _game_start():
+	# Client 端啟動 NetworkSpawner 同步
+	if not multiplayer.is_server():
+		_spawner.start()
+
 	## Spawn TEST 
 	if multiplayer.is_server():
 		#await get_tree().create_timer(10).timeout
