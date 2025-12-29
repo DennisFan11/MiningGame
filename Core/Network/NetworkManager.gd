@@ -20,6 +20,7 @@ var players: Dictionary = {}
 ## 玩家資訊 (本地)
 var player_info = {"name": "Player"}
 
+
 func _ready():
 	# 攔截關閉請求，確保能正確發送斷線封包
 	get_tree().auto_accept_quit = false
@@ -77,6 +78,13 @@ func start_host(port: int = DEFAULT_PORT, is_single_player: bool = false, is_ded
 	multiplayer.multiplayer_peer = peer
 	print("Host 已啟動 (Port: %d, Protocol: %s, 單人模式: %s, Dedicated: %s)" % [port, "TCP" if protocol == Protocol.TCP else "UDP", is_single_player, is_dedicated])
 	
+	# 加入流量監控
+	if not has_node("NetworkTrafficLogger"):
+		var logger_script = preload("res://Core/Network/NetworkTrafficLogger.gd")
+		var logger = logger_script.new()
+		logger.name = "NetworkTrafficLogger"
+		add_child(logger)
+
 	# Host 自己也要登入 (僅在非 Dedicated 模式下)
 	if not is_dedicated:
 		var my_name = player_info.get("name", "Host")
