@@ -59,18 +59,18 @@
 
 ```gdscript
 func _setup_multiplayer_synchronizer():
-    var synchronizer = MultiplayerSynchronizer.new()
-    synchronizer.set_multiplayer_authority(1) # Server Authority
-    
-    var config = SceneReplicationConfig.new()
-    # 注意: Body 位置/速度已由 BodyComponent 自動同步，無需重複配置
-    
-    # 同步 HP（HealthComponent）
-    config.add_property(NodePath("HealthComponent:current_hp"))
-    # 其他 Entity 層級的狀態...
-    
-    synchronizer.replication_config = config
-    add_child(synchronizer)
+	var synchronizer = MultiplayerSynchronizer.new()
+	synchronizer.set_multiplayer_authority(1) # Server Authority
+	
+	var config = SceneReplicationConfig.new()
+	# 注意: Body 位置/速度已由 BodyComponent 自動同步，無需重複配置
+	
+	# 同步 HP（HealthComponent）
+	config.add_property(NodePath("HealthComponent:current_hp"))
+	# 其他 Entity 層級的狀態...
+	
+	synchronizer.replication_config = config
+	add_child(synchronizer)
 ```
 
 **重要提醒**: `BodyComponent` 已自動創建 Synchronizer 同步 position/velocity，Entity 層級無需重複設定。
@@ -90,12 +90,12 @@ health_component.heal(5.0)
 ```gdscript
 # Server AI 邏輯
 func _physics_process(delta):
-    if not multiplayer.is_server(): return
-    
-    if vision_component.can_see_target(player):
-        # 移動邏輯由 UnitMoveComponent 自動處理
-        # 攻擊邏輯
-        player_health.damage(damage_amount, self)
+	if not multiplayer.is_server(): return
+	
+	if vision_component.can_see_target(player):
+		# 移動邏輯由 UnitMoveComponent 自動處理
+		# 攻擊邏輯
+		player_health.damage(damage_amount, self)
 ```
 
 ## 注意事項

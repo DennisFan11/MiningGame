@@ -31,11 +31,14 @@ func _ready() -> void:
 	body.physics_material_override = PhysicsMaterial.new()
 	body.physics_material_override.bounce = 1.0
 	
-	# Layer 32 (Prop)
+	# Layer (Prop)
 	var prop_layer = _bitmask_manager.get_prop_layer()
 	body.collision_layer = prop_layer
-	body.collision_mask = prop_layer | _bitmask_manager.get_wall_layer()
-	body.collision_mask |= _bitmask_manager.PLAYER_LAYER
+	body.collision_mask = \
+		prop_layer |\
+		_bitmask_manager.get_wall_layer() |\
+		_bitmask_manager.PLAYER_LAYER
+	
 	#body.collision_layer |= _bitmask_manager.PLAYER_LAYER
 	add_child(body)
 	

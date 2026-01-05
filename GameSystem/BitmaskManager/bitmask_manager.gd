@@ -2,6 +2,7 @@ class_name BitmaskManager
 extends Node2D
 
 
+
 func _ready() -> void:
 	DI.register("_bitmask_manager", self)
 
