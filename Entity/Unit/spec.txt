@@ -3,29 +3,29 @@
 ## 1. 核心原則 (Core Principles)
 *   **Building Entity System 架構**: 所有 Unit 必須遵循此系統。
 *   **嚴格解耦 (Strict Decoupling)**:
-    *   Component **不可知道** `UnitEntity` 類別。
-    *   Component **不可知道** `LocalInjector` (Injector)，禁止手動呼叫 `injection()`。
-    *   Component **不可依賴外部場景樹**，禁止使用 `get_node()`。
+	*   Component **不可知道** `UnitEntity` 類別。
+	*   Component **不可知道** `LocalInjector` (Injector)，禁止手動呼叫 `injection()`。
+	*   Component **不可依賴外部場景樹**，禁止使用 `get_node()`。
 *   **自動注入 (Auto-Injection)**:
-    *   所有依賴注入必須透過 `LocalInjector` 的自動變數名稱匹配機制達成。
-    *   Component 內部變數命名必須與註冊的 Key 完全一致 (例如 `var __unit_data`)。
+	*   所有依賴注入必須透過 `LocalInjector` 的自動變數名稱匹配機制達成。
+	*   Component 內部變數命名必須與註冊的 Key 完全一致 (例如 `var __unit_data`)。
 
 ## 2. 通用組件 (CommonComponents)
 *   **BodyComponent**: 
-    *   創建 `CharacterBody2D`
-    *   僅處理與牆壁的碰撞
-    *   從 `BodyComponentData` 接收 `polygon` 參數
+	*   創建 `CharacterBody2D`
+	*   僅處理與牆壁的碰撞
+	*   從 `BodyComponentData` 接收 `polygon` 參數
 *   **HealthComponent**:
-    *   自己管理 `max_hp` 和 `current_hp`
-    *   從 `HealthComponentData` 接收 `max_hp` 參數
+	*   自己管理 `max_hp` 和 `current_hp`
+	*   從 `HealthComponentData` 接收 `max_hp` 參數
 *   **HitboxComponent**:
-    *   處理敵我碰撞檢測
-    *   從 `HitboxComponentData` 接收 `team` 參數
+	*   處理敵我碰撞檢測
+	*   從 `HitboxComponentData` 接收 `team` 參數
 
 ## 3. UnitEntity 職責
 *   **純容器 (Container)**:
-    *   僅負責持有 Data/State 並初始化 Injector。
-    *   不直接操作或持有 `Body`。
+	*   僅負責持有 Data/State 並初始化 Injector。
+	*   不直接操作或持有 `Body`。
 
 ## 4. 註冊 Key 規範
 *   `__unit_data` -> UnitData
@@ -37,15 +37,15 @@
 ## 5. 多人連線支援 (Multiplayer Support)
 *   **架構**: Server-Authoritative (Server 權威)
 *   **HealthComponent**: 
-    *   使用 RPC 確保 Server 執行傷害/治療
-    *   `damage()` 和 `heal()` 自動處理 Client-Server 通訊
+	*   使用 RPC 確保 Server 執行傷害/治療
+	*   `damage()` 和 `heal()` 自動處理 Client-Server 通訊
 *   **UnitMoveComponent**: 
-    *   只在 Server 執行物理運算 (`multiplayer.is_server()`)
-    *   Client 透過 Synchronizer 插值顯示位置
+	*   只在 Server 執行物理運算 (`multiplayer.is_server()`)
+	*   Client 透過 Synchronizer 插值顯示位置
 *   **BodyComponent & HitboxComponent**: 
-    *   每個客戶端本地創建
-    *   BodyComponent 自動創建 MultiplayerSynchronizer 同步 position/velocity
+	*   每個客戶端本地創建
+	*   BodyComponent 自動創建 MultiplayerSynchronizer 同步 position/velocity
 *   **VisionComponent**: 
-    *   純查詢功能，無狀態，無需同步
+	*   純查詢功能，無狀態，無需同步
 
 詳見: `multiplayer_support.md`
