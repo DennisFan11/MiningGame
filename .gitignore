@@ -2,3 +2,6 @@
 .godot/
 /android/
 server.log
+
+# GUT Testing
+.gut_editor_config.json

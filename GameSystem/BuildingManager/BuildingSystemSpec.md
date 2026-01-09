@@ -16,44 +16,44 @@
 ### 類別關係圖
 ```mermaid
 classDiagram
-    class BuildingManager {
-        - _spawner: MultiplayerSpawner
-        - _block_map: Dictionary
-        + spawn_building(type, data, state)
-        + delete_block(coord)
-        + get_block(coord)
-    }
-    
-    class BuildingService {
-        + try_set_plan(RPC Wrapper)
-        + try_tag_breaking(RPC Wrapper)
-        + try_transfer_resource(Dual Sim)
-    }
+	class BuildingManager {
+		- _spawner: MultiplayerSpawner
+		- _block_map: Dictionary
+		+ spawn_building(type, data, state)
+		+ delete_block(coord)
+		+ get_block(coord)
+	}
+	
+	class BuildingService {
+		+ try_set_plan(RPC Wrapper)
+		+ try_tag_breaking(RPC Wrapper)
+		+ try_transfer_resource(Dual Sim)
+	}
 
-    class Builder {
-        - _player_item_repo: Global Repo
-        + _build(target)
-        + _remove(target)
-    }
+	class Builder {
+		- _player_item_repo: Global Repo
+		+ _build(target)
+		+ _remove(target)
+	}
 
-    class BuildingEntity {
-        <<Abstract>>
-        + data: BuildingData
-        + state: BuildingState
-        + breaking: bool (Synced)
-    }
-    
-    class BuildingConstruct {
-        + contain_item: PackedItem
-        + need_item: PackedItem
-        + is_building_finish()
-        + is_remove_finish()
-    }
+	class BuildingEntity {
+		<<Abstract>>
+		+ data: BuildingData
+		+ state: BuildingState
+		+ breaking: bool (Synced)
+	}
+	
+	class BuildingConstruct {
+		+ contain_item: PackedItem
+		+ need_item: PackedItem
+		+ is_building_finish()
+		+ is_remove_finish()
+	}
 
-    BuildingManager --> BuildingEntity : Manages
-    BuildingService ..> BuildingManager : Uses
-    Builder ..> BuildingService : Calls
-    BuildingConstruct --|> BuildingEntity
+	BuildingManager --> BuildingEntity : Manages
+	BuildingService ..> BuildingManager : Uses
+	Builder ..> BuildingService : Calls
+	BuildingConstruct --|> BuildingEntity
 ```
 
 ---
@@ -74,9 +74,9 @@ classDiagram
 ### 3.3 邏輯同步 (Logic Sync - Dual Simulation)
 *   **機制**: `BuildingService.try_transfer_resource()`
 *   **說明**: 資源的傳遞 (Builder -> Building) 不使用頻繁的網路同步，而是採用「雙端模擬」：
-    1.  **Client**: `Builder` 計算傳輸量 -> 本地扣除背包/增加建築資源 -> 更新 UI 進度條。
-    2.  **Server**: `Builder` 執行相同邏輯 -> 驗證並修改權威數據。
-    3.  **校正**: 僅在建築完成 (`BuildingFinish`) 或拆除完成 (`RemoveFinish`) 等關鍵節點，Server 會發送最終狀態或生成新物件來「覆蓋」Client 的模擬結果。
+	1.  **Client**: `Builder` 計算傳輸量 -> 本地扣除背包/增加建築資源 -> 更新 UI 進度條。
+	2.  **Server**: `Builder` 執行相同邏輯 -> 驗證並修改權威數據。
+	3.  **校正**: 僅在建築完成 (`BuildingFinish`) 或拆除完成 (`RemoveFinish`) 等關鍵節點，Server 會發送最終狀態或生成新物件來「覆蓋」Client 的模擬結果。
 
 ---
 
@@ -84,26 +84,26 @@ classDiagram
 
 ### 4.1 建造流程 (Construction Flow)
 1.  **放置藍圖**:
-    *   Client `Placer` 呼叫 `BuildingService.try_set_plan()`。
-    *   Server `request_build_plan` 驗證位置 -> `BuildingManager.spawn_building(PLAN)`。
-    *   Spawner 同步 `BuildingPlan` 到 Client。
+	*   Client `Placer` 呼叫 `BuildingService.try_set_plan()`。
+	*   Server `request_build_plan` 驗證位置 -> `BuildingManager.spawn_building(PLAN)`。
+	*   Spawner 同步 `BuildingPlan` 到 Client。
 2.  **升級/建造**:
-    *   Server `Builder` 偵測到 `BuildingPlan` -> `try_upgrade` -> 替換為 `BuildingConstruct`。
-    *   Client/Server `Builder` 對 `BuildingConstruct` 執行 `try_transfer_resource` (注入資源)。
-    *   **完成判定 (Server)**: `is_building_finish()` 為真 -> `request_upgrade` -> 替換為 `Building` (完成體)。
+	*   Server `Builder` 偵測到 `BuildingPlan` -> `try_upgrade` -> 替換為 `BuildingConstruct`。
+	*   Client/Server `Builder` 對 `BuildingConstruct` 執行 `try_transfer_resource` (注入資源)。
+	*   **完成判定 (Server)**: `is_building_finish()` 為真 -> `request_upgrade` -> 替換為 `Building` (完成體)。
 
 ### 4.2 拆除流程 (Deletion Flow)
 1.  **標記拆除**:
-    *   Client `Remover` 呼叫 `BuildingService.try_tag_breaking()`。
-    *   Server `request_tag_breaking` -> 設定 `building.breaking = true`。
-    *   `MultiplayerSynchronizer` 同步 `breaking` 狀態給 Client。
+	*   Client `Remover` 呼叫 `BuildingService.try_tag_breaking()`。
+	*   Server `request_tag_breaking` -> 設定 `building.breaking = true`。
+	*   `MultiplayerSynchronizer` 同步 `breaking` 狀態給 Client。
 2.  **回收資源**:
-    *   Client/Server `Builder` 偵測到 `breaking == true` -> 切換至 `_remove` 模式。
-    *   `try_transfer_resource` (雙端模擬) 將資源從建築退回背包。
+	*   Client/Server `Builder` 偵測到 `breaking == true` -> 切換至 `_remove` 模式。
+	*   `try_transfer_resource` (雙端模擬) 將資源從建築退回背包。
 3.  **刪除判定 (Server)**:
-    *   **條件**: `is_remove_finish()` (資源歸零 且 breaking)。
-    *   **執行**: `request_delete` -> `BuildingManager.delete_block()` -> `queue_free()`。
-    *   Spawner 自動同步刪除結果。
+	*   **條件**: `is_remove_finish()` (資源歸零 且 breaking)。
+	*   **執行**: `request_delete` -> `BuildingManager.delete_block()` -> `queue_free()`。
+	*   Spawner 自動同步刪除結果。
 
 ---
 
@@ -112,10 +112,10 @@ classDiagram
 ### FULL_REMOVED_CONSTRUCT
 *   **用途**: 當玩家對一個已完成的 `Building` 進行拆除時，無法直接變回「一半的鷹架」。
 *   **機制**:
-    *   Server 刪除 `Building`。
-    *   Server 生成 `FULL_REMOVED_CONSTRUCT` (這是一個 `BuildingConstruct` 變體)。
-    *   **初始化**: 自動設定 `breaking = true` 且 `contain_item = full`。
-    *   Client 生成此物件時，亦會執行相同初始化，確保視覺上立即顯示為「滿資源且正在拆除」的鷹架。
+	*   Server 刪除 `Building`。
+	*   Server 生成 `FULL_REMOVED_CONSTRUCT` (這是一個 `BuildingConstruct` 變體)。
+	*   **初始化**: 自動設定 `breaking = true` 且 `contain_item = full`。
+	*   Client 生成此物件時，亦會執行相同初始化，確保視覺上立即顯示為「滿資源且正在拆除」的鷹架。
 
 ---
 

@@ -1,7 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://4ik2roj8liup"]
 
 [ext_resource type="Script" uid="uid://bldwqnrxjxe3b" path="res://Entity/ComponentSystem/CommonComponents/Builder/BuilderComponent.gd" id="1_0jlwc"]
-[ext_resource type="Script" uid="uid://cithxaqsmesw8" path="res://Entity/_components/IFF/IFF.gd" id="2_3y445"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_hmesp"]
 
@@ -26,10 +25,3 @@ closed = true
 width = 3.0
 default_color = Color(1, 0.7490196, 0.047058824, 0.8862745)
 
-[node name="IFF" type="Node2D" parent="."]
-unique_name_in_owner = true
-script = ExtResource("2_3y445")
-target = 2
-team = 1
-AREA_R = 300.0
-metadata/_custom_type_script = "uid://cithxaqsmesw8"

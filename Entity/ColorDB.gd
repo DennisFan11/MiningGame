@@ -19,5 +19,5 @@ static func get_building_color(
 		[true, false]:
 			return Color("ffbf0ce2")
 		[false, false]:
-			return Color("ff910ca8")
+			return Color("ff910c70")
 	return Color.MEDIUM_PURPLE

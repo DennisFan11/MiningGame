@@ -44,3 +44,36 @@ static func create_entity(data: EntityData, state: Object = null) -> Entity:
 		entity.final_setup()
 		
 	return entity
+
+## Factory Method for Building Visuals
+## Factory Method for Building Visuals
+static func create_building_visual(stage: int, data: BuildingData, controller: Node = null) -> Entity:
+	var entity = Entity.new()
+	entity.name = "VisualEntity"
+	
+	# Register Dependencies for Components
+	entity.__loca_injector.register("__data", data)
+	if controller:
+		entity.__loca_injector.register("__building_controller", controller)
+	
+	match stage:
+		0: # BuildingController.STAGE.PLAN
+			var comp = PlanVisualComponent.new()
+			comp.name = "PlanVisual"
+			entity.add_child(comp)
+			
+		1: # BuildingController.STAGE.CONSTRUCT
+			var comp = ConstructVisualComponent.new()
+			comp.name = "ConstructVisual"
+			entity.add_child(comp)
+			
+		2: # BuildingController.STAGE.COMPLETE
+			# Inject Components defined in Data
+			for comp_data in data.get_component_datas():
+				ComponentDB.inject_component(entity, comp_data)
+	
+	# Trigger final setup to ensure injection happens for added children
+	if entity.has_method("final_setup"):
+		entity.final_setup()
+				
+	return entity

@@ -29,7 +29,7 @@ func _ready() -> void:
 
 var _terrain_manager: TerrainManager
 
-func get_block(coord: Vector2i) -> BuildingEntity:
+func get_block(coord: Vector2i) -> Node:
 	return _block_map.get(coord, null)
 
 func is_space(coord: Vector2i) -> bool:
@@ -48,16 +48,18 @@ func _spawn_building_node(data: Dictionary) -> Node:
 	
 	var instance = BuildingDB.create_type(type, building_data, state)
 	
-	if data.has("items") and instance is BuildingConstruct:
+	if data.has("items") and instance is BuildingController:
 		instance.contain_item.item_set = data["items"]
 		instance.update_progress()
 	
 	return instance
 
 # Register (called by Entity._ready)
-func register_building(building: BuildingEntity):
-	_block_map[building.state.coord] = building
-	# print("Registered building at ", building.state.coord)
+func register_building(building: Node):
+	if "state" in building and "coord" in building.state:
+		_block_map[building.state.coord] = building
+	elif "coord" in building: # Support new BuildingController
+		_block_map[building.coord] = building
 
 # ==============================================================================
 # 2. 公開 API - 強制操作 (Server Only)
@@ -82,7 +84,7 @@ func spawn_building(type: int, data: BuildingData, state: BuildingState, items: 
 func delete_block(coord: Vector2i):
 	if not multiplayer.is_server(): return
 	
-	var building: BuildingEntity = get_block(coord)
+	var building: Node = get_block(coord)
 	if not building:
 		return
 	
@@ -134,7 +136,7 @@ static func coord_to_global(coord: Vector2i) -> Vector2:
 ## 工具區
 
 
-var _block_map: Dictionary[Vector2i, BuildingEntity] = {}
+var _block_map: Dictionary = {}
 
 
 # ==============================================================================
