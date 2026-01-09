@@ -2,7 +2,8 @@ class_name PlayerManager
 extends Node2D
 
 # 角色列表 { peer_id : Node }
-var _avatars: Dictionary[int, UnitEntity] = {}
+# 使用 Entity 取代 UnitEntity
+var _avatars: Dictionary[int, Entity] = {}
 
 # Spawner
 @onready var _spawner: MultiplayerSpawner = $PlayerSpawner
@@ -68,11 +69,11 @@ func spawn_character(peer_id: int, session_data: Dictionary) -> void:
 		print("已生成角色: ", node.name)
 
 ## 取得特定玩家的角色節點
-func get_player_node(peer_id: int) -> UnitEntity:
+func get_player_node(peer_id: int) -> Entity:
 	return _avatars.get(peer_id)
 
 ## [Convenience] 取得本地玩家自己的角色節點
-func get_local_player_node() -> UnitEntity:
+func get_local_player_node() -> Entity:
 	return get_player_node(multiplayer.get_unique_id())
 
 ## 取得所有角色節點 (供敵人 AI 查詢)
@@ -91,7 +92,8 @@ func _spawn_player_node(data: Dictionary) -> Node:
 	
 	print("正在生成玩家實體: Peer %d" % peer_id)
 	
-	# 使用 UnitDB 工廠創建玩家
+	# 使用 UnitDB 工廠創建玩家 (回傳 Entity)
+	# UnitDB 作為 Facade，內部會呼叫 EntityDB
 	var player_instance = UnitDB.create_player(peer_id)
 	player_instance.position = pos
 	

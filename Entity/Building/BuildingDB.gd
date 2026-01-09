@@ -7,14 +7,13 @@ extends Node
 """
 enum TYPE {PLAN, CONSTRUCT, BUILDING, FULL_REMOVED_CONSTRUCT}
 
-## Factory 產生一個遊戲建築
-const CONTROLLER_SCENE = preload("res://Entity/Building/BuildingController.tscn")
 
 ## Factory 產生一個遊戲建築
 static func create_type(
 		type: TYPE,
 		data: BuildingData,
 		state: BuildingState) -> Node:
+	var CONTROLLER_SCENE = load("res://Entity/Building/BuildingController.tscn")
 	var instance = CONTROLLER_SCENE.instantiate()
 	# 設定基礎屬性
 	instance.data = data
@@ -43,24 +42,6 @@ static func create_type(
 
 	return instance
 
-# Legacy helpers replacement (optional, or just remove)
-static func create_plan(data: BuildingData) -> Node:
-	var node = CONTROLLER_SCENE.instantiate()
-	node.data = data
-	node.stage = BuildingController.STAGE.PLAN
-	return node
-
-static func create_construct(data: BuildingData) -> Node:
-	var node = CONTROLLER_SCENE.instantiate()
-	node.data = data
-	node.stage = BuildingController.STAGE.CONSTRUCT
-	return node
-
-static func create_building(data: BuildingData) -> Node:
-	var node = CONTROLLER_SCENE.instantiate()
-	node.data = data
-	node.stage = BuildingController.STAGE.COMPLETE
-	return node
 
 ## COMPONENTS
 

@@ -12,44 +12,22 @@ static var ZAKO := ZakoData.new()
 # Factory Methods
 # ==============================================================================
 
-# Factory method to create a generic unit
-static func create_unit(data: UnitData, state: UnitState) -> UnitEntity:
-	# Load a generic base scene for Units. 
-	var scene_path = "res://Entity/Unit/UnitEntity.tscn" # Hypothetical base scene
-	if data.get("scene_path"): # If Data carries scene path
-		scene_path = data.scene_path
-		
-	var node
-	if ResourceLoader.exists(scene_path):
-		node = load(scene_path).instantiate()
-	else:
-		# Fallback: Create script instance (might lack Node structure)
-		node = UnitEntity.new()
-		node.name = "Unit"
-	
-	node.data = data
-	
-	# Inject components
-	for component_data in data.get_component_datas():
-		ComponentDB.inject_component(node, component_data)
-		
-	# Assign State last (triggering injection updates)
-	node.state = state
-	
-	node.final_setup()
-	return node
+# 建立通用 Unit 的工廠方法
+# @param data: UnitData
+static func create_unit(data: UnitData) -> Entity:
+	# 委派給 EntityDB 進行基礎實體創建
+	var unit = EntityDB.create_entity(data)
+	return unit
 
 ## 創建玩家實體 (包含動態注入 PlayerController)
-static func create_player(peer_id: int) -> UnitEntity:
+static func create_player(peer_id: int) -> Entity:
 	# 使用靜態註冊的資料
 	var data = UnitDB.PLAYER
 	
-	var state = UnitState.new()
-	state.team = BitmaskManager.TEAM.PLAYER
-	
-	# 1. 創建基礎 Unit
-	var unit = create_unit(data, state)
+	# 1. 創建基礎 Unit (回傳 Entity)
+	var unit = create_unit(data)
 	unit.name = str(peer_id)
+	
 	# 2. 動態注入 PlayerController (不在 PlayerData 中定義)
 	ComponentDB.inject_component(unit, ComponentDB.PLAYER_CONTROLLER)
 	
@@ -59,5 +37,5 @@ static func create_player(peer_id: int) -> UnitEntity:
 	# 4. 設定權限 (最後執行，確保所有組件都能繼承)
 	unit.set_multiplayer_authority(peer_id)
 		
-	print("Player Spawnned")
+	print("已生成玩家實體 (Entity)")
 	return unit

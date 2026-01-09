@@ -2,7 +2,7 @@ class_name UnitMoveComponent
 extends Component
 
 var __body_component: BodyComponent
-var __unit_data: UnitData
+var __data: UnitData
 
 const ACCELATION := 30.3
 const DECRESS := 20.5
@@ -12,7 +12,7 @@ func _on_data_set(_data: ComponentData):
 	
 func _on_setuped():
 	if not __body_component or not __body_component.body:
-		printerr("[UnitMoveComponent] Missing Body Component or Body Node!")
+		printerr("[UnitMoveComponent] 缺少 Body Component 或 Body 節點!")
 		set_physics_process(false)
 		return
 
@@ -35,8 +35,8 @@ func _physics_process(delta: float) -> void:
 
 	var input_vec = _get_input_vector()
 	var target_vel = Vector2.ZERO
-	# Use helper or default
-	var speed = __unit_data.get_speed() if __unit_data else 100.0
+	# 使用 helper 或預設值，注意改用 __data
+	var speed = __data.get_speed() if __data else 100.0
 	
 	if input_vec.length_squared() > 0.01:
 		target_vel = input_vec * speed
@@ -46,7 +46,7 @@ func _physics_process(delta: float) -> void:
 		
 	body.move_and_slide()
 
-# Virtual method to be overridden or injected
+# 虛擬方法，供覆寫或注入
 func _get_input_vector() -> Vector2:
 	# 優先使用外部注入的 Input Provider
 	if input_provider:

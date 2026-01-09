@@ -5,7 +5,6 @@ extends Resource
 ## 所有 UnitData, BuildingData, PropData 都將繼承此類
 
 @export var entity_name: String = "Entity"
-@export var scene_path: String = "" # 若為空，Factory 可能會使用預設場景
 
 ## 獲取該實體所需的所有組件資料
 ## 子類應覆蓋此方法回傳具體的 ComponentData 列表
