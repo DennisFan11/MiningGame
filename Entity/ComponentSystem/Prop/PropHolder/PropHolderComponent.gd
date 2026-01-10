@@ -81,14 +81,20 @@ func rpc_try_pickup(target_path: NodePath):
 		return
 	if target_body.get_parent() is not PropBodyComponent:
 		return
-	var prop_entity: PropEntity = target_body.get_parent().get_parent()
-	print("player pickup", prop_entity)
+	if target_body.get_parent() is not PropBodyComponent:
+		return
+		
+	var prop_body_comp = target_body.get_parent()
+	var data = prop_body_comp.get_prop_data()
+	print("player pickup data: ", data)
 	
-	if prop_entity is PropEntity and prop_entity.data is PropData:
-		var id = _find_prop_id(prop_entity.data)
+	if data:
+		var id = _find_prop_id(data)
 		
 		if id != -1:
-			prop_entity.queue_free()
+			# User allows knowing Entity for freeing
+			# PropBodyComponent -> Entity
+			prop_body_comp.remove_entity()
 			current_prop_id = id # Setter triggers visual update local & sync triggers remote
 
 

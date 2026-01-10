@@ -5,8 +5,6 @@ extends EntityData
 @export var icon: Texture
 @export var mass: float = 1.0
 
-func _init():
-	scene_path = "res://Entity/Prop/PropEntity.tscn"
 
 # Virtual Methods (Defaults)
 func get_entity_name() -> String:

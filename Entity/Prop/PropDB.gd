@@ -23,13 +23,22 @@ static func create_world_prop(data: PropData, pos: Vector2, force: Vector2) -> E
 	var state = PropState.new(pos, Vector2.ONE, force)
 	
 	# 2. Instantiate Entity (Data/State injection via EntityDB)
-	var entity = EntityDB.create_entity(data, state)
+	var entity = EntityDB.create_entity(data)
 	
 	# 3. Inject WORLD Components (Visual + Body)
 	# NOTE: We manually inject components because we split World/Held data in PropData
 	var components = data.get_world_component_datas()
 	for comp in components:
 		ComponentDB.inject_component(entity, comp)
+	
+	# 4. Trigger Final Setup
+	if entity.has_method("final_setup"):
+		entity.final_setup()
+		
+	# 5. Config Body Component (Use Component Access!)
+	var body_comp = entity.get_component(PropBodyComponent)
+	if body_comp:
+		body_comp.init_physics(pos, force)
 		
 	return entity
 
@@ -38,14 +47,14 @@ static func create_held_prop(data: PropData) -> Entity:
 	var state = PropState.new(Vector2.ZERO, Vector2.ZERO, Vector2.ZERO)
 	
 	# 2. Instantiate Entity
-	var entity = EntityDB.create_entity(data, state)
+	var entity = EntityDB.create_entity(data)
 	
 	# 3. Inject HELD Components (Visual Only)
 	var components = data.get_held_component_datas()
 	for comp in components:
 		ComponentDB.inject_component(entity, comp)
 	
-	# 4. Apply Initial Transform (Since manual transform control component is absent in Held mode)
+	# 4. Apply Initial Transform
 	if entity:
 		entity.position = state.position
 		entity.scale = state.scale

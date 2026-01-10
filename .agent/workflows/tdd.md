@@ -1,3 +1,7 @@
+---
+description: 此項目的詳細TDD開發流程
+---
+
 一律使用中文 plan也要
 
 ---
@@ -54,6 +58,8 @@ var __health_component: HealthComponent
 1. **禁止知道 Entity 類別** - 不可引用 `UnitEntity`, `BuildingEntity`
 2. **禁止知道 LocalInjector** - 不可手動呼叫 `injection()`
 3. **禁止依賴場景樹** - 不可使用 `get_node()`
+4. **主動通知** - 如果需要違反上述原則，請先主動通知用戶 先跟用戶討論！！！ 不要自作主張！！！！！
+
 
 ### 正確的依賴獲取方式
 
