@@ -31,6 +31,27 @@ func _setup_network():
     client_root.name = "ClientRoot"
     add_child(client_root)
 
+    # 4. 配置 MultiplayerAPI (優先執行，確保子節點加入時能讀取到正確的 API)
+    server_peer = ENetMultiplayerPeer.new()
+    var err = server_peer.create_server(0)
+    if err != OK:
+        push_error("Failed to create server")
+        return
+    var port = server_peer.host.get_local_port()
+    
+    var server_api = SceneMultiplayer.new()
+    server_api.root_path = server_root.get_path()
+    get_tree().set_multiplayer(server_api, server_root.get_path())
+    server_api.multiplayer_peer = server_peer
+    
+    client_peer = ENetMultiplayerPeer.new()
+    client_peer.create_client("127.0.0.1", port)
+    
+    var client_api = SceneMultiplayer.new()
+    client_api.root_path = client_root.get_path()
+    get_tree().set_multiplayer(client_api, client_root.get_path())
+    client_api.multiplayer_peer = client_peer
+
     # 2. 建立容器 (Spawn Container)
     server_container = Node.new()
     server_container.name = "SpawnContainer"
@@ -52,27 +73,6 @@ func _setup_network():
     client_spawner.spawn_path = client_container.get_path()
     client_spawner.spawn_function = _simple_spawn_func
     client_root.add_child(client_spawner)
-
-    # 4. 配置 MultiplayerAPI
-    server_peer = ENetMultiplayerPeer.new()
-    var err = server_peer.create_server(0)
-    if err != OK:
-        push_error("Failed to create server")
-        return
-    var port = server_peer.host.get_local_port()
-    
-    var server_api = SceneMultiplayer.new()
-    server_api.root_path = server_root.get_path()
-    get_tree().set_multiplayer(server_api, server_root.get_path())
-    server_api.multiplayer_peer = server_peer
-    
-    client_peer = ENetMultiplayerPeer.new()
-    client_peer.create_client("127.0.0.1", port)
-    
-    var client_api = SceneMultiplayer.new()
-    client_api.root_path = client_root.get_path()
-    get_tree().set_multiplayer(client_api, client_root.get_path())
-    client_api.multiplayer_peer = client_peer
 
     # 等待連線
     var waited = 0.0
