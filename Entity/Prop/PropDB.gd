@@ -19,9 +19,6 @@ static var props: Dictionary[int, PropData] = {}
 # ==============================================================================
 
 static func create_world_prop(data: PropData, pos: Vector2, force: Vector2) -> Entity:
-	# 1. Create State (No flags, just physical properties)
-	var state = PropState.new(pos, Vector2.ONE, force)
-	
 	# 2. Instantiate Entity (Data/State injection via EntityDB)
 	var entity = EntityDB.create_entity(data)
 	
@@ -30,10 +27,6 @@ static func create_world_prop(data: PropData, pos: Vector2, force: Vector2) -> E
 	var components = data.get_world_component_datas()
 	for comp in components:
 		ComponentDB.inject_component(entity, comp)
-	
-	# 4. Trigger Final Setup
-	if entity.has_method("final_setup"):
-		entity.final_setup()
 		
 	# 5. Config Body Component (Use Component Access!)
 	var body_comp = entity.get_component(PropBodyComponent)
@@ -43,9 +36,6 @@ static func create_world_prop(data: PropData, pos: Vector2, force: Vector2) -> E
 	return entity
 
 static func create_held_prop(data: PropData) -> Entity:
-	# 1. Create State (Held Transform)
-	var state = PropState.new(Vector2.ZERO, Vector2.ZERO, Vector2.ZERO)
-	
 	# 2. Instantiate Entity
 	var entity = EntityDB.create_entity(data)
 	
@@ -56,8 +46,8 @@ static func create_held_prop(data: PropData) -> Entity:
 	
 	# 4. Apply Initial Transform
 	if entity:
-		entity.position = state.position
-		entity.scale = state.scale
+		entity.position = Vector2.ZERO
+		entity.scale = Vector2.ZERO
 		
 	return entity
 

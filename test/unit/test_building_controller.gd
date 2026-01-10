@@ -9,24 +9,28 @@ func _create_building() -> BuildingController:
 	add_child_autofree(building)
 	return building
 
+# 目的：驗證 BuildingController.STAGE 枚舉值的定義是否符合預期 (PLAN=0, CONSTRUCT=1, COMPLETE=2)
 func test_building_stage_enum():
 	assert_eq(BuildingController.STAGE.PLAN, 0)
 	assert_eq(BuildingController.STAGE.CONSTRUCT, 1)
 	assert_eq(BuildingController.STAGE.COMPLETE, 2)
 
 
+# 目的：驗證新實例化的 BuildingController 預設階段應為 PLAN
 func test_building_default_stage():
 	var building = BUILDING_SCENE.instantiate()
 	add_child_autofree(building)
 	assert_eq(building.stage, BuildingController.STAGE.PLAN)
 
 
+# 目的：驗證新實例化的 BuildingController 預設不處於正在拆除 (breaking) 狀態
 func test_building_default_breaking():
 	var building = BUILDING_SCENE.instantiate()
 	add_child_autofree(building)
 	assert_false(building.breaking)
 
 
+# 目的：驗證設定 coord 屬性時，是否會自動計算並更新 global_position (基於 BLOCK_SIZE=64)
 func test_building_coord_sets_position():
 	var building = BUILDING_SCENE.instantiate()
 	add_child_autofree(building)
@@ -37,6 +41,7 @@ func test_building_coord_sets_position():
 	assert_eq(building.position, expected)
 
 
+# 目的：驗證 contain_item 容器預設應為空但已初始化
 func test_building_contain_item_default():
 	var building = BUILDING_SCENE.instantiate()
 	add_child_autofree(building)
@@ -44,6 +49,7 @@ func test_building_contain_item_default():
 	assert_true(building.contain_item.is_zero())
 
 
+# 目的：驗證當沒有設定建築數據 (data) 時，是否預設判定為建造完成 (防止崩潰或死鎖)
 func test_building_is_building_finish_no_data():
 	var building = BUILDING_SCENE.instantiate()
 	add_child_autofree(building)
@@ -51,6 +57,7 @@ func test_building_is_building_finish_no_data():
 	assert_true(building.is_building_finish())
 
 
+# 目的：驗證當 breaking 為 false 時，即使容器為空，也不應判定為移除完成
 func test_building_is_remove_finish_not_breaking():
 	var building = BUILDING_SCENE.instantiate()
 	add_child_autofree(building)
@@ -59,6 +66,7 @@ func test_building_is_remove_finish_not_breaking():
 	assert_false(building.is_remove_finish())
 
 
+# 目的：驗證當 breaking 為 true 且容器為空時，應判定為移除完成
 func test_building_is_remove_finish_breaking_empty():
 	var building = BUILDING_SCENE.instantiate()
 	add_child_autofree(building)
@@ -67,6 +75,7 @@ func test_building_is_remove_finish_breaking_empty():
 	assert_true(building.is_remove_finish())
 
 
+# 目的：驗證 get_global_rect 是否能正確返回基於 coord 計算出的全域矩形範圍
 func test_building_get_global_rect():
 	var building = BUILDING_SCENE.instantiate()
 	add_child_autofree(building)
@@ -84,56 +93,53 @@ class DummyBuildingData extends BuildingData:
 	func get_icon(): return PlaceholderTexture2D.new()
 	func get_need_item(): return PackedItem.new()
 	func get_component_datas():
-		# Return a dummy component to verify injection in COMPLETE stage
+		# 返回一個虛擬組件以驗證 COMPLETE 階段的注入
 		return [HealthComponentData.new()]
 
 
+# 目的：驗證當設定 BuildingData 時，是否會自動建立 VisualEntity 及其初始子節點 (PlanVisual)
 func test_visual_entity_created_on_data_set():
 	var building = _create_building()
 	var data = DummyBuildingData.new()
 	building.data = data
 	
 	var visual = building.get_node_or_null("VisualEntity")
-	assert_not_null(visual, "VisualEntity should be created")
+	assert_not_null(visual, "應創建 VisualEntity")
 	
 	var plan_visual = visual.get_node_or_null("PlanVisual")
-	assert_not_null(plan_visual, "PlanVisual should be created in PLAN stage")
+	assert_not_null(plan_visual, "在 PLAN 階段應創建 PlanVisual")
 
 
+# 目的：驗證當 Building Stage 改變時，VisualEntity 是否會正確切換對應的視覺子節點 (Plan -> Construct -> Complete)
 func test_visual_entity_changes_on_stage_change():
 	var building = _create_building()
 	var data = DummyBuildingData.new()
 	building.data = data
 	
-	# Initial PLAN
+	# 初始狀態應為 PLAN
 	assert_not_null(building.get_node("VisualEntity/PlanVisual"))
 	
-	# Change to CONSTRUCT
+	# 切換至 CONSTRUCT 狀態
 	building.stage = BuildingController.STAGE.CONSTRUCT
 	var visual = building.get_node("VisualEntity")
-	assert_null(visual.get_node_or_null("PlanVisual"), "PlanVisual should be removed")
-	assert_not_null(visual.get_node_or_null("ConstructVisual"), "ConstructVisual should be created")
+	assert_null(visual.get_node_or_null("PlanVisual"), "PlanVisual 應被移除")
+	assert_not_null(visual.get_node_or_null("ConstructVisual"), "應創建 ConstructVisual")
 
-	# Change to COMPLETE
+	# 切換至 COMPLETE 狀態
 	building.stage = BuildingController.STAGE.COMPLETE
 	visual = building.get_node("VisualEntity")
 	assert_null(visual.get_node_or_null("ConstructVisual"))
 	# assert_not_null(visual.get_node_or_null("CompleteVisual"))
 
-	# Now using HealthComponentData
-	# Note: ComponentDB likely adds node named "HealthComponent" if it adds child.
-	# But ComponentDB inject_component usually looks up component from ComponentDB/Data logic.
-	# Let's check if node exists. 
-	# If injection works, it should be there.
-	# Wait, injection != add_child? 
-	# EntityDB loop: inject_component(entity, comp_data).
-	# ComponentDB.inject_component: var comp = data.get_component(); entity.add_child(comp);
-	# So name is likely "HealthComponent" (default node name) or set.
+	# 現在使用 HealthComponentData
+	# 註：ComponentDB 可能會添加名為 "HealthComponent" 的節點。
+	# ComponentDB.inject_component 邏輯：var comp = data.get_component(); entity.add_child(comp);
+	# 所以名稱可能是 "HealthComponent"（默認節點名稱）或已設置。
 	var health = visual.get_node_or_null("HealthComponent")
 	if not health:
-        # Maybe name is different? Look for type?
+        # 也可能名稱不同？檢查類型？
 		for c in visual.get_children():
 			if c is HealthComponent:
 				health = c
 				break
-	assert_not_null(health, "Should have HealthComponent in COMPLETE stage")
+	assert_not_null(health, "在 COMPLETE 階段應有 HealthComponent")

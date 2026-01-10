@@ -2,6 +2,7 @@ extends GutTest
 
 ## IFF Node 單元測試
 
+# 目的：驗證 IFF.TARGET 常數的值是否正確定義，並能進行正確的位元運算
 func test_iff_constants():
 	# 測試 flag 位元運算
 	assert_eq(IFF.TARGET.BE_SCANNED, 1)
@@ -16,6 +17,7 @@ func test_iff_constants():
 	assert_true(combined & IFF.TARGET.SCAN_ENEMY != 0)
 	assert_false(combined & IFF.TARGET.SCAN_ALLY != 0)
 
+# 目的：驗證 setup 方法是否能正確設定 team, target 和 radius 屬性
 func test_iff_setup():
 	var iff = IFF.new()
 	add_child_autofree(iff)
@@ -30,6 +32,7 @@ func test_iff_setup():
 	assert_eq(iff.target, target)
 	assert_eq(iff.radius, radius)
 
+# 目的：驗證直接修改屬性 (team, radius) 是否能正確更新 IFF 的狀態
 func test_iff_property_changes():
 	var iff = IFF.new()
 	add_child_autofree(iff)
@@ -40,4 +43,4 @@ func test_iff_property_changes():
 	
 	iff.radius = 50.0
 	assert_eq(iff.radius, 50.0)
-	# Verify collision shape radius if possible, but that requires access to internal area/shape
+	# 驗證碰撞形狀半徑（如果可能），但這需要存取內部 Area/Shape

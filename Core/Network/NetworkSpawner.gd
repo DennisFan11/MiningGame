@@ -45,10 +45,19 @@ func _ready() -> void:
 ## 應在 Client 端確認場景/依賴載入完成後呼叫 (例如 _game_start)
 func start():
 	if not multiplayer.is_server():
-		# 延遲一幀確保連線狀態穩定
+		# 如果已經連線，直接請求同步，不需要等待
+		if multiplayer.has_multiplayer_peer() and multiplayer.multiplayer_peer.get_connection_status() == MultiplayerPeer.CONNECTION_CONNECTED:
+			# print("NetworkSpawner [Client]: Requesting sync (Immediate)...")
+			_request_sync.rpc_id(1)
+			return
+			
+		# 延遲一幀確保連線狀態穩定 (Fallback)
 		await get_tree().process_frame
 		if multiplayer.has_multiplayer_peer() and multiplayer.multiplayer_peer.get_connection_status() == MultiplayerPeer.CONNECTION_CONNECTED:
+			# print("NetworkSpawner [Client]: Requesting sync (Delayed)...")
 			_request_sync.rpc_id(1)
+		else:
+			push_warning("NetworkSpawner [Client]: Not connected to server, cannot request sync. Status: %s" % str(multiplayer.multiplayer_peer.get_connection_status() if multiplayer.has_multiplayer_peer() else "No Peer"))
 
 # ==============================================================================
 # Public API (Server Only)
@@ -84,6 +93,7 @@ func spawn(data: Dictionary) -> Node:
 	# 如果 spawn_function 沒設定名稱，我們需要給一個
 	# 通常建議 data 裡包含 id 或 unique key
 	if node.name.is_empty() or node.name.begins_with("@"):
+		# print("NetworkSpawner [Server]: Name invalid '%s', forcing NetNode_..." % node.name)
 		node.name = "NetNode_" + str(randi())
 		
 	# 加入場景樹
@@ -93,8 +103,11 @@ func spawn(data: Dictionary) -> Node:
 		node.free()
 		return null
 		
-	parent.add_child(node)
+	var name_before = node.name
+	parent.add_child(node, true)
+	# print("NetworkSpawner [Server]: Spawned %s -> %s" % [name_before, node.name])
 	
+	# Get final name after add_child
 	# [關鍵修正] 
 	# 必須在 add_child 之後獲取名字，因為 SceneTree 可能會因為名稱衝突而重新命名 (例如 name@2)
 	# 這確保 Server 和 Client 使用完全一致的名稱，讓 MultiplayerSynchronizer 能正確運作
@@ -155,10 +168,16 @@ func _update_watcher():
 		_current_watched_node = node
 
 func _on_child_exiting_tree(node: Node):
-	# 當受控節點被移除（無論是透過 despawn 還是外部 queue_free）
-	# 我們都要確保同步給客戶端
+	# [Robustness] Check if multiplayer is still valid
+	if not is_inside_tree() or not multiplayer:
+		return
+
 	var node_name = node.name
 	
+	# Godot 4.x: multiplayer might be null during teardown even if inside tree
+	if not is_instance_valid(multiplayer):
+		return
+
 	if multiplayer.is_server():
 		# Server Logic: Sync to Clients
 		if _spawned_nodes.has(node_name):
@@ -186,10 +205,10 @@ func _on_child_exiting_tree(node: Node):
 ## 由 Client 端在 _ready 時呼叫
 @rpc("any_peer", "call_remote", "reliable")
 func _request_sync():
+	# print("NetworkSpawner [Server]: Received sync request from ", multiplayer.get_remote_sender_id())
 	if not multiplayer.is_server(): return
 	
 	var peer_id = multiplayer.get_remote_sender_id()
-	# print("NetworkSpawner: Sending sync data to peer ", peer_id)
 	
 	for node_name in _spawned_nodes:
 		var data = _spawned_nodes[node_name]
@@ -201,6 +220,7 @@ func _request_sync():
 
 @rpc("authority", "call_remote", "reliable")
 func _rpc_spawn(node_name: String, data: Dictionary) -> void:
+	# print("NetworkSpawner [Client]: _rpc_spawn received for ", node_name)
 	# [魯棒性] 檢查 Parent
 	var parent = get_node_or_null(spawn_path)
 	if not parent:
@@ -245,6 +265,7 @@ func _rpc_spawn(node_name: String, data: Dictionary) -> void:
 
 @rpc("authority", "call_remote", "reliable")
 func _rpc_despawn(node_name: String) -> void:
+	# print("NetworkSpawner [Client]: _rpc_despawn received for ", node_name)
 	var parent = get_node_or_null(spawn_path)
 	if not parent:
 		return

@@ -1,8 +1,11 @@
 extends GutTest
 
 """
-Building 系統完整性測試
-遍歷 EntityDB/BuildingDB 中定義的所有實例，驗證依賴注入是否完整。
+
+Building系統完整性測試
+目的：確保BuildingDB中定義的所有建築物配置數據(BuildingData)都是有效的，
+並且在三個生命週期階段(PLAN, CONSTRUCT, COMPLETE)都能正確生成對應的實體，
+且所有必要的依賴(Dependencies)都能成功注入，無遺漏。
 """
 
 func before_all():
@@ -10,7 +13,7 @@ func before_all():
 	if BuildingDB.types.is_empty():
 		BuildingDB._static_init()
 		
-	# 註冊 Global Managers (Mocks) 以滿足某些 Component 的依賴
+	# 註冊 Global Managers (Mock) 以滿足某些 Component 的依賴
 	# LogisticIOComponent 需要 _logistic_manager (Type: LogisticManager)
 	var mock_logistic = Node2D.new()
 	mock_logistic.set_script(load("res://GameSystem/BuildingManager/LogisticManager.gd"))
@@ -33,6 +36,7 @@ func before_all():
 	autoqfree(mock_bitmask_mgr)
 
 
+# 目的：遍歷資料庫中所有類型的建築，驗證其實例化過程不會報錯，且所有組件依賴均被滿足
 func test_all_building_instances_integrity():
 	var checked_count = 0
 	
@@ -40,7 +44,7 @@ func test_all_building_instances_integrity():
 		var type = BuildingDB.types[type_name]
 		for data in type.get_buildings():
 			# 測試每個階段的實體生成與依賴
-			# Mock Controller for injection
+			# Mock Controller 用於注入
 			var mock_controller = BuildingController.new()
 			mock_controller.data = data
 			mock_controller.coord = Vector2i.ZERO
@@ -48,34 +52,36 @@ func test_all_building_instances_integrity():
 			
 			# 0: PLAN, 1: CONSTRUCT, 2: COMPLETE (模擬 Entity 生成)
 			# 1. 測試 PLAN 視覺實體
+			# 目的：驗證 "計畫階段" 的視覺實體是否有缺漏的依賴
 			var plan_entity = EntityDB.create_building_visual(0, data, mock_controller)
 			_verify_entity_integrity(plan_entity, "PLAN: %s" % data.get_building_name())
 			checked_count += 1
 			
 			# 2. 測試 CONSTRUCT 視覺實體
+			# 目的：驗證 "施工階段" 的視覺實體依賴完整性
 			var construct_entity = EntityDB.create_building_visual(1, data, mock_controller)
 			_verify_entity_integrity(construct_entity, "CONSTRUCT: %s" % data.get_building_name())
 			checked_count += 1
 			
 			# 3. 測試 COMPLETE (實體組件依賴)
-			# 這邊模擬 EntityDB.create_entity 的行為 (或 create_building_visual(2))
-			# 我們直接使用 create_building_visual(2, data, controller) 來測試標準流程
+			# 目的：驗證 "完工階段" 的實體（通常包含邏輯組件）依賴完整性
+			# 這是最關鍵的步驟，因為大部分邏輯代碼 (如物流、生產) 都在此階段運作
 			var complete_entity = EntityDB.create_building_visual(2, data, mock_controller)
 			
-			# 模擬額外依賴 (LogisticIO 需要 _logistic_manager, 雖然現在它是全域注入，但組件可能預期從 LocalInjector 獲取? No, Global is _xxx, Local is __xxx)
-			# LogisticIO uses `_logistic_manager` (global) AND `__building_controller` (local).
-			# But verify_entity_integrity checks dependencies.
+			# 模擬額外依賴 (LogisticIO 需要 _logistic_manager)
+			# LogisticIO 使用 `_logistic_manager` (全域) 和 `__building_controller` (本地)。
+			# verify_entity_integrity 會檢查這些依賴。
 			
-			# 為了讓 LogisticManager 相關依賴能被解析 (如果這是在 _on_setuped 中使用)
-			# Smoke test just checks if variables are SET.
-			# _on_setuped runs inside create_building_visual -> final_setup.
-			# So dependencies must be ready. Global DI is handled in before_all.
+			# 為了讓 LogisticManager 相關依賴能被解析
+			# Smoke test 僅檢查變數是否被設置。
+			# _on_setuped 在 create_building_visual -> final_setup 中執行。
+			# 因此依賴必須準備就緒。全域 DI 已在 before_all 中處理。
 			
 			_verify_entity_integrity(complete_entity, "COMPLETE: %s" % data.get_building_name())
 			checked_count += 1
 			
 	gut.p("Checked %d building instances across stages." % checked_count)
-	assert_gt(checked_count, 0, "Should iterate at least some buildings")
+	assert_gt(checked_count, 0, "應至少迭代一些建築")
 
 func _verify_entity_integrity(entity: Node, context: String):
 	add_child_autofree(entity)
@@ -103,6 +109,6 @@ func _check_node_dependencies(node: Object, context: String):
 				if node.get_script():
 					script_name = node.get_script().resource_path.get_file()
 					
-				fail_test("Missing Dependency: %s.%s is null (%s)" % [script_name, p_name, context])
+				fail_test("缺少依賴: %s.%s 為空 (%s)" % [script_name, p_name, context])
 			else:
-				pass_test("Dependency Resolved: %s.%s" % [node.name, p_name])
+				pass_test("依賴已解析: %s.%s" % [node.name, p_name])

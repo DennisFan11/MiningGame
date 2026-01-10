@@ -34,6 +34,8 @@ func before_each():
 func after_each():
 	DI._dependence.clear()
 
+# 目的：測試 BuilderComponent 在真實場景中的完整生命週期
+# 包括：初始化、偵測周圍建築請求 (Plan)、執行升級 (Upgrade)、以及持續投入資源進行建造 (Construct to Complete)
 func test_builder_lifecycle():
 	# [Setup] 建立真實玩家實體 (透過 UnitDB)
 	var peer_id = 1
@@ -61,6 +63,7 @@ func test_builder_lifecycle():
 		builder.team = BitmaskManager.TEAM.PLAYER
 	
 	# [Action 1] 放置藍圖 (Plan) 在建造範圍內
+	# 目的：模擬玩家在附近放置建築藍圖，觸發 Builder 的自動偵測機制
 	var coord = Vector2i(2, 2) # (128, 128) 附近
 	var data_script = load("res://test/integration/resources/DummyBuildingData.gd")
 	var state = BuildingState.new(coord, BitmaskManager.TEAM.PLAYER, GridDirs.DIR.UP)
@@ -79,6 +82,7 @@ func test_builder_lifecycle():
 	await wait_seconds(0.5)
 	
 	# [Assert 1] Builder 應自動升級 Plan -> Construct
+	# 驗證：Builder 元件應自動偵測到 Plan 建築，並呼叫 upgrade 請求，使其進入施工階段
 	assert_eq(building.stage, BuildingController.STAGE.CONSTRUCT, "Builder 應將 Plan 升級為 Construct")
 	
 	# [Action 2] 提供資源給 Builder (PlayerRepo)
@@ -88,12 +92,14 @@ func test_builder_lifecycle():
 	await wait_seconds(1.0)
 	
 	# [Assert 2] Builder 應投入資源 (建築內資源 > 0)
+	# 驗證：當玩家背包有足夠資源時，Builder 應自動將資源轉移至建築中
 	assert_gt(building.contain_item.vtotal(), 0.0, "Builder 應投入資源進入建築")
 	
 	# [Action 3] 等待建造完成
 	await wait_seconds(4.0)
 	
 	# [Assert 3] 建築應完成
+	# 驗證：當資源投入滿足需求後，建築應自動轉變為 COMPLETE 階段
 	assert_eq(building.stage, BuildingController.STAGE.COMPLETE, "Builder 應完成建築")
 
 # Helper: 依類型尋找組件 (因為名稱可能變動)

@@ -5,62 +5,65 @@ var _prop_manager: PropManager
 var _player_manager: PlayerManager
 
 func before_each():
-	# Load Main Scene
+	# 載入主場景
 	var main_packed = load("res://Scene/Main/Main.tscn")
 	_main_scene = main_packed.instantiate()
 	add_child_autofree(_main_scene)
 	
 	await get_tree().process_frame
 	
-	# Get Dependencies
+	# 獲取依賴
 	_prop_manager = DI._dependence.get("_prop_manager")
 	_player_manager = DI._dependence.get("_player_manager")
 
 func after_each():
 	DI._dependence.clear()
 
+# 目的：整合測試玩家的 "拾取 (Pick up)" 與 "丟棄 (Throw)" 功能
+# 驗證 PropHolderComponent 能否通過 RPC 正確吸附世界中的 Prop，並再次將其投擲出去
 func test_player_pickup_prop():
-	# 1. Spawn Player
+	# 1. 生成玩家
 	var player = UnitDB.create_player(1)
 	_main_scene.add_child(player)
 	player.global_position = Vector2(100, 100)
 	
-	# Verify Components
+	# 驗證組件
 	var holder = player.get_component(PropHolderComponent)
-	assert_not_null(holder, "Player should have PropHolderComponent")
+	assert_not_null(holder, "玩家應有 PropHolderComponent")
 	var body_comp = player.get_component(BodyComponent)
-	assert_not_null(body_comp, "Player should have BodyComponent")
+	assert_not_null(body_comp, "玩家應有 BodyComponent")
 	
-	# 2. Spawn Prop
+	# 2. 生成 Prop
 	var prop_data = PropDB.get_data(PropDB.PROP.STONE)
-	# Place at (160, 100) to be within pickup range (150) but avoid collision overlap (Radius ~30 + Player ~20 = 50)
+	# 放置在 (160, 100) 以便於拾取範圍 (150) 內但避免碰撞重疊 (半徑 ~30 + 玩家 ~20 = 50)
 	var prop = PropDB.create_world_prop(prop_data, Vector2(160, 100), Vector2.ZERO)
 	_main_scene.add_child(prop)
 	
-	# Force physics update to register positions/collisions
+	# 強制物理更新以註冊位置/碰撞
 	await wait_seconds(1.0)
 	
-	# 3. Simulate Pickup
-	# Since it's an RPC, and we are likely server/host in test, we call the rpc implementation directly
-	# or verify the public API triggers it. public API check is_multiplayer_authority.
+	# 3. 模擬拾取
+	# 目的：觸發拾取 RPC，測試 PropHolderComponent 是否能鎖定目標 Prop 並將其從世界中移除 (轉為持有狀態)
 	
-	# Assuming test runner is authority (server)
+	# 假設測試執行者是權威 (server)
 	holder.rpc_try_pickup(prop.get_component(PropBodyComponent).body.get_path())
 	
-	# 4. Assert Pickup Success
-	# Wait for queue_free to process
+	# 4. 斷言拾取成功
+	# 目的：確認 Prop 節點已被釋放，且 Holder 狀態已更新為持有該 Prop ID
+	# 等待 queue_free 處理
 	await wait_seconds(0.1)
-	assert_eq(holder.current_prop_id, PropDB.PROP.STONE, "Should have picked up Stone (ID matched)")
-	assert_freed(prop, "World prop should be freed")
+	assert_eq(holder.current_prop_id, PropDB.PROP.STONE, "應已拾取石頭 (ID 匹配)")
+	assert_freed(prop, "世界 Prop 應被釋放")
 	
-	# 5. Simulate Throw
+	# 5. 模擬丟棄
+	# 目的：觸發丟棄 RPC，測試系統是否能重新生成 Prop 實體並重置 Holder 狀態
 	holder.rpc_try_throw(Vector2(200, 100))
 	
-	# 6. Assert Throw Success (Prop spawned)
-	assert_eq(holder.current_prop_id, -1, "Prop ID should be reset after throw")
+	# 6. 斷言丟棄成功 (Prop 生成)
+	assert_eq(holder.current_prop_id, -1, "丟棄後 Prop ID 應重置")
 	
-	# Allow frame for spawn
+	# 允許幀生成
 	await wait_seconds(0.5)
 	
-	# Verify new prop exists (Simple check: PropManager should have a child, or check global entity count)
-	# For now, just asserting state reset is good enough to prove logic executed.
+	# 驗證新 prop 存在 (簡單檢查: PropManager 應有子節點，或檢查全局實體計數)
+	# 目前，斷言狀態重置足以證明邏輯已執行。
