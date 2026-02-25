@@ -1,0 +1,251 @@
+# 使用 Ubuntu 作為基礎編譯環境
+image: ubuntu:22.04
+
+variables:
+  GODOT_VERSION: "4.5.1-stable"
+  TEMPLATE_DIR_NAME: "4.5.1.stable"
+  EXPORT_NAME: "my_game"
+  EMSDK_VERSION: "4.0.0" 
+
+stages:
+  - build_templates
+  - export_game
+
+cache:
+  # 💡 終極版 Cache Key，包含魔改與混淆
+  key: "godot-templates-ultimate-$GODOT_VERSION"
+  paths:
+    - custom_templates/
+
+# =========================================================================
+# 第一階段：編譯引擎客製化模板 (動態金鑰 + 混淆注入 + 魔改防禦)
+# =========================================================================
+build_all_templates:
+  stage: build_templates
+  rules:
+    - when: manual
+  script:
+    - HOST_ARCH=$(uname -m)
+    - if [ "$HOST_ARCH" = "aarch64" ]; then GODOT_ARCH="arm64"; else GODOT_ARCH="x86_64"; fi
+    - echo "💡 偵測到伺服器架構為 $HOST_ARCH，Linux 將編譯 $GODOT_ARCH 版本"
+    
+    # 預先建立資料夾
+    - mkdir -p custom_templates/$TEMPLATE_DIR_NAME
+
+    # 1. 檢查 Cache 與金鑰是否健全
+    - |
+      if [ -f "custom_templates/$TEMPLATE_DIR_NAME/windows_release_x86_64.exe" ] && \
+         [ -f "custom_templates/$TEMPLATE_DIR_NAME/linux_release.$GODOT_ARCH" ] && \
+         [ -f "custom_templates/$TEMPLATE_DIR_NAME/web_release.zip" ] && \
+         [ -f "custom_templates/$TEMPLATE_DIR_NAME/dynamic_key.txt" ]; then
+        echo "✅ 所有魔改模板與配對金鑰皆已存在 Cache 中，跳過耗時編譯！"
+        export DYNAMIC_KEY=$(cat custom_templates/$TEMPLATE_DIR_NAME/dynamic_key.txt)
+        echo "GODOT_ARCH=$GODOT_ARCH" > build.env
+        echo "GODOT_ENCRYPTION_KEY=$DYNAMIC_KEY" >> build.env
+        exit 0
+      fi
+
+    - echo "⚠️ 模板未齊全或無金鑰，開始準備編譯環境..."
+    
+    # 2. 先安裝環境 (包含 Python 3，供後續腳本使用)
+    - apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential scons pkg-config libx11-dev libxcursor-dev libxinerama-dev libgl1-mesa-dev libglu-dev libasound2-dev libpulse-dev libudev-dev libxi-dev libxrandr-dev libwayland-dev git mingw-w64 python3 python3-pip unzip
+    
+    # 3. 動態生成全新 64 字元隨機金鑰
+    - export DYNAMIC_KEY=$(python3 -c "import secrets; print(secrets.token_hex(32))")
+    - echo "🔑 本次編譯產生的新金鑰已生成並儲存 (為求安全不顯示於 Log)"
+    - echo $DYNAMIC_KEY > custom_templates/$TEMPLATE_DIR_NAME/dynamic_key.txt
+    
+    # 將新金鑰與架構變數傳遞給匯出階段
+    - echo "GODOT_ARCH=$GODOT_ARCH" > build.env
+    - echo "GODOT_ENCRYPTION_KEY=$DYNAMIC_KEY" >> build.env
+
+    # 4. 強制切換 MinGW 執行緒模型以符合 Godot 需求
+    - update-alternatives --set x86_64-w64-mingw32-gcc /usr/bin/x86_64-w64-mingw32-gcc-posix
+    - update-alternatives --set x86_64-w64-mingw32-g++ /usr/bin/x86_64-w64-mingw32-g++-posix
+
+    # 5. 下載 Godot 原始碼
+    - git clone --depth 1 -b $GODOT_VERSION https://github.com/godotengine/godot.git
+    - cd godot
+
+    # ----------------------------------------------------
+    # 🛡️ 終極防禦核心：C++ 魔改與混淆注入
+    # ----------------------------------------------------
+    - echo "🛡️ 正在修改底層 PCK Magic Number (反逆向工具解析)..."
+    - sed -i 's/0x43504447/0x4b434148/g' core/io/file_access_pack.h
+    - sed -i 's/0x43504445/0x45434148/g' core/io/file_access_pack.h
+
+    - echo "🛡️ 正在注入 XOR 金鑰混淆邏輯 (反記憶體掃描)..."
+    - |
+      python3 -c "
+      import os, random
+      hex_key = os.environ.get('DYNAMIC_KEY', '').strip()
+      if len(hex_key) != 64: exit('❌ 錯誤：金鑰長度不正確！')
+      
+      key_bytes = bytes.fromhex(hex_key)
+      mask_bytes = bytes([random.randint(0, 255) for _ in range(32)])
+      obfuscated_bytes = bytes([k ^ m for k, m in zip(key_bytes, mask_bytes)])
+      to_c = lambda b: ', '.join(f'0x{x:02x}' for x in b)
+      
+      cpp_code = f'''
+      // --- INJECTED BY CI: KEY OBFUSCATION ---
+      static const uint8_t* get_real_key() {{
+          static uint8_t real_key[32];
+          static bool initialized = false;
+          if (!initialized) {{
+              uint8_t obfuscated[32] = {{ {to_c(obfuscated_bytes)} }};
+              uint8_t mask[32] = {{ {to_c(mask_bytes)} }};
+              for(int i = 0; i < 32; i++) real_key[i] = obfuscated[i] ^ mask[i];
+              initialized = true;
+          }}
+          return real_key;
+      }}
+      // ---------------------------------------
+      '''
+      
+      with open('core/io/file_access_encrypted.cpp', 'r') as f: content = f.read()
+      content = content.replace('#include \"file_access_encrypted.h\"', '#include \"file_access_encrypted.h\"\\n' + cpp_code)
+      content = content.replace('script_encryption_key', 'get_real_key()')
+      with open('core/io/file_access_encrypted.cpp', 'w') as f: f.write(content)
+      "
+    # 故意餵給 SCons 一個假金鑰，讓傳統掃描工具上當
+    - export SCRIPT_AES256_ENCRYPTION_KEY="0000000000000000000000000000000000000000000000000000000000000000"
+
+    # ----------------------------------------------------
+    # 開始進行多平台編譯
+    # ----------------------------------------------------
+    - echo "🔨 開始編譯 Linux ($GODOT_ARCH) 模板..."
+    - scons platform=linuxbsd target=template_release -j$(nproc)
+    - cp bin/godot.linuxbsd.template_release.$GODOT_ARCH ../custom_templates/$TEMPLATE_DIR_NAME/linux_release.$GODOT_ARCH
+
+    - echo "🔨 開始編譯 Windows (x86_64) 模板..."
+    - scons platform=windows arch=x86_64 target=template_release -j$(nproc)
+    - cp bin/godot.windows.template_release.x86_64.exe ../custom_templates/$TEMPLATE_DIR_NAME/windows_release_x86_64.exe
+
+    - echo "🔨 開始編譯 Web (HTML5) 模板..."
+    - cd ..
+    - git clone https://github.com/emscripten-core/emsdk.git
+    - cd emsdk
+    - ./emsdk install $EMSDK_VERSION
+    - ./emsdk activate $EMSDK_VERSION
+    - source ./emsdk_env.sh
+    
+    - cd ../godot
+    - scons platform=web target=template_release -j$(nproc)
+    - cp bin/godot.web.template_release.wasm32.zip ../custom_templates/$TEMPLATE_DIR_NAME/web_release.zip
+
+  artifacts:
+    name: "all-custom-templates-$GODOT_VERSION"
+    paths:
+      - custom_templates/
+    reports:
+      dotenv: build.env
+    expire_in: 1 day
+
+
+# =========================================================================
+# 第二階段：匯出遊戲 (強制霸道加密 + 二進位修補)
+# =========================================================================
+export_all_platforms:
+  stage: export_game
+  image: ubuntu:22.04
+  rules:
+    - when: manual
+  script:
+    - echo "💡 接收到模板架構為：$GODOT_ARCH"
+    - echo "🔐 使用的動態金鑰前綴為：${GODOT_ENCRYPTION_KEY:0:6}..."
+    
+    - apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y wget unzip ca-certificates libfontconfig1 libxcursor1 libxinerama1 libxrandr2 libxi6 libgl1 python3
+    
+    - echo "📥 下載官方 Godot $GODOT_VERSION Linux ARM64 編輯器..."
+    - wget https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}/Godot_v${GODOT_VERSION}_linux.arm64.zip -O godot_editor.zip
+    - unzip godot_editor.zip
+    - mv Godot_v${GODOT_VERSION}_linux.arm64 /usr/local/bin/godot
+    - chmod +x /usr/local/bin/godot
+    
+    # 部署魔改過的模板
+    - mkdir -v -p ~/.local/share/godot/export_templates/
+    - mv custom_templates/$TEMPLATE_DIR_NAME ~/.local/share/godot/export_templates/
+    
+    # 複製 Web 模板以滿足檢查機制
+    - cd ~/.local/share/godot/export_templates/$TEMPLATE_DIR_NAME/
+    - cp web_release.zip web_nothreads_release.zip
+    - cp web_release.zip web_nothreads_debug.zip
+    - cp web_release.zip web_threads_release.zip
+    - cp web_release.zip web_threads_debug.zip
+    - cd -
+    
+    # ----------------------------------------------------
+    # 🛡️ 無感加密：強行介入專案設定檔，無中生有塞入加密設定
+    # ----------------------------------------------------
+    - echo "⚙️ 正在強制修改匯出設定檔，開啟所有平台的加密功能..."
+    - |
+      python3 -c "
+      import os, re
+      key = os.environ.get('GODOT_ENCRYPTION_KEY', '')
+      if not key: exit('❌ 找不到金鑰，無法寫入設定檔')
+      
+      with open('export_presets.cfg', 'r') as f: 
+          content = f.read()
+      
+      # 1. 刪除可能存在的舊設定
+      content = re.sub(r'(?m)^encrypt_pck=.*\n?', '', content)
+      content = re.sub(r'(?m)^encrypt_directory=.*\n?', '', content)
+      content = re.sub(r'(?m)^encryption_key=.*\n?', '', content)
+      
+      # 2. 強行塞入加密設定
+      inject_str = f'\g<0>\nencrypt_pck=true\nencrypt_directory=true\nencryption_key=\"{key}\"'
+      content = re.sub(r'^\[preset\.\d+\.options\]$', inject_str, content, flags=re.MULTILINE)
+      
+      with open('export_presets.cfg', 'w') as f: 
+          f.write(content)
+      
+      print('✅ 專案無感加密設定已霸道注入完成！')
+      "
+    
+    # 自動適應 Linux 匯出架構設定
+    - |
+      if [ "$GODOT_ARCH" = "arm64" ]; then
+        echo "🔧 正在修改 export_presets.cfg 以支援 ARM64 Linux 匯出..."
+        sed -i 's/binary_format\/x86_64=true/binary_format\/x86_64=false/g' export_presets.cfg
+        sed -i 's/binary_format\/arm64=false/binary_format\/arm64=true/g' export_presets.cfg
+      fi
+
+    - mkdir -v -p build/windows build/linux build/web
+    
+    # 呼叫官方引擎進行多平台匯出 (內容將使用真實金鑰加密)
+    - echo "📦 匯出 Windows..."
+    - godot --headless --export-release "Windows Desktop" build/windows/$EXPORT_NAME.exe
+    
+    - echo "📦 匯出 Linux..."
+    - godot --headless --export-release "Linux" build/linux/$EXPORT_NAME.$GODOT_ARCH
+    
+    - echo "📦 匯出 Web..."
+    - godot --headless --export-release "Web" build/web/index.html
+
+    # ----------------------------------------------------
+    # 🛡️ 二進位修補：在遊戲包上線前，摧毀官方檔案特徵碼
+    # ----------------------------------------------------
+    - echo "🛠️ 正在修補匯出檔案的 PCK Magic Number，徹底封殺 GDRE Tools..."
+    - |
+      python3 -c "
+      import os
+      for root, dirs, files in os.walk('build'):
+          for f in files:
+              path = os.path.join(root, f)
+              with open(path, 'rb') as file:
+                  data = file.read()
+              
+              # 替換未加密(GDPC)與加密(GDPE)標記
+              if b'GDPC' in data or b'GDPE' in data:
+                  data = data.replace(b'GDPC', b'HACK')
+                  data = data.replace(b'GDPE', b'HACE')
+                  with open(path, 'wb') as file:
+                      file.write(data)
+                  print(f'✅ 成功魔改檔案結構：{path}')
+      "
+    
+  artifacts:
+    name: "Game-Builds-$CI_COMMIT_SHORT_SHA"
+    paths:
+      - build/
+    expire_in: 1 week
